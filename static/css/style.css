@@ -1,0 +1,61 @@
+/* static/css/style.css */
+body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+.navbar, .footer-links { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #ccc; }
+footer { border-top: 1px solid #ccc; margin-top: auto; }
+.footer-links { justify-content: center; gap: 2rem; }
+.main-container { display: flex; flex: 1; justify-content: center; align-items: center; gap: 5rem; padding: 2rem; }
+.info-section { text-align: center; }
+.logo-large { font-size: 3rem; font-weight: bold; margin-bottom: 1rem; }
+.tagline { font-size: 1.5rem; color: #555; }
+.form-section { }
+.form-box { background-color: #d8e4a9; padding: 2rem; border-radius: 8px; width: 350px; }
+.form-box h2 { text-align: center; margin-bottom: 1.5rem; }
+form { display: flex; flex-direction: column; gap: 1rem; }
+form input { padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; }
+.btn-submit { background-color: #333; color: white; padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+.forgot-password { display: block; text-align: center; margin-top: 0.5rem; font-size: 0.9rem; }
+.or-divider { text-align: center; margin: 1rem 0; }
+p { text-align: center; }
+/* Style for field-specific errors */
+.form-field .errorlist {
+    list-style-type: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 0.9em;
+    color: #a94442; /* A standard error red color */
+}
+
+/* Style for general form errors at the top */
+.form-errors .errorlist {
+    list-style-type: none;
+    padding: 10px;
+    margin-bottom: 1rem;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+    border-radius: 4px;
+}
+.form-box input[type="text"],
+.form-box input[type="email"],
+.form-box input[type="password"],
+.form-box select {
+    width: 100%;
+    box-sizing: border-box; 
+}
+.form-box .btn-submit {
+    width: 100%;
+    box-sizing: border-box;
+}
+.form-field-role > div {
+    display: flex;
+    gap: 1.5rem; /* Space between the options */
+    margin-top: 0.5rem;
+    justify-content: center; /* Center the radio buttons */
+}
+
+/* Style each individual radio option */
+.form-field-role label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem; /* Space between the radio circle and its text */
+}

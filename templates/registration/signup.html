@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="info-section">
+    <div class="logo-large">Sari-Sari</div>
+    <p class="tagline">TAGLINE TAGLINE TAGLINE TAGLINE</p>
+</div>
+
+<div class="form-section">
+    <div class="form-box">
+        <h2>Sign Up</h2>
+        <form method="post">
+            {% csrf_token %}
+        
+            <!-- Display any errors that aren't tied to a specific field -->
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+        
+            <!-- Render each field manually -->
+            <div class="form-field">{{ form.username }} {{ form.username.errors }}</div>
+            <div class="form-field">{{ form.email }} {{ form.email.errors }}</div>
+            <div class="form-field">{{ form.phone_number }} {{ form.phone_number.errors }}</div>
+            
+            <!-- The role field is special (radio buttons) -->
+            <div class="form-field-role">
+                {{ form.role.label_tag }}
+                {{ form.role }}
+                {{ form.role.errors }}
+            </div>
+        
+            <div class="form-field">{{ form.password1 }} {{ form.password1.errors }}</div>
+            <div class="form-field">{{ form.password2 }} {{ form.password2.errors }}</div>
+        
+            <button type="submit" class="btn-submit">Sign up</button>
+        </form>
+        <div class="or-divider"></div>
+        <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
+        <!-- ... -->
+    </div>
+</div>
+{% endblock %}
