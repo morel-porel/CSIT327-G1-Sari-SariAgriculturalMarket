@@ -63,3 +63,6 @@ dmypy.json
 .ipynb_checkpoints
 # Local settings
 local_settings.p
+
+.env
+db.sqlite3
