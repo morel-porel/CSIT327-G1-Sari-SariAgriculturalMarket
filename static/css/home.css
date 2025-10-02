@@ -1,0 +1,356 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Song Myung', serif;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: #e4e4e4 2px solid;
+}
+
+.search-bar {
+  display: flex;
+  flex: 1;
+  margin: 0 0 0 150px;
+  border-right: none;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #e4e4e4;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #175e52;
+  background-color: #ffffff;
+}
+
+.search-bar button {
+  background: #ffffff;
+  border: 2px solid #e4e4e4;
+  border-left: none;
+  cursor: pointer;
+  padding: 5px 12px 5px 5px;
+  border-radius: 0 4px 4px 0;
+}
+
+.search-bar .search-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 25px;
+  color: #ffffff;
+  margin-bottom: 25px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  padding: 3px;
+  object-fit: contain;
+  border: 2px solid #ffffff;
+}
+
+.nav-icons a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #000;
+  font-size: 14px;
+}
+
+.nav-icons img.nav-icon {
+  width: 24px;
+  height: 24px;
+  margin: 0 8px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  min-height: calc(100vh - 100px);
+  width: 100%;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 300px;
+  padding: 10px 20px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 25px;
+  color: #000000;
+}
+
+.navbar .logo-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #175e52;
+  padding: 4px;
+  object-fit: contain;
+}
+
+.sidebar h2 {
+  margin: 10px 0 12px;
+  font-size: 15px;
+  font-weight: lighter;
+  color: #000000;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 75px;
+  padding: 18px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-btn::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.sidebar-btn:hover::before {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.sidebar-btn img.icon {
+  width: 24px;
+  height: 24px;
+  transition: filter 0.3s ease;
+}
+
+.sidebar-btn:hover img.icon {
+  filter: brightness(2) drop-shadow(0 0 7px #fff);
+}
+
+.sidebar-btn img.icon,
+.sidebar-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-btn:hover {
+  transform: scale(1.05);
+  font-weight: bold;
+  transition: all 0.2s ease-in-out;
+}
+
+.home-btn { background-image: url("../backgrounds/bg-home.jpg"); }
+.fresh-btn { background-image: url("../backgrounds/bg-fresh.jpg"); }
+.grains-btn { background-image: url("../backgrounds/bg-grains.jpg"); }
+.meat-btn { background-image: url("../backgrounds/bg-meat.jpg"); }
+.dairy-btn { background-image: url("../backgrounds/bg-dairy.jpg"); }
+.packaged-btn { background-image: url("../backgrounds/bg-packaged.jpg"); }
+.local-btn { background-image: url("../backgrounds/bg-local.jpg"); }
+.service-btn { background-image: url("../backgrounds/bg-service.jpg"); }
+
+.content {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: 80px;
+  width: 100%;
+  background: #f5f5f5;
+  overflow-y: auto;
+}
+
+.content-banner {
+  width: 100%;
+  max-height: 600px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-bg {
+  background-color: #175e52;
+  width: 100%;
+  max-height: 600px;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  object-fit: contain;
+}
+
+.banner-bg::after {
+  content: "";
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  right: 30px;
+  bottom: 30px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.banner-text {
+  position: absolute;
+  text-align: center;
+  color: #ffffff;
+  padding: 20px;
+  z-index: 2;
+}
+
+.banner-text h1 {
+  font-size: 6rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.banner-text h3 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.banner-text p {
+  font-size: 1.5rem;
+}
+
+.content h2 {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 230px);
+  gap: 37px;
+  width: 100%;
+}
+
+.grid-item {
+  background: #ffffff;
+  border: 1px solid #175e52;
+  border-radius: 6px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.product-image {
+  background: #e4e4e4 url("icons/placeholder.png") center/contain no-repeat;
+  height: 180px;
+  border-bottom: 1px solid #ddd;
+}
+
+.product-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 15px;
+  margin-bottom: 5px;
+  font-weight: normal;
+}
+
+.product-price {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.product-rating {
+  font-size: 20px;
+  color: #6cdf6e;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 18px 30px;
+  font-size: 15px;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #b8b8b8;
+  border-bottom: 5px solid #6cdf6e;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.footer a {
+  text-decoration: none;
+  color: #000;
+}
