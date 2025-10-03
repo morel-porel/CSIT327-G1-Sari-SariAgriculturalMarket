@@ -1,18 +1,29 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import SignUpForm
+from .forms import ConsumerSignUpForm, VendorSignUpForm
 
-def signup_view(request):
+def consumer_signup_view(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = ConsumerSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user) # Optional: log the user in immediately after signing up
+            login(request, user)
             return redirect('home') # Redirect to a home/dashboard page after success
     else:
-        form = SignUpForm()
+        form = ConsumerSignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def vendor_signup_view(request):
+    if request.method == 'POST':
+        form = VendorSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home') # Redirect home after signup
+    else:
+        form = VendorSignUpForm()
+    return render(request, 'registration/vendor_signup.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -23,7 +34,12 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home') # Redirect to a home/dashboard page after success
+                if user.role == 'VENDOR':
+                    return redirect('home') 
+                elif user.role == 'CONSUMER':
+                    return redirect('home')
+                else: # Fallback for admins
+                    return redirect('/admin/')
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})

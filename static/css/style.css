@@ -27,7 +27,8 @@ footer { border-top: 1px solid #ccc; margin-top: auto; }
     justify-content: center; 
     align-items: center; 
     gap: 5rem; 
-    padding: 2rem; 
+    padding-bottom: 2rem;
+    padding-left: 2rem;
 }
 .info-section { text-align: center; }
 .logo-large { font-size: 3rem; font-weight: bold; margin-bottom: 1rem; }

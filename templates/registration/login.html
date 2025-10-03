@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
@@ -28,7 +29,11 @@
         </form>
         <a href="#" class="forgot-password">Forgot password?</a>
         <div class="or-divider">OR</div>
-        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+        <p>
+            Don't have an account? 
+            <a href="{% url 'signup' %}">Sign up as a Consumer</a> or 
+            <a href="{% url 'vendor_signup' %}">Sign up as a Vendor</a>
+        </p>
     </div>
 </div>
 {% endblock %}
