@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='home.html'), name='home'), # A simple home page
     path('auth/', include('users.urls')), 
+    path('', include('pages.urls')), # Include the pages app URLs
 ]
