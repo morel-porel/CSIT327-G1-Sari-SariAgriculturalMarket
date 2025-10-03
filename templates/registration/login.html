@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="info-section">
     <div class="logo-large">Sari-Sari</div>

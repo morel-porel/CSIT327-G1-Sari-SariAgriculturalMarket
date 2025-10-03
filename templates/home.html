@@ -1,16 +1,149 @@
 <!-- templates/home.html -->
 {% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div class="dashboard">
-    <h2>Welcome to Sari-Sari!</h2>
-    {% if user.is_authenticated %}
-        <p>You are logged in as <strong>{{ user.username }}</strong>.</p>
-        <p>Your role is: <strong>{{ user.get_role_display }}</strong></p>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <p>You are not logged in.</p>
-        <a href="{% url 'login' %}">Login</a> | <a href="{% url 'signup' %}">Sign Up</a>
-    {% endif %}
-</div>
+<header class="navbar">
+    <div class="logo">
+        <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+        <span>Sari-Sari</span>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Search products...">
+        <button>
+            <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+        </button>
+    </div>
+    <div class="nav-icons">
+        <a href="#">
+            <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+        </a>
+        <a href="#">
+            <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
+        </a>
+        <a href="{% url 'login' %}">
+            <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+        </a>
+    </div>
+</header>
+
+<main class="container">
+    <aside class="sidebar">
+        <h2>Main Menu</h2>
+        <button class="sidebar-btn home-btn">
+            <div class="circle">
+                <img src="{% static 'icons/home.png' %}" alt="Home Icon" class="icon">
+            </div>
+            <span>Home</span>
+        </button>
+
+        <h2>Categories</h2>
+        <button class="sidebar-btn fresh-btn">
+            <div class="circle"><img src="{% static 'icons/fresh.png' %}" alt="Fresh Icon" class="icon"></div>
+            <span>Fresh Produce</span>
+        </button>
+        <button class="sidebar-btn grains-btn">
+            <div class="circle"><img src="{% static 'icons/grains.png' %}" alt="Grains Icon" class="icon"></div>
+            <span>Grains and Staples</span>
+        </button>
+        <button class="sidebar-btn meat-btn">
+            <div class="circle"><img src="{% static 'icons/meat.png' %}" alt="Meat Icon" class="icon"></div>
+            <span>Meat, Poultry and Seafood</span>
+        </button>
+        <button class="sidebar-btn dairy-btn">
+            <div class="circle"><img src="{% static 'icons/dairy.png' %}" alt="Dairy Icon" class="icon"></div>
+            <span>Dairy & Eggs</span>
+        </button>
+        <button class="sidebar-btn packaged-btn">
+            <div class="circle"><img src="{% static 'icons/packaged.png' %}" alt="Packaged Icon" class="icon"></div>
+            <span>Packaged Goods</span>
+        </button>
+        <button class="sidebar-btn local-btn">
+            <div class="circle"><img src="{% static 'icons/local.png' %}" alt="Local Icon" class="icon"></div>
+            <span>Local & Specialty Products</span>
+        </button>
+        <button class="sidebar-btn service-btn">
+            <div class="circle"><img src="{% static 'icons/service.png' %}" alt="Service Icon" class="icon"></div>
+            <span>Services</span>
+        </button>
+    </aside>
+
+    <div class="main">
+        <section class="content">
+            <div class="content-banner">
+                <div class="banner-bg">
+                    <img src="{% static 'images/banner-image.png' %}" alt="Banner Image" class="banner-image">
+                    <div class="banner-text">
+                        <h3>WELCOME TO SARI-SARI</h3>
+                        <h1>FARMERS MARKET</h1>
+                        <p>We connect farmers, vendors, and families — locally and affordably</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Daily Discover</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Product Name</h3>
+                        <p class="product-price">₱0.00</p>
+                        <div class="product-rating">★★★★★</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <a href="#">About Us</a>
+    <a href="#">Follow Us</a>
+    <a href="#">Feedback</a>
+</footer>
 {% endblock %}

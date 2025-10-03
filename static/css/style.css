@@ -40,7 +40,7 @@ p { text-align: center; }
 .form-box input[type="password"],
 .form-box select {
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 .form-box .btn-submit {
     width: 100%;
