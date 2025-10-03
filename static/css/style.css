@@ -2,8 +2,33 @@
 body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
 .navbar, .footer-links { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #ccc; }
 footer { border-top: 1px solid #ccc; margin-top: auto; }
-.footer-links { justify-content: center; gap: 2rem; }
-.main-container { display: flex; flex: 1; justify-content: center; align-items: center; gap: 5rem; padding: 2rem; }
+.footer-links { 
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 18px 30px;
+    font-size: 15px;
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #b8b8b8;
+    border-bottom: 5px solid #6cdf6e;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+.footer-links a { 
+    color: #333; 
+    text-decoration: none; 
+    margin: 0 1rem; 
+}
+.main-container { 
+    display: flex; 
+    flex: 1; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 5rem; 
+    padding: 2rem; 
+}
 .info-section { text-align: center; }
 .logo-large { font-size: 3rem; font-weight: bold; margin-bottom: 1rem; }
 .tagline { font-size: 1.5rem; color: #555; }
