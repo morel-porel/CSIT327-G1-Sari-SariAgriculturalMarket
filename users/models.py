@@ -9,5 +9,13 @@ class CustomUser(AbstractUser):
     # Add any common fields here, like a phone number
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     
-    # This is the crucial field for role-based access
-    role = models.CharField(max_length=50, choices=Role.choices)
+    role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
+    
+class VendorProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    shop_name = models.CharField(max_length=255)
+    business_permit_number = models.CharField(max_length=100, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.shop_name
