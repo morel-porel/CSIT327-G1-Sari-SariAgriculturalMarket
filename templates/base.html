@@ -6,15 +6,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sari-Sari Agricultural Market</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     {% block css %}{% endblock %}
 </head>
 <body>
     {% if not request.path == '/' %}
-        <header>
-            <div class="navbar">
-                <div class="logo">Sari-Sari</div>
-                <div class="help-link">Need help?</div>
-            </div>
+        <header class="navbar">
+            <div class="logo">
+                <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+                <span>Sari-Sari</span>
+            </div>      
         </header>
     {% endif %}
 
