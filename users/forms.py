@@ -1,34 +1,68 @@
 # users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, VendorProfile
 
-class SignUpForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = CustomUser
-        fields = ('username', 'email', 'phone_number', 'role')
-
+class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Define placeholders for each field
         placeholders = {
             'username': 'Username',
             'email': 'Email Address',
-            'phone_number': 'Phone Number',
             'password1': 'Password',
             'password2': 'Confirm Password',
+            'shop_name': 'Shop Name',
+            'business_permit_number': 'Business Permit Number',
         }
         
-        # Remove the default help text and add placeholders
         for field_name, field in self.fields.items():
-            # Remove the built-in help text
-            field.help_text = None 
-            
-            # Add placeholder attribute if it's in our dictionary
+            field.help_text = None  # Remove the default help text
             if field_name in placeholders:
                 field.widget.attrs['placeholder'] = placeholders[field_name]
-                field.label = '' # Remove the label, since we have a placeholder
+                field.label = ''  # Remove the label
 
-        # Special handling for the 'role' field if needed
-        self.fields['role'].label = 'Select your role:' # We can keep a label for radio buttons
+
+class ConsumerSignUpForm(CustomUserCreationForm): 
+    class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = ('username', 'email')
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = CustomUser.Role.CONSUMER
+        if commit:
+            user.save()
+        return user
+
+class VendorSignUpForm(CustomUserCreationForm): 
+    shop_name = forms.CharField(max_length=255, required=True)
+    business_permit_number = forms.CharField(max_length=100, required=True)
+
+    class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = ('username', 'email')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field_order = [
+            'username', 
+            'email', 
+            'shop_name', 
+            'business_permit_number', 
+            'password1', 
+            'password2'
+        ]
+        
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = CustomUser.Role.VENDOR
+        if commit:
+            user.save()
+            VendorProfile.objects.create(
+                user=user,
+                shop_name=self.cleaned_data.get('shop_name'),
+                business_permit_number=self.cleaned_data.get('business_permit_number')
+            )
+        return user
