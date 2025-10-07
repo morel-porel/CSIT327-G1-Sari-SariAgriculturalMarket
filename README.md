@@ -18,7 +18,7 @@ Sari-Sari is a web-based marketplace designed to connect small-scale agricultura
 
 **1. Clone the Repository**
 ```bash
-git clone <your_github_repo_url.git>
+git clone https://github.com/morel-porel/CSIT327-G1-Sari-SariAgriculturalMarket.git
 cd Sari-Sari-Agricultural-Market
 ```
 
