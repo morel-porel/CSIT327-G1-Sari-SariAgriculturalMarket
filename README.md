@@ -60,13 +60,13 @@ The application will be running at http://122.0.0.1:8000/.
 
 ---
 
-Team Members
-Name	Role	CIT-U Email
-Ramirez, Ruther Gerald L. | Lead Developer | ruthergerard.ramirez@cit.edu
-Pacio, Muriel D. | Developer | muriel.pacio@cit.edu
-Orat, Crisorlann Jon S. | Developer | crisorlannjon.orat@cit.edu	
-Pescante, Merven Loui A. | Product Owner | mervenloui.pescante@cit.edu
-Poliquit Keint Warren J. | Business Analyst | keintwarren.poliquit@cit.edu
+Team Members<br>
+Name	Role	CIT-U Email<br>
+Ramirez, Ruther Gerald L. | Lead Developer | ruthergerard.ramirez@cit.edu<br>
+Pacio, Muriel D. | Developer | muriel.pacio@cit.edu<br>
+Orat, Crisorlann Jon S. | Developer | crisorlannjon.orat@cit.edu	<br>
+Pescante, Merven Loui A. | Product Owner | mervenloui.pescante@cit.edu<br>
+Poliquit Keint Warren J. | Business Analyst | keintwarren.poliquit@cit.edu<br>
 Pancho, Allan Krsna B. | Scrum Master | allankrsna.pancho@cit.edu			
 							
 							
