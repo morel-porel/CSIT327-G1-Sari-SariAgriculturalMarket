@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="padding: 40px; text-align: center;">
+    <h1>Your Profile</h1>
+    <p>Welcome back, <strong>{{ user.username }}</strong>!</p>
+    <p>Email: {{ user.email }}</p>
+    
+    <hr style="margin: 20px 0;">
+
+    <h2>Consumer Details</h2>
+    <p><em>(Your order history and shipping address will go here soon.)</em></p>
+
+    <a href="{% url 'logout' %}" style="color: red; margin-top: 20px; display: inline-block;">Logout</a>
+</div>
+{% endblock %}
