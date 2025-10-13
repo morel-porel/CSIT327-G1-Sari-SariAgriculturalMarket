@@ -1,17 +1,96 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<div style="padding: 40px; text-align: center;">
-    <h1>Your Profile</h1>
-    <p>Welcome back, <strong>{{ user.username }}</strong>!</p>
-    <p>Email: {{ user.email }}</p>
-    
-    <hr style="margin: 20px 0;">
 
-    <h2>Consumer Details</h2>
-    <p><em>(Your order history and shipping address will go here soon.)</em></p>
+<header class="navbar">
+    <div class="logo">
+        <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+        <span>Sari-Sari</span>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Search products...">
+        <button>
+            <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+        </button>
+    </div>
+    <div class="nav-icons">
+        <a href="#">
+            <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+        </a>
+        <a href="#">
+            <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+            </a>
+        {% endif %}
+    </div>
+</header>
 
-    <a href="{% url 'logout' %}" style="color: red; margin-top: 20px; display: inline-block;">Logout</a>
+<div class="profile-container">
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <li class="active"><a href="#">My Account</a></li>
+                <li><a href="#">Addresses</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Notification</a></li>
+                <li><a href="#">Delete Account</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% if not request.user.vendorprofile %}
+                <li><a href="{% url 'vendor_signup' %}" class="vendor-link">Be a Vendor!</a></li>
+                {% else %}
+                <li><a href="#" class="vendor-link">Manage Vendor Profile</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <h1>Manage your account</h1>
+        <p>View and manage your account details.</p>
+        
+        <form method="post" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            <div class="profile-picture-section">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Picture" class="profile-avatar">
+                <label for="id_avatar" class="btn-upload">Select Image</label>
+                <input type="file" name="avatar" id="id_avatar" style="display: none;">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" id="id_username" value="{{ user.username }}">
+                </div>
+                <div class="form-group">
+                    <label for="id_email">Email Address</label>
+                    <input type="email" name="email" id="id_email" value="{{ user.email }}">
+                </div>
+                <div class="form-group">
+                    <label for="id_phone_number">Phone number</label>
+                    <input type="text" name="phone_number" id="id_phone_number" placeholder="Add phone number">
+                </div>
+                <div class="form-group">
+                    <label for="id_date_of_birth">Date of Birth</label>
+                    <input type="date" name="date_of_birth" id="id_date_of_birth">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-save">Save</button>
+            </div>
+        </form>
+    </main>
 </div>
 {% endblock %}
