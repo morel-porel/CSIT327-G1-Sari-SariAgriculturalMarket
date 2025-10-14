@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import ConsumerSignUpForm, VendorSignUpForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
 
@@ -53,3 +54,12 @@ def logout_view(request):
 
 def home_view(request):
     return render(request, 'home.html')
+
+@login_required # This protects the page from logged-out users
+def profile_view(request):
+    # For now, we'll just pass the user's basic info to the template.
+    # Later, we can add the ConsumerProfile model here.
+    context = {
+        'user': request.user
+    }
+    return render(request, 'pages/consumer_profile.html', context)

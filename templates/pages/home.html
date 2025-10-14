@@ -27,12 +27,12 @@
             <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
         </a>
         {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Logout Icon" class="nav-icon" title="Logout">
+            <a href="{% url 'profile' %}">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
             </a>
         {% else %}
             <a href="{% url 'login' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon" title="Login">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
             </a>
         {% endif %}
     </div>
