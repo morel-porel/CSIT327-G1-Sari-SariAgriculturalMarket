@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import ConsumerSignUpForm, VendorSignUpForm
+from django.contrib.auth import logout
+from django.contrib import messages
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -46,7 +48,8 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login') # Redirect back to the login page
+    messages.info(request, "You have been successfully logged out.") # Optional: add a message
+    return redirect('login')
 
 def home_view(request):
     return render(request, 'home.html')

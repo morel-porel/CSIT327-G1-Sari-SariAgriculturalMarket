@@ -66,3 +66,23 @@ class VendorSignUpForm(CustomUserCreationForm):
                 business_permit_number=self.cleaned_data.get('business_permit_number')
             )
         return user
+    
+class VendorProfileForm(forms.ModelForm):
+    class Meta:
+        model = VendorProfile
+        fields = ['shop_name', 'business_permit_number', 'contact_number', 'profile_image']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        placeholders = {
+            'shop_name': 'Shop Name',
+            'business_permit_number': 'Business Permit Number',
+            'contact_number': 'Contact Number',
+            'profile_image': 'Profile Image',
+        }
+        
+        for field_name, field in self.fields.items():
+            if field_name in placeholders:
+                field.widget.attrs['placeholder'] = placeholders[field_name]
+                field.label = ''  # Remove the label

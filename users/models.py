@@ -16,6 +16,9 @@ class VendorProfile(models.Model):
     shop_name = models.CharField(max_length=255)
     business_permit_number = models.CharField(max_length=100, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+
+    contact_number = models.CharField(max_length=20, blank=True, null=True)
+    profile_image = models.ImageField(upload_to='vendor_images/', blank=True, null=True)
     
     def __str__(self):
         return self.shop_name
