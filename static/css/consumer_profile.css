@@ -23,6 +23,7 @@
     font-weight: bold;
     font-size: 25px;
     color: #000000;
+    transition: transform 0.2s ease-in-out;
 }
 .navbar .logo-icon {
     width: 45px;
@@ -162,4 +163,31 @@
 }
 .btn-save {
     background-color: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;
+}
+.logo-link {
+    text-decoration: none;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 25px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+}
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #175e52; /* Your primary theme color */
+    padding: 4px;
+    object-fit: contain;
+}
+
+.navbar a:hover .logo {
+    transform: scale(1.05);
 }

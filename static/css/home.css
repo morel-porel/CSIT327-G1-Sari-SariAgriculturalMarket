@@ -354,3 +354,9 @@ body, html {
   text-decoration: none;
   color: #000;
 }
+
+.product-vendor {
+  font-size: 14px;
+  color: #777;
+  margin-top: 5px;
+}
