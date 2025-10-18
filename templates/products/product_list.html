@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="product-container">
+    <div class="page-header">
+        <h2>My Products</h2>
+        <a href="{% url 'product_create' %}" class="btn btn-primary">+ Add New Product</a>
+    </div>
+
+    <div class="card">
+        {% if products %}
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><strong>{{ product.name }}</strong></td>
+                    <td>₱{{ product.price }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>{{ product.category }}</td>
+                    <td class="actions">
+                        <a href="{% url 'product_update' product.pk %}" class="btn btn-info">Edit</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <p>You haven't added any products yet.</p>
+            <p>Click "Add New Product" to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

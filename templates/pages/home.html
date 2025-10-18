@@ -20,9 +20,15 @@
         </button>
     </div>
     <div class="nav-icons">
-        <a href="#">
-            <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
-        </a>
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
+            <a href="{% url 'product_list' %}">
+                <img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon">
+            </a>
+        {% else %}
+            <a href="#">
+                <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+            </a>
+        {% endif %}
         <a href="#">
             <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
         </a>
@@ -94,62 +100,24 @@
 
             <h2>Daily Discover</h2>
             <div class="grid">
+                {% for product in products %}
                 <div class="grid-item">
-                    <div class="product-image"></div>
+                    {% if product.image %}
+                        <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
+                    {% else %}
+                        <div class="product-image"></div>
+                    {% endif %}
                     <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <p class="product-price">₱{{ product.price }}</p>
+                        <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
                     </div>
                 </div>
-                <div class="grid-item">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
-                    </div>
-                </div>
-                <div class="grid-item">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Product Name</h3>
-                        <p class="product-price">₱0.00</p>
-                        <div class="product-rating">★★★★★</div>
-                    </div>
-                </div>
+                {% empty %}
+                <p>No products are available at the moment.</p>
+                {% endfor %}
             </div>
         </section>
     </div>
 </main>
-
-<footer class="footer">
-    <a href="{% url 'about' %}">About Us</a>
-    <a href="#">Follow Us</a>
-    <a href="#">Feedback</a>
-</footer>
 {% endblock %}

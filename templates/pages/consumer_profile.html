@@ -3,15 +3,17 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-
 <header class="navbar">
-    <div class="logo">
-        <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
-        <span>Sari-Sari</span>
-    </div>
+    <a href="{% url 'home' %}" style="text-decoration: none;">
+        <div class="logo">
+            <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+            <span>Sari-Sari</span>
+        </div>
+    </a>
     <div class="search-bar">
         <input type="text" placeholder="Search products...">
         <button>
@@ -19,9 +21,15 @@
         </button>
     </div>
     <div class="nav-icons">
-        <a href="#">
-            <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
-        </a>
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
+            <a href="{% url 'product_list' %}">
+                <img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon">
+            </a>
+        {% else %}
+            <a href="#">
+                <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+            </a>
+        {% endif %}
         <a href="#">
             <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
         </a>

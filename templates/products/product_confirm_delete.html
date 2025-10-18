@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="product-container">
+    <div class="card text-center">
+        <h2>Are you sure?</h2>
+        <p style="margin: 1.5rem 0;">You are about to permanently delete the product: <strong>"{{ object.name }}"</strong></p>
+        <p>This action cannot be undone.</p>
+        <form method="post" style="margin-top: 2rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete It</button>
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
