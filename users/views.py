@@ -5,6 +5,10 @@ from .forms import ConsumerSignUpForm, VendorSignUpForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from .models import VendorProfile 
+from .forms import VendorProfileForm 
+from .forms import ConsumerProfileForm
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -57,9 +61,40 @@ def home_view(request):
 
 @login_required # This protects the page from logged-out users
 def profile_view(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = ConsumerProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('profile') # Redirect to the same page to show the changes
+    else:
+        form = ConsumerProfileForm(instance=user)
+
     # For now, we'll just pass the user's basic info to the template.
     # Later, we can add the ConsumerProfile model here.
     context = {
-        'user': request.user
+        'form': form
     }
     return render(request, 'pages/consumer_profile.html', context)
+
+@login_required 
+def vendor_profile_view(request):
+    # Security check: Ensure the user is actually a vendor.
+    if request.user.role != 'VENDOR':
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('home')
+
+    profile = get_object_or_404(VendorProfile, user=request.user)
+
+    if request.method == 'POST':
+        form = VendorProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('vendor_profile') 
+    else:
+        form = VendorProfileForm(instance=profile)
+
+    return render(request, 'pages/vendor_profile.html', {'form': form})

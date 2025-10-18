@@ -8,6 +8,8 @@ class CustomUser(AbstractUser):
 
     # Add any common fields here, like a phone number
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
     
