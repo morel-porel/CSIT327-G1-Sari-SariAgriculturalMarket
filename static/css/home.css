@@ -360,3 +360,15 @@ body, html {
   color: #777;
   margin-top: 5px;
 }
+
+.nav-text-link {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0 5px;
+}
+
+.nav-text-link:hover {
+  color: #175e52; /* This is your primary theme color */
+}

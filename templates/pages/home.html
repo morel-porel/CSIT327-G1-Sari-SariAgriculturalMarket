@@ -37,9 +37,9 @@
                 <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
             </a>
         {% else %}
-            <a href="{% url 'login' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
-            </a>
+            <a href="{% url 'login' %}" class="nav-text-link">Login</a>
+            <span style="color: #000; margin: 0 5px;">/</span>
+            <a href="{% url 'signup' %}" class="nav-text-link">Signup</a>
         {% endif %}
     </div>
 </header>
