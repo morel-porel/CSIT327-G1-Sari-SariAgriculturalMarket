@@ -56,7 +56,7 @@
                 <li><a href="#">Delete Account</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% if not request.user.vendorprofile %}
-                <li><a href="{% url 'vendor_signup' %}" class="vendor-link">Be a Vendor!</a></li>
+                <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
                 {% else %}
                 <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
                 {% endif %}
