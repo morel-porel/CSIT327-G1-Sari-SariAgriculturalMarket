@@ -58,7 +58,7 @@
                 {% if not request.user.vendorprofile %}
                 <li><a href="{% url 'vendor_signup' %}" class="vendor-link">Be a Vendor!</a></li>
                 {% else %}
-                <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
+                <li><a href="#" class="vendor-link">Manage Vendor Profile</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -71,41 +71,27 @@
         <form method="post" enctype="multipart/form-data" class="profile-form">
             {% csrf_token %}
             <div class="profile-picture-section">
-                {% if form.instance.avatar %}
-                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
-                {% else %}
-                    <!-- Otherwise, show the default placeholder -->
-                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
-                {% endif %}
-
-                <div>
-                    <!-- Let Django render the label and the file input -->
-                    {{ form.avatar.label_tag }}
-                    {{ form.avatar }}
-                    {{ form.avatar.errors }}
-                </div>
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Picture" class="profile-avatar">
+                <label for="id_avatar" class="btn-upload">Select Image</label>
+                <input type="file" name="avatar" id="id_avatar" style="display: none;">
             </div>
 
             <div class="form-grid">
                 <div class="form-group">
-                    {{ form.username.label_tag }}
-                    {{ form.username }}
-                    {{ form.username.errors }}
+                    <label for="id_username">Username</label>
+                    <input type="text" name="username" id="id_username" value="{{ user.username }}">
                 </div>
                 <div class="form-group">
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                    {{ form.email.errors }}
+                    <label for="id_email">Email Address</label>
+                    <input type="email" name="email" id="id_email" value="{{ user.email }}">
                 </div>
                 <div class="form-group">
-                    {{ form.phone_number.label_tag }}
-                    {{ form.phone_number }}
-                    {{ form.phone_number.errors }}
+                    <label for="id_phone_number">Phone number</label>
+                    <input type="text" name="phone_number" id="id_phone_number" placeholder="Add phone number">
                 </div>
                 <div class="form-group">
-                    {{ form.date_of_birth.label_tag }}
-                    {{ form.date_of_birth }}
-                    {{ form.date_of_birth.errors }}
+                    <label for="id_date_of_birth">Date of Birth</label>
+                    <input type="date" name="date_of_birth" id="id_date_of_birth">
                 </div>
             </div>
             
