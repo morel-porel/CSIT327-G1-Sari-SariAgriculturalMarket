@@ -66,3 +66,16 @@ class VendorSignUpForm(CustomUserCreationForm):
                 business_permit_number=self.cleaned_data.get('business_permit_number')
             )
         return user
+    
+class VendorProfileForm(forms.ModelForm):
+    class Meta:
+        model = VendorProfile
+        fields = ['shop_name', 'business_permit_number', 'contact_number', 'profile_image']
+
+class ConsumerProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'phone_number', 'date_of_birth', 'avatar']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }

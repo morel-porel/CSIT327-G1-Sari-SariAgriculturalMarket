@@ -25,6 +25,17 @@
     {% endif %}
 
     <main class="main-container">
+        {% if messages %}
+            <div class="messages-container" style="width: 100%; position: absolute; top: 80px; left: 0; z-index: 10;">
+                <ul class="messages" style="list-style-type: none; padding: 0; margin: 0;">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}" style="background-color: #e8f5e9; color: #2e7d32; padding: 1rem; text-align: center;"{% endif %}>
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
     
