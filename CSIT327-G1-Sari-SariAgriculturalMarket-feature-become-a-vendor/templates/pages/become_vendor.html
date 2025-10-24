@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/become_vendor.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="center-container">
+    <div class="content-box">
+        <h2>Sari-Sari</h2>
+        <p>To get started as a Sari - Sari vendor, register as a Vendor and provide necessary information</p>
+        <a href="{% url 'vendor_signup' %}" class="btn-start">Start</a>
+    </div>
+</div>
+
+{% endblock %}

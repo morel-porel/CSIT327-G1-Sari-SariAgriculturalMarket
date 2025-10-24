@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="info-section">
+    <div class="logo-large">Sari-Sari</div>
+    <p class="tagline">TAGLINE TAGLINE TAGLINE TAGLINE</p>
+</div>
+
+<div class="form-section">
+    <div class="form-box">
+        <h2>Create a Vendor Account</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Manually render each field to use our placeholders -->
+            <div class="form-field">{{ form.username }} {{ form.username.errors }}</div>
+            <div class="form-field">{{ form.email }} {{ form.email.errors }}</div>
+            <div class="form-field">{{ form.shop_name }} {{ form.shop_name.errors }}</div>
+            <div class="form-field">{{ form.business_permit_number }} {{ form.business_permit_number.errors }}</div>
+            <div class="form-field">{{ form.password1 }} {{ form.password1.errors }}</div>
+            <div class="form-field">{{ form.password2 }} {{ form.password2.errors }}</div>
+
+            <button type="submit" class="btn-submit">Sign up as Vendor</button>
+        </form>
+        <div class="or-divider"></div>
+        <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </div>
+</div>
+{% endblock %}

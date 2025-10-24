@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sari-Sari Agricultural Market</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    {% block css %}{% endblock %}
+</head>
+<body>
+    
+    {% url 'profile' as profile_url %}
+
+    {% if request.path != '/' and request.path != profile_url %}
+        <header class="navbar">
+            <a href="{% url 'home' %}" style="text-decoration: none;">
+                <div class="logo">
+                    <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+                    <span>Sari-Sari</span>
+                </div>
+            </a>
+        </header>
+    {% endif %}
+
+    <main class="main-container">
+        {% if messages %}
+            <div class="messages-container" style="width: 100%; position: absolute; top: 80px; left: 0; z-index: 10;">
+                <ul class="messages" style="list-style-type: none; padding: 0; margin: 0;">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}" style="background-color: #e8f5e9; color: #2e7d32; padding: 1rem; text-align: center;"{% endif %}>
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <div class="footer">
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="#">Follow Us</a>
+            <a href="#">Feedback</a>
+        </div>
+    </footer>
+</body>
+</html>

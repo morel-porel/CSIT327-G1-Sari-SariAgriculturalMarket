@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<header class="navbar">
+    <a href="{% url 'home' %}" style="text-decoration: none;">
+        <div class="logo">
+            <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
+            <span>Sari-Sari</span>
+        </div>
+    </a>
+    <div class="search-bar">
+        <input type="text" placeholder="Search products...">
+        <button>
+            <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+        </button>
+    </div>
+    <div class="nav-icons">
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
+            <a href="{% url 'product_list' %}">
+                <img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon">
+            </a>
+        {% else %}
+            <a href="#">
+                <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+            </a>
+        {% endif %}
+        <a href="#">
+            <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+            </a>
+        {% endif %}
+    </div>
+</header>
+
+<div class="profile-container">
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <li class="active"><a href="#">My Account</a></li>
+                <li><a href="#">Addresses</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Notification</a></li>
+                <li><a href="#">Delete Account</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% if not request.user.vendorprofile %}
+                <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
+                {% else %}
+                <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <h1>Manage your account</h1>
+        <p>View and manage your account details.</p>
+        
+        <form method="post" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            <div class="profile-picture-section">
+                {% if form.instance.avatar %}
+                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
+                {% else %}
+                    <!-- Otherwise, show the default placeholder -->
+                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
+                {% endif %}
+
+                <div>
+                    <!-- Let Django render the label and the file input -->
+                    {{ form.avatar.label_tag }}
+                    {{ form.avatar }}
+                    {{ form.avatar.errors }}
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.phone_number.label_tag }}
+                    {{ form.phone_number }}
+                    {{ form.phone_number.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.date_of_birth.label_tag }}
+                    {{ form.date_of_birth }}
+                    {{ form.date_of_birth.errors }}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-save">Save</button>
+            </div>
+        </form>
+    </main>
+</div>
+{% endblock %}

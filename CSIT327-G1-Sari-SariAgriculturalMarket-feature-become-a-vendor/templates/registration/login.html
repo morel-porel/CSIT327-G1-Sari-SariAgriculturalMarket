@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="info-section">
+    <div class="logo-large">Sari-Sari</div>
+    <p class="tagline">We connect farmers, vendors, and families <br> — locally and affordably</p>
+</div>
+
+<div class="form-section">
+    <div class="form-box">
+        <h2>Log in</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Django's form will render the username and password fields -->
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            
+            <button type="submit" class="btn-submit">Log in</button>
+        </form>
+        <a href="#" class="forgot-password">Forgot password?</a>
+        <div class="or-divider">OR</div>
+        <p>
+            Don't have an account? <br>
+            <a href="{% url 'signup' %}">Sign up as a Consumer</a><br> or <br>
+            <a href="{% url 'vendor_signup' %}">Sign up as a Vendor</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
