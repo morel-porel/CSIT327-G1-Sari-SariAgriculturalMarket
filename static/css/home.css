@@ -308,7 +308,11 @@ body, html {
 }
 
 .product-image {
-  background: #e4e4e4 url("icons/placeholder.png") center/contain no-repeat;
+  background-color: #e4e4e4;
+  background-image: url("../icons/placeholder.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   height: 180px;
   border-bottom: 1px solid #ddd;
 }
