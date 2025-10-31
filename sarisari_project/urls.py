@@ -26,7 +26,5 @@ urlpatterns = [
     path('', include('pages.urls')), # Include the pages app URLs
     path('notifications/', include('notifications.urls')),
 
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('messages/', include('messaging.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

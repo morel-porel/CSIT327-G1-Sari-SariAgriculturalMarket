@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'pages',
     'products',
     'notifications',
+    'messaging',
 ]
 
 MIDDLEWARE = [
