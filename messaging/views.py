@@ -1,49 +1,70 @@
 # messaging/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from .models import Conversation, Message
-from users.models import CustomUser #
+from users.models import CustomUser
+
+import datetime # <--- IMPORT IS ADDED HERE
+
+# This is our new, single template file
+MESSENGER_TEMPLATE = 'messaging/messenger.html'
 
 @login_required
 def inbox_view(request):
     """
-    Display a list of all conversations for the current user.
+    Display the main chat UI.
+    Left panel: Populated with all conversations.
+    Right panel: Empty (shows placeholder).
     """
-    conversations = Conversation.objects.filter(participants=request.user).prefetch_related('participants')
     
-    # We'll create a new list to pass to the template
-    # This list will contain (conversation, other_participant) tuples
+    # Get all conversations for the left panel
+    all_conversations = Conversation.objects.filter(participants=request.user).prefetch_related('participants', 'messages')
+    
     conversations_with_recipient = []
+    for convo in all_conversations:
+        recipient = convo.participants.exclude(id=request.user.id).first()
+        last_message = convo.messages.all().order_by('-timestamp').first()
+        unread_count = convo.messages.filter(Q(is_read=False) & ~Q(sender=request.user)).count()
+        
+        conversations_with_recipient.append((convo, recipient, last_message, unread_count))
     
-    for convo in conversations:
-        # Find the other participant
-        other_participant = convo.participants.exclude(id=request.user.id).first()
-        conversations_with_recipient.append((convo, other_participant))
+    # --- THIS IS THE FIX ---
+    # Define a timezone-aware "epoch" (a very old date) for sorting
+    epoch = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+    # Sort by last message time, using the epoch for empty conversations
+    conversations_with_recipient.sort(key=lambda x: x[2].timestamp if x[2] else epoch, reverse=True)
+    # --- END OF FIX ---
 
     context = {
-        'conversations_with_recipient': conversations_with_recipient
+        # Data for the Left Panel
+        'conversations_with_recipient': conversations_with_recipient,
+        
+        # 'other_participant' is None, so the template will show the placeholder
+        'other_participant': None,
     }
-    return render(request, 'messaging/inbox.html', context)
+    
+    # Render the new messenger.html template
+    return render(request, MESSENGER_TEMPLATE, context)
 
 @login_required
 def conversation_detail_view(request, conversation_id):
     """
-    Display a single conversation and its messages.
-    Handles POST requests to send a new message.
+    Display the main chat UI with an active conversation.
+    Left panel: All conversations.
+    Right panel: Active chat messages.
     """
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    # Security check: Ensure the user is a participant
+    # Security check
     if request.user not in conversation.participants.all():
-        return redirect('inbox')
+        return redirect('inbox') # 'inbox' should be the name of your inbox_view URL
 
-    # Handle sending a new message
+    # --- Handle sending a new message (POST request) ---
     if request.method == 'POST':
-        text_content = request.POST.get('text_content', '').strip() # .strip() removes whitespace
+        text_content = request.POST.get('text_content', '').strip()
         media_file = request.FILES.get('media_file')
         
-        # Check that the message is not empty
         if text_content or media_file:
             Message.objects.create(
                 conversation=conversation,
@@ -51,35 +72,60 @@ def conversation_detail_view(request, conversation_id):
                 text_content=text_content,
                 media_file=media_file
             )
-        
-        # ALWAYS redirect after a POST to prevent re-submissions
-        # This fixes the "it looks like it didn't send" issue
+        # Redirect back to the same page to show the new message
         return redirect('conversation_detail', conversation_id=conversation.id)
 
-    # (GET request) Load all messages for this conversation
-    messages = conversation.messages.all()
-    # Mark messages as read (for Task 2.1.2)
-    messages.filter(sender=request.user).update(is_read=True)
+    # --- GET Request Logic ---
+
+    # 1. Get data for the Right Panel (Active Chat)
+    messages = conversation.messages.all().order_by('timestamp')
+    # Mark messages from the *other* user as read
+    messages.filter(conversation=conversation).exclude(sender=request.user).update(is_read=True)
+    other_participant = conversation.participants.exclude(id=request.user.id).first()
+
+    # 2. Get data for the Left Panel (All Conversations)
+    all_conversations = Conversation.objects.filter(participants=request.user).prefetch_related('participants', 'messages')
+    
+    conversations_with_recipient = []
+    for convo in all_conversations:
+        recipient = convo.participants.exclude(id=request.user.id).first()
+        last_message = convo.messages.all().order_by('-timestamp').first()
+        unread_count = convo.messages.filter(Q(is_read=False) & ~Q(sender=request.user)).count()
+        
+        conversations_with_recipient.append((convo, recipient, last_message, unread_count))
+    
+    # --- THIS IS THE FIX ---
+    # Define a timezone-aware "epoch" (a very old date) for sorting
+    epoch = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+    # Sort by last message time, using the epoch for empty conversations
+    conversations_with_recipient.sort(key=lambda x: x[2].timestamp if x[2] else epoch, reverse=True)
+    # --- END OF FIX ---
+
 
     context = {
+        # Data for the Left Panel
+        'conversations_with_recipient': conversations_with_recipient,
+        
+        # Data for the Right Panel
         'conversation': conversation,
         'messages': messages,
-        'other_participant': conversation.participants.exclude(id=request.user.id).first()
+        'other_participant': other_participant
     }
-    return render(request, 'messaging/conversation_detail.html', context)
+    
+    # Render the new messenger.html template
+    return render(request, MESSENGER_TEMPLATE, context)
 
 @login_required
 def start_conversation_view(request, recipient_id):
     """
-    Finds or creates a 1-on-1 conversation with a recipient.
+    Finds or creates a 1-on-1 conversation and redirects to it.
+    (This view logic does not need to change)
     """
     recipient = get_object_or_404(CustomUser, id=recipient_id)
 
     if recipient == request.user:
-        # User can't message themselves
-        return redirect('home') # Or wherever you prefer
+        return redirect('home') 
 
-    # Find an existing 1-on-1 conversation
     conversation = Conversation.objects.annotate(
         num_participants=Count('participants')
     ).filter(
@@ -90,10 +136,8 @@ def start_conversation_view(request, recipient_id):
         num_participants=2
     ).first()
 
-    # If no 1-on-1 conversation exists, create one
     if not conversation:
         conversation = Conversation.objects.create()
         conversation.participants.add(request.user, recipient)
 
-    # Redirect to the conversation detail page
     return redirect('conversation_detail', conversation_id=conversation.id)
