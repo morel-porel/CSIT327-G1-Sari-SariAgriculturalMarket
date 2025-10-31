@@ -1,5 +1,11 @@
 /* static/css/products.css */
 
+/* 1. Override home.css to allow scrolling on this page */
+body, html {
+    overflow-y: auto !important; /* Allow vertical scrolling */
+    height: auto !important;
+}
+
 :root {
     --primary-color: #175e52;
     --secondary-color: #6cdf6e;
@@ -15,6 +21,10 @@ body {
     font-family: 'Song Myung', serif;
 }
 
+/* * MERGED NAVBAR RULE
+ * This combines both of your '.navbar' rules into one.
+ * It is now 'position: fixed' and has all its styles.
+*/
 .navbar {
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
@@ -22,6 +32,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    
+    /* These properties lock it to the top */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
 }
 
 .logo-link {
@@ -44,10 +61,20 @@ body {
     object-fit: contain;
 }
 
+/* * MERGED PRODUCT-CONTAINER RULE
+ * This combines both of your '.product-container' rules.
+ * It now has the correct 'padding-top' and 'padding-bottom'.
+*/
 .product-container {
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 15px;
+
+    /* * We set padding here:
+     * 80px on top (for the navbar)
+     * 15px on left/right
+     * 100px on bottom (for the footer)
+    */
+    padding: 80px 15px 80px 15px;
 }
 
 .page-header {
