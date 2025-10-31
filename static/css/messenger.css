@@ -1,0 +1,368 @@
+/*
+ * This is a NEW file for the messenger.
+ * It does NOT conflict with home.css or style.css.
+ */
+
+/* * STEP 1: We override the home page styles for main.main-container
+ * This is necessary to fix the centering.
+ */
+main.main-container {
+    flex-grow: 1; /* Makes it fill the space between header and footer */
+    display: flex; /* Makes it a flex container to center its child */
+    
+    /* --- These rules OVERRIDE home.css --- */
+    justify-content: normal;  /* Resets the 'center' from home.css */
+    align-items: normal;     /* Resets the 'center' from home.css */
+    gap: 0;                  /* Resets the '5rem' from home.css */
+    padding: 20px;           /* Adds some simple padding */
+    box-sizing: border-box;
+}
+
+/* * STEP 2: Your main rectangle container
+ */
+.my-centered-rectangle {
+    width: 1700px;
+    height: 750px;
+    
+    margin-top: 12px;
+    margin-left: 80px;
+    
+    border: 1px solid #cccccc;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    display: flex;       /* This makes the panels line up side-by-side */
+    overflow: hidden;    /* Hides anything that spills out */
+}
+
+
+/* * STEP 3: Panel and Divider styles
+ */
+.chat-left-panel {
+    flex-basis: 400px; /* Starting width */
+    width: 400px;
+    min-width: 250px; 
+    height: 100%;
+    background: #fdfdfd;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column; /* To stack header and list */
+}
+
+.chat-divider {
+    flex-basis: 2px;
+    height: 100%;
+    background-color: #e0e0e0;
+    cursor: col-resize;
+    transition: background-color 0.2s;
+}
+.chat-divider:hover {
+    background-color: #cccccc;
+}
+
+.chat-right-panel {
+    flex-grow: 1;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column; /* To stack header, window, and form */
+}
+
+/* * STEP 4: Left Panel Header & Search
+ */
+.chat-panel-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0; /* Prevents header from shrinking */
+}
+
+.chat-panel-header h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.6em;
+    font-weight: 600;
+}
+
+.chat-search-container {
+    position: relative;
+    width: 100%;
+}
+
+.chat-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+}
+
+.chat-search-input {
+    width: 100%;
+    padding: 10px 10px 10px 38px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    outline: none;
+    transition: background-color 0.2s;
+}
+.chat-search-input:focus {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 9px 9px 9px 37px; 
+}
+
+/* * STEP 5: Conversation List (Left Panel)
+ */
+.conversation-list {
+    flex-grow: 1; /* Fills the rest of the left panel */
+    overflow-y: auto; /* Adds scrollbar if list is long */
+}
+.chat-list-empty {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+}
+.conversation-item:hover {
+    background-color: #f9f9f9;
+}
+.conversation-item.active {
+    background-color: #eef4ff;
+}
+
+.convo-avatar {
+    flex-shrink: 0;
+}
+.convo-avatar img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+}
+.convo-details {
+    flex-grow: 1;
+    overflow: hidden;
+}
+.convo-user {
+    display: block;
+    font-weight: 600;
+    font-size: 1em;
+    color: #222;
+}
+.convo-excerpt {
+    display: block;
+    font-size: 0.9em;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.convo-meta {
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.8em;
+    color: #888;
+}
+.convo-timestamp {
+    display: block;
+    margin-bottom: 4px;
+}
+.convo-unread-count {
+    display: inline-block;
+    background-color: #0d6efd; /* Blue */
+    color: white;
+    font-weight: bold;
+    font-size: 0.85em;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+/* * STEP 6: Active Chat Header (Right Panel)
+ */
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fdfdfd;
+    flex-shrink: 0; /* Prevents shrinking */
+}
+.chat-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+}
+.chat-info h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+.chat-info .shop-name {
+    margin: 0;
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* * STEP 7: Chat Window (Right Panel)
+ */
+.chat-window {
+    flex-grow: 1; /* Fills the space */
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+}
+.chat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #888;
+}
+.chat-placeholder h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+/* * STEP 8: Message Bubbles
+ */
+.message {
+    display: flex;
+    margin-bottom: 15px;
+    max-width: 75%;
+}
+.message-bubble {
+    padding: 12px 18px;
+    border-radius: 20px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 0.95em;
+}
+.message-bubble p {
+    margin: 0 0 5px 0;
+}
+.message-timestamp {
+    font-size: 0.75em;
+    display: block;
+    color: #888;
+}
+.read-receipt {
+    font-style: italic;
+    color: #0d6efd; /* Blue */
+}
+
+/* Sent Messages (Current User) */
+.message.sent {
+    align-self: flex-end; /* Aligns to the right */
+}
+.message.sent .message-bubble {
+    background-color: #0d6efd; /* Blue */
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+.message.sent .message-timestamp {
+    color: #eee;
+    text-align: right;
+}
+
+/* Received Messages (Other User) */
+.message.received {
+    align-self: flex-start; /* Aligns to the left */
+}
+.message.received .message-bubble {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #e9e9e9;
+    border-bottom-left-radius: 5px;
+}
+.message.received .message-timestamp {
+    color: #888;
+    text-align: left;
+}
+
+/* Media Attachments */
+.message-media img {
+    max-width: 250px;
+    border-radius: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.file-attachment {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 8px;
+    margin-top: 5px;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+}
+
+
+/* * STEP 9: Message Form (Right Panel)
+ */
+.message-form {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fdfdfd;
+    flex-shrink: 0; /* Prevents shrinking */
+}
+.message-form textarea {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 18px;
+    margin: 0 10px;
+    font-family: inherit;
+    font-size: 1em;
+    resize: none;
+    max-height: 120px; /* Max 5 lines approx */
+    box-sizing: border-box;
+}
+
+.file-label,
+.btn-send {
+    padding: 8px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.file-label:hover,
+.btn-send:hover {
+    background-color: #f0f0f0;
+}
+.btn-send {
+    background-color: #0d6efd; /* Blue */
+}
+.btn-send img {
+    filter: brightness(0) invert(1); /* Makes the icon white */
+}
+.btn-send:hover {
+    background-color: #0a58ca; /* Darker blue */
+}

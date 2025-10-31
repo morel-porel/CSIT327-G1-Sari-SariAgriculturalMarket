@@ -12,7 +12,7 @@ footer { border-top: 1px solid #ccc; margin-top: auto; }
     background: #fff;
     border-top: 1px solid #b8b8b8;
     border-bottom: 5px solid #6cdf6e;
-    position: fixed;
+    /* position: fixed; <-- This was removed to prevent overlap */
     bottom: 0;
     left: 0;
 }
@@ -21,6 +21,17 @@ footer { border-top: 1px solid #ccc; margin-top: auto; }
     text-decoration: none;
     margin: 0 1rem;
 }
+
+/* This <main> tag rule helps center the content */
+main.content-wrapper {
+    flex-grow: 1; /* Expands to fill space */
+    display: flex; /* Allows the chat container to be centered */
+    flex-direction: column;
+    padding: 20px 10px; /* Adds some top/bottom and side breathing room */
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
 .main-container {
     display: flex;
     flex: 1;
@@ -92,150 +103,164 @@ p { text-align: center; }
 }
 
 /* ========================================= */
-/* MESSAGING & CHAT STYLES (Aesthetic Upgrade)
+/* MESSAGING UI (Messenger Layout) - CLEANER
 /* ========================================= */
 
-/* Main container for chat pages */
-.chat-container {
-    max-width: 800px;
-    margin: 30px auto;
+/* Main layout container */
+.chat-container-layout {
+    display: flex;
+    width: 100%;
+
+    /* === ADJUST THIS to control the *overall box size* === */
+    max-width: 1000px; /* Made smaller */
+    height: 60vh;     /* 60% of the screen height */
+    min-height: 500px; /* Minimum height */
+    /* === END OF ADJUSTMENT === */
+
+    margin: auto; /* This centers the container */
+    
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    overflow: hidden; /* This is key */
+    overflow: hidden;
     background: #fff;
 }
 
 /* ----------------------------------------- */
-/* Inbox Page (inbox.html)
+/* Left Panel: Inbox (NARROWER)
 /* ----------------------------------------- */
-.inbox-header {
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
+.inbox-panel {
+    width: 35%; 
+    min-width: 260px; /* Reduced */
+    border-right: 1px solid #e0e0e0; 
+    display: flex;
+    flex-direction: column;
+    background-color: #fcfcfc;
 }
-.inbox-header h1 {
+.inbox-header {
+    padding: 12px 15px; /* Reduced */
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+.inbox-header h2 {
     margin: 0;
+    font-size: 1.1em; /* Reduced */
 }
 
-.conversation-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.conversation-item a {
+.conversation-item {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
+    padding: 10px 12px; /* Reduced */
     text-decoration: none;
     color: #333;
     transition: background-color 0.2s;
     border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
 }
-.conversation-item:last-child a {
-    border-bottom: none;
-}
-.conversation-item a:hover {
-    background-color: #f9f9f9;
-}
+
 .convo-avatar {
     flex-shrink: 0;
 }
 .convo-avatar img {
-    width: 55px;
-    height: 55px;
+    width: 32px; /* === VERY SMALL ICON === */
+    height: 32px; /* === VERY SMALL ICON === */
     border-radius: 50%;
-    margin-right: 15px;
+    margin-right: 10px; /* Reduced */
     object-fit: cover;
 }
 .convo-details {
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevents text wrap issues */
+    overflow: hidden; 
 }
 .convo-user {
     font-weight: 600;
-    font-size: 1.1em;
+    font-size: 0.9em; /* Reduced */
     color: #222;
 }
 .convo-excerpt {
-    font-size: 0.9em;
+    font-size: 0.8em; /* Reduced */
     color: #777;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* ----------------------------------------- */
+/* Right Panel: Chat Window (WIDER)
+/* ----------------------------------------- */
 
-/* ----------------------------------------- */
-/* Chat Detail Page (conversation_detail.html)
-/* ----------------------------------------- */
+/* ... (chat-panel and chat-placeholder rules are fine) ... */
+
+/* Chat Header */
 .chat-header {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
+    padding: 10px 15px; /* Reduced */
     border-bottom: 1px solid #e0e0e0;
-    background-color: #fcfcfc;
-}
-.back-to-inbox {
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: bold;
-    margin-right: 15px;
-    padding: 5px;
-}
-.back-to-inbox img {
-    width: 24px;
-    height: 24px;
+    background-color: #ffffff;
+    flex-shrink: 0;
 }
 .chat-avatar img {
-    width: 45px;
-    height: 45px;
+    width: 34px; /* === VERY SMALL ICON === */
+    height: 34px; /* === VERY SMALL ICON === */
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 15px;
+    margin-right: 12px; 
 }
 .chat-info h2 {
     margin: 0;
-    font-size: 1.25em;
+    font-size: 1em; /* Reduced */
 }
 .chat-info .shop-name {
     margin: 0;
-    font-size: 0.85em;
+    font-size: 0.8em; 
     color: #666;
 }
 
+/* Chat Window */
 .chat-window {
-    height: 60vh; /* 60% of the viewport height */
-    padding: 20px;
+    flex-grow: 1; 
+    padding: 15px; 
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    background-color: #f7f7f7;
 }
 
 /* Chat bubble styles */
 .message {
     display: flex;
-    margin-bottom: 15px;
-    max-width: 80%;
+    margin-bottom: 12px; 
+    max-width: 75%;
 }
 .message-bubble {
-    padding: 12px 18px;
-    border-radius: 20px;
+    padding: 8px 12px; /* Reduced */
+    border-radius: 16px; /* Reduced */
     line-height: 1.4;
     word-wrap: break-word;
+    font-size: 0.85em; /* Reduced */
 }
 .message-bubble p {
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0; 
 }
 .message-timestamp {
-    font-size: 0.75em;
+    font-size: 0.75em; 
     display: block;
+}
+.message-media img {
+    max-width: 200px; 
+    border-radius: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.message-media a {
+    color: inherit;
+    font-weight: bold;
 }
 
 /* Sent Messages (Current User) */
 .message.sent {
-    align-self: flex-end; /* Aligns to the right */
+    align-self: flex-end; 
 }
 .message.sent .message-bubble {
     background-color: var(--primary-color);
@@ -249,7 +274,7 @@ p { text-align: center; }
 
 /* Received Messages (Other User) */
 .message.received {
-    align-self: flex-start; /* Aligns to the left */
+    align-self: flex-start; 
 }
 .message.received .message-bubble {
     background-color: #ffffff;
@@ -262,62 +287,53 @@ p { text-align: center; }
     text-align: left;
 }
 
-/* Media in chat */
-.message-media img {
-    max-width: 200px;
-    border-radius: 8px;
-    margin-top: 5px;
-}
-.message-media a {
-    color: inherit;
-    font-weight: bold;
-}
-
 /* Message Form */
 .message-form {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
+    padding: 8px 12px; /* Reduced */
     border-top: 1px solid #e0e0e0;
-    background-color: #fcfcfc;
+    background-color: #ffffff;
+    flex-shrink: 0;
 }
 .message-form textarea {
     flex-grow: 1;
     border: 1px solid #ddd;
     border-radius: 20px;
-    padding: 10px 20px;
-    margin-right: 10px;
+    padding: 6px 12px; /* Reduced */
+    margin-right: 8px; /* Reduced */
     font-family: inherit;
-    font-size: 1em;
+    font-size: 0.85em; /* Reduced */
     resize: none;
-    min-height: 22px; /* For single line */
+    height: 32px; /* Reduced */
+    line-height: 1.4;
+    box-sizing: border-box;
 }
 .message-form .form-actions {
     display: flex;
     align-items: center;
 }
-.file-label {
-    padding: 10px;
+.file-label,
+.btn-send {
+    padding: 4px; /* Reduced */
     cursor: pointer;
-    margin-right: 5px;
-    /* Add a paperclip icon here for best results */
-    font-size: 1.5em;
-    color: #777;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em; /* Reduced */
+    color: #555;
 }
-.file-label:hover {
-    color: #333;
+.file-label:hover,
+.btn-send:hover {
+    background-color: #f0f0f0;
 }
 .btn-send {
-    padding: 10px 15px;
     background-color: var(--primary-color);
     color: white;
-    border: none;
-    border-radius: 50%; /* Makes it a circle */
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.2em;
-    line-height: 1;
-    /* Add a send icon here */
 }
 .btn-send:hover {
     background-color: var(--accent-color);
@@ -435,4 +451,145 @@ p { text-align: center; }
 }
 .modal-details .btn-message-vendor:hover {
     background: var(--accent-color);
+}
+
+/* ========================================= */
+/* PROFILE PAGE AVATAR FIX
+/* ========================================= */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #eee;
+    margin-bottom: 10px;
+}
+
+/*
+ * This file (style.css) OVERRIDES the styles from home.css
+ */
+
+/* * STEP 1: We override the home page's conflicting styles
+ */
+main.main-container {
+    flex-grow: 1;
+    display: flex;
+    
+    /* --- These rules RESET home.css --- */
+    justify-content: normal;  /* Resets 'center' */
+    align-items: normal;     /* Resets 'center' */
+    gap: 0;                  /* Resets '5rem' */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* * STEP 2: Your rectangle.
+ * We add 'display: flex' to make it a container for the panels.
+ */
+.my-centered-rectangle {
+    width: 1700px;
+    height: 750px;
+    
+    margin-top: 12px;
+    margin-left: 80px;
+    
+    border: 1px solid #cccccc;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    /* === NEW STYLES ADDED === */
+    display: flex;       /* This makes the panels line up side-by-side */
+    overflow: hidden;    /* Hides anything that spills out */
+}
+
+
+/* === STEP 3: NEW STYLES FOR THE PANELS === */
+
+/* Left Panel (Inbox) */
+.chat-left-panel {
+    /* Starting width (the JS will change this) */
+    flex-basis: 350px;
+    width: 400px;
+
+    /* Don't let it get smaller than this */
+    min-width: 250px;
+
+    height: 100%; /* Fill the rectangle */
+    overflow-y: auto; /* Add scrollbar if content is too tall */
+    background: #fdfdfd;
+}
+
+/* The Divider */
+.chat-divider {
+    flex-basis: 2px; /* Width of the divider */
+    height: 100%;    /* Fill the rectangle */
+    background-color: #e0e0e0;
+    cursor: col-resize; /* Shows the "resize" mouse cursor */
+    transition: background-color 0.2s;
+}
+
+.chat-divider:hover {
+    background-color: #cccccc; /* Darker on hover */
+}
+
+/* Right Panel (Active Chat) */
+.chat-right-panel {
+    flex-grow: 1; /* Takes up all remaining space */
+    height: 100%; /* Fill the rectangle */
+    background: #ffffff;
+    display: flex; /* This will help us later */
+    flex-direction: column;
+}
+
+/* === STEP 4: STYLES FOR PANEL CONTENTS === */
+
+/* Header for the left panel */
+.chat-panel-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0; /* Prevents header from shrinking */
+}
+
+.chat-panel-header h2 {
+    margin: 0 0 15px 0; /* Space below the "Messages" title */
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+/* Container for the search bar */
+.chat-search-container {
+    position: relative; /* This is needed to position the icon */
+    width: 100%;
+}
+
+/* The search icon inside the bar */
+.chat-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+}
+
+/* The search input field */
+.chat-search-input {
+    width: 100%;
+    padding: 10px 10px 10px 38px; /* Left padding to make space for icon */
+    font-size: 0.9em;
+    border: none; /* Remove default border */
+    border-radius: 20px; /* Makes it pill-shaped */
+    background-color: #f0f0f0;
+    box-sizing: border-box; /* Important for 100% width + padding */
+    outline: none; /* Removes blue glow on focus */
+    transition: background-color 0.2s;
+}
+
+.chat-search-input:focus {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    /* We add 1px border on focus, so we remove 1px of padding to prevent a layout jump */
+    padding: 9px 9px 9px 37px;
 }
