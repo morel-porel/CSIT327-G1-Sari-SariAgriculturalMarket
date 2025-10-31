@@ -24,6 +24,8 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     path('my-products/', include('products.urls')),
     path('', include('pages.urls')), # Include the pages app URLs
+    path('notifications/', include('notifications.urls')),
+
 ]
 
 if settings.DEBUG:
