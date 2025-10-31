@@ -1,5 +1,6 @@
 # products/views.py
 
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -47,3 +48,31 @@ class ProductDeleteView(LoginRequiredMixin, VendorRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Product.objects.filter(vendor=self.request.user)
+    
+def product_detail_api(request, product_id):
+    """
+    API endpoint to get product details as JSON.
+    """
+    try:
+        product = Product.objects.select_related('vendor__vendorprofile').get(id=product_id)
+        
+        if product.image:
+            image_url = product.image.url
+        else:
+            # You might want a placeholder image URL here
+            image_url = ''
+
+        data = {
+            'id': product.id,
+            'name': product.name,
+            'description': product.description,
+            'price': f"₱{product.price}",
+            'stock': product.stock,
+            'category': product.get_category_display(), # Gets the readable name
+            'image_url': image_url,
+            'vendor_name': product.vendor.vendorprofile.shop_name,
+            'vendor_chat_url': f"/messages/start/{product.vendor.id}/"
+        }
+        return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Product not found'}, status=404)

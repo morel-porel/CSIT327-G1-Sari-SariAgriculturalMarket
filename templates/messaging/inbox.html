@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-top: 40px; max-width: 900px; margin: auto;">
+    <h1>Your Messages</h1>
+    
+    <div class="inbox-container">
+        {% if conversations_with_recipient %}
+            <ul class="conversation-list">
+                {% for convo, other in conversations_with_recipient %}
+                    <li class="conversation-item">
+                        <a href="{% url 'conversation_detail' convo.id %}">
+                            <div class="convo-avatar">
+                                {% if other.avatar %}
+                                    <img src="{{ other.avatar.url }}" alt="{{ other.username }}'s avatar">
+                                {% else %}
+                                    <img src="{% static 'icons/profile.png' %}" alt="Default avatar">
+                                {% endif %}
+                            </div>
+                            <div class="convo-details">
+                                <span class="convo-user">
+                                    {{ other.username }}
+                                </span>
+                                <span class="convo-excerpt">
+                                    Click to view conversation
+                                </span>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no messages.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

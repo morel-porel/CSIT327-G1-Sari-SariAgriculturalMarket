@@ -52,7 +52,7 @@
                 <li class="active"><a href="#">My Account</a></li>
                 <li><a href="#">Addresses</a></li>
                 <li><a href="#">Password</a></li>
-                <li><a href="#">Notification</a></li>
+                <li><a href="{% url 'inbox' %}">Messages</a></li>
                 <li><a href="#">Delete Account</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% if not request.user.vendorprofile %}

@@ -1,4 +1,3 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -29,8 +28,9 @@
                 <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
             </a>
         {% endif %}
-        <a href="#">
-            <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
+        
+        <a href="{% url 'inbox' %}">
+            <img src="{% static 'icons/notification.png' %}" alt="Messages Icon" class="nav-icon">
             {% if unread_notifications %}
                 <span class="notification-count">{{ unread_notifications.count }}</span>
             {% endif %}
@@ -104,18 +104,26 @@
             <h2>Daily Discover</h2>
             <div class="grid">
                 {% for product in products %}
-                <div class="grid-item">
-                    {% if product.image %}
-                        <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
-                    {% else %}
-                        <div class="product-image"></div>
-                    {% endif %}
-                    <div class="product-info">
-                        <h3 class="product-name">{{ product.name }}</h3>
-                        <p class="product-price">₱{{ product.price }}</p>
-                        <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
+                    <div class="grid-item" data-product-id="{{ product.id }}" style="cursor: pointer;">
+                        {% if product.image %}
+                            <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
+                        {% else %}
+                            <div class="product-image"></div>
+                        {% endif %}
+                        <div class="product-info">
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <p class="product-price">₱{{ product.price }}</p>
+                            {% if product.vendor.vendorprofile %}
+                            <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
+                            {% endif %}
+
+                            {% if user.is_authenticated and product.vendor and product.vendor != request.user %}
+                                <a href="{% url 'start_conversation' product.vendor.id %}" class="btn-message-vendor" style="text-decoration: none; font-size: 0.9em;">
+                                    Chat with Vendor
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
                 {% empty %}
                 <p>No products are available at the moment.</p>
                 {% endfor %}
@@ -123,4 +131,97 @@
         </section>
     </div>
 </main>
+
+<div class="modal-backdrop" id="product-modal-backdrop" style="display: none;"></div>
+    <div class="modal" id="product-modal" style="display: none;">
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+        <div class="modal-content">
+            <div class="modal-image">
+                <img src="" alt="Product Image" id="modal-img">
+            </div>
+            <div class="modal-details">
+                <h2 id="modal-name">Product Name</h2>
+                <span class="modal-vendor" id="modal-vendor">by Vendor</span>
+                
+                <div class="modal-price" id="modal-price">₱0.00</div>
+                
+                <p class="modal-description" id="modal-description">
+                    Loading description...
+                </p>
+                
+                <div class="modal-meta">
+                    <span>Category: <strong id="modal-category">...</strong></span>
+                    <span>Stock: <strong id="modal-stock">...</strong></span>
+                </div>
+                
+                <a href="#" class="btn-message-vendor" id="modal-chat-btn">
+                    Chat with Vendor
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('product-modal');
+            const backdrop = document.getElementById('product-modal-backdrop');
+            const closeBtn = document.getElementById('modal-close-btn');
+
+            // Function to open the modal
+            const openModal = () => {
+                modal.style.display = 'block';
+                backdrop.style.display = 'block';
+            };
+
+            // Function to close the modal
+            const closeModal = () => {
+                modal.style.display = 'none';
+                backdrop.style.display = 'none';
+            };
+
+            // Close modal events
+            closeBtn.addEventListener('click', closeModal);
+            backdrop.addEventListener('click', closeModal);
+
+            // Get all product cards
+            const productCards = document.querySelectorAll('.grid-item');
+
+            productCards.forEach(card => {
+                // Get the product ID from a data attribute
+                const productId = card.dataset.productId;
+                if (!productId) return;
+
+                card.addEventListener('click', (e) => {
+                    // Don't open modal if they clicked the chat button directly
+                    if (e.target.classList.contains('btn-message-vendor')) {
+                        return;
+                    }
+
+                    // Fetch product data from our new API
+                    fetch(`/products/api/detail/${productId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                console.error(data.error);
+                                return;
+                            }
+
+                            // Populate the modal with data
+                            document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
+                            document.getElementById('modal-name').textContent = data.name;
+                            document.getElementById('modal-vendor').textContent = `by ${data.vendor_name}`;
+                            document.getElementById('modal-price').textContent = data.price;
+                            document.getElementById('modal-description').textContent = data.description;
+                            document.getElementById('modal-category').textContent = data.category;
+                            document.getElementById('modal-stock').textContent = data.stock;
+                            document.getElementById('modal-chat-btn').href = data.vendor_chat_url;
+                            
+                            // Open the modal
+                            openModal();
+                        })
+                        .catch(err => console.error('Error fetching product:', err));
+                });
+            });
+        });
+    </script>
 {% endblock %}

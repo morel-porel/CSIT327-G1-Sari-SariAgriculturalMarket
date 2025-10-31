@@ -9,7 +9,7 @@ def about_us_view(request):
     return render(request, 'pages/about.html')
 
 def home_view(request):
-    products = Product.objects.all().order_by('-created_at') # Get all products
+    products = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at') # Get all products
     context = {
         'products': products
     }

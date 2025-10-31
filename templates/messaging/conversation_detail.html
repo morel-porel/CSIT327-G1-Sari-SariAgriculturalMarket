@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-top: 40px; max-width: 900px; margin: auto;">
+    
+    <div class="chat-header">
+        <a href="{% url 'inbox' %}" class="back-to-inbox">
+            <img src="{% static 'icons/arrow-left.svg' %}" alt="Back">
+        </a>
+        
+        <div class="chat-avatar">
+            {% if other_participant.avatar %}
+                <img src="{{ other_participant.avatar.url }}" alt="{{ other_participant.username }}'s avatar">
+            {% else %}
+                <img src="{% static 'icons/profile.png' %}" alt="Default avatar">
+            {% endif %}
+        </div>
+        <div class="chat-info">
+            <h2>{{ other_participant.username }}</h2>
+            <span class="shop-name">{{ other_participant.vendorprofile.shop_name }}</span>
+        </div>
+    </div>
+
+    <div class="chat-window">
+        {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <div class="message-bubble">
+                    <p>{{ message.text_content }}</p>
+
+                    {% if message.media_file %}
+                        <div class="message-media">
+                            {% if 'jpg' in message.media_file.url or 'png' in message.media_file.url or 'jpeg' in message.media_file.url %}
+                                <img src="{{ message.media_file.url }}" alt="Attached media" style="max-width: 200px; border-radius: 8px;">
+                            {% else %}
+                                <a href="{{ message.media_file.url }}" target="_blank">View Attached File</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    <span class="message-timestamp">{{ message.timestamp|date:"P M d" }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form class="message-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea name="text_content" placeholder="Type your message..." rows="3"></textarea>
+        
+        <div class="form-actions">
+            <label for="media_file_input" class="file-label">Attach File</label>
+            <input type="file" name="media_file" id="media_file_input" style="display: none;">
+            <button type="submit" class="btn-send">Send</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
