@@ -1,0 +1,252 @@
+/* ==========================================================================
+   GLOBAL FIXES
+   ========================================================================== */
+
+/*
+ * FIX: Re-enable vertical scrolling across the entire site.
+ * This overrides the 'overflow: hidden' rule from home.css.
+ * The '!important' is necessary to ensure this rule wins.
+*/
+body, html {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+
+/*
+ * FIX: Prevent the fixed footer from overlapping content.
+ * This adds a margin to the bottom of the main body of the page
+ * that is equal to the height of the footer.
+*/
+body {
+    /* You may need to adjust this value to match your footer's exact height */
+    margin-bottom: 70px !important; 
+}
+
+/* ==========================================================================
+   TABLET & SMALLER DESKTOP STYLES (Applies to screens 992px wide or smaller)
+   ========================================================================== */
+@media (max-width: 992px) {
+    
+    /* --- Main Layouts (Homepage, Profile Pages) --- */
+    /* Stack the sidebar and main content vertically instead of side-by-side */
+    .container,
+    .profile-container {
+        flex-direction: column;
+        margin: 20px auto; /* Reduce top margin */
+        padding: 10px;
+    }
+
+    .sidebar {
+        flex: 0 0 auto; /* Allow sidebar to shrink */
+        width: 100%;    /* Make sidebar take full width */
+        margin-bottom: 20px;
+    }
+
+    .main,
+    .main-content {
+        width: 100%;
+    }
+
+    /* --- Homepage Product Grid --- */
+    /* Adjust grid to show fewer items per row */
+    .grid {
+        /* Use auto-fit to automatically adjust columns based on available space */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    /* --- About Us Page --- */
+    main {
+        margin: 1rem auto;
+        padding: 0.5rem;
+    }
+}
+
+
+/* ==========================================================================
+   MOBILE-ONLY STYLES (Applies to screens 768px wide or smaller)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* --- Global Navbar --- */
+    .navbar {
+        flex-direction: column; /* Stack logo, search, and icons vertically */
+        align-items: flex-start;
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    .navbar .search-bar {
+        width: 100%;
+        margin: 0; /* Remove the large left margin */
+    }
+
+    .navbar .nav-icons {
+        align-self: flex-end; /* Move icons to the right */
+    }
+    
+    /* Hide text-based login/signup links on mobile, icons are enough */
+    .nav-text-link {
+        display: none;
+    }
+    .navbar .nav-icons span {
+        display: none;
+    }
+
+
+    /* --- Login / Signup Pages --- */
+    .main-container {
+        flex-direction: column; /* Stack info section and form vertically */
+        padding: 1rem;
+        gap: 2rem;
+        align-items: center; /* Re-center content */
+    }
+
+    .form-box {
+        width: 100%;
+        max-width: 400px; /* Give it a max-width on mobile */
+    }
+
+    /* --- Profile Page Form Grid --- */
+    .form-grid {
+        grid-template-columns: 1fr; /* Stack form fields in a single column */
+    }
+    .profile-picture-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* --- Product List Table --- */
+    /* This is a special technique to make tables responsive */
+    .product-table thead {
+        display: none; /* Hide the table headers */
+    }
+
+    .product-table, .product-table tbody, .product-table tr, .product-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .product-table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .product-table td {
+        text-align: right; /* Align content to the right */
+        padding-left: 50%; /* Create space for the label */
+        position: relative;
+        border-bottom: none;
+    }
+
+    .product-table td::before {
+        content: attr(data-label); /* Use the data-label attribute as a label */
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .product-table td.actions {
+        padding-left: 10px;
+        text-align: left;
+    }
+    
+    /* --- Banner and Modal Text --- */
+    .banner-text h1 { font-size: 3rem; }
+    .banner-text h3 { font-size: 1.2rem; }
+    .banner-text p { font-size: 1rem; }
+    
+    .modal-content { flex-direction: column; }
+
+    /*
+     * FIX: Allow the main container on the homepage to scroll vertically on mobile.
+     * This overrides the 'overflow: hidden' from home.css.
+    */
+    .container {
+        overflow-y: auto; /* Allow vertical scrolling */
+        height: auto;     /* Let the container grow with its content */
+        display: block;   /* Change from flex to a simpler block layout */
+    }
+    
+    .sidebar {
+        /* We can remove fixed width and height on mobile */
+        width: 100%;
+        height: auto;
+    }
+
+}
+/* ==========================================================================
+   MESSENGER PAGE RESPONSIVENESS
+   ========================================================================== */
+
+/* --- TABLET STYLES (992px and smaller) --- */
+@media (max-width: 992px) {
+    /* Make the main messenger container full-width */
+    .my-centered-rectangle {
+        width: 100%;
+        height: calc(100vh - 100px); /* Adjust height for nav/footer */
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    /* Give more space to the chat window */
+    .chat-left-panel {
+        flex-basis: 320px;
+    }
+
+    /* Reduce padding on the main container for the messenger page */
+    main.main-container {
+        padding: 0;
+    }
+}
+
+
+/* --- MOBILE STYLES (768px and smaller) --- */
+@media (max-width: 768px) {
+    /* Stack the chat panels vertically */
+    .my-centered-rectangle {
+        flex-direction: column;
+        height: calc(100vh - 120px); /* Adjust for taller mobile navbar */
+    }
+
+    /* Make both panels full width */
+    .chat-left-panel,
+    .chat-right-panel {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    /* Hide the vertical divider */
+    .chat-divider {
+        display: none;
+    }
+
+    /* On mobile, the conversation list should not take up the whole screen height */
+    .chat-left-panel {
+        flex-basis: auto; /* Let it shrink */
+        height: 40%; /* Take up top 40% of the container */
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .chat-right-panel {
+        height: 60%; /* Take up bottom 60% of the container */
+    }
+
+    /* Adjust font sizes and padding for smaller screens */
+    .chat-panel-header h2 {
+        font-size: 1.2em;
+    }
+    .message-bubble {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .message-form textarea {
+        padding: 8px 15px;
+        margin: 0 5px;
+    }
+}
