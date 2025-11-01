@@ -108,11 +108,7 @@ def conversation_detail_view(request, conversation_id):
         
         # Data for the Right Panel
         'conversation': conversation,
-<<<<<<< HEAD
-        'chat_messages': messages,  # <--- RENAMED
-=======
-        'messages': messages,
->>>>>>> ea4a784 (Add password reset feature with Gmail integration)
+        'chat_messages': messages,  # <--- RENAMED (This fixes the bug)
         'other_participant': other_participant
     }
     

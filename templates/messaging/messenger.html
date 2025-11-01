@@ -78,12 +78,8 @@
             </div>
 
             <div class="chat-window" id="chat-window">
-<<<<<<< HEAD
-                {% for message in chat_messages %}  <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-=======
-                {% for message in messages %}
+                {% for message in chat_messages %}
                     <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
->>>>>>> ea4a784 (Add password reset feature with Gmail integration)
                         <div class="message-bubble">
                             <p>{{ message.text_content }}</p>
 
@@ -143,7 +139,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCROLL TO BOTTOM ---
-        // This finds the chat window and scrolls it to the latest message
         const chatWindow = document.getElementById('chat-window');
         if (chatWindow) {
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -169,8 +164,8 @@
             let newLeftWidth = e.clientX - containerRect.left;
 
             // Enforce min/max widths
-            if (newLeftWidth < 250) newLeftWidth = 250;
-            if (newLeftWidth > (containerRect.width - 250)) newLeftWidth = (containerRect.width - 250);
+            if (newLeftWidth < 250) newLeftWidth = 250; 
+            if (newLeftWidth > (containerRect.width - 250)) newLeftWidth = (containerRect.width - 250); 
             
             leftPanel.style.width = newLeftWidth + 'px';
             leftPanel.style.flexBasis = newLeftWidth + 'px';
