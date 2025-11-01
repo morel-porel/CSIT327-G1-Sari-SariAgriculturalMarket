@@ -4,7 +4,7 @@ from .models import Notification
 def create_notification(recipient, message, link=None):
     """
     A simple helper function to create a new notification.
-    This is what the messaging app will call.
+    The link should be the URL path, e.g., /messages/1/
     """
     Notification.objects.create(
         recipient=recipient,
