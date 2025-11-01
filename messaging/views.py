@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from .models import Conversation, Message
 from users.models import CustomUser
+from notifications.utils import create_notification
 
 import datetime # <--- IMPORT IS ADDED HERE
 
@@ -72,6 +73,20 @@ def conversation_detail_view(request, conversation_id):
                 text_content=text_content,
                 media_file=media_file
             )
+            recipient = conversation.participants.exclude(id=request.user.id).first()
+
+            if recipient:
+                notification_text = f"New message from {request.user.username}"
+                notification_link = request.build_absolute_uri(
+                    redirect('conversation_detail', conversation_id=conversation.id).url
+                )
+
+                # Call your helper function
+                create_notification(
+                    recipient=recipient,
+                    message=notification_text,
+                    link=notification_link
+                )
         # Redirect back to the same page to show the new message
         return redirect('conversation_detail', conversation_id=conversation.id)
 
