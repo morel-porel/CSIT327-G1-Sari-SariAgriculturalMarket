@@ -108,7 +108,7 @@ def conversation_detail_view(request, conversation_id):
         
         # Data for the Right Panel
         'conversation': conversation,
-        'messages': messages,
+        'chat_messages': messages,  # <--- RENAMED
         'other_participant': other_participant
     }
     
