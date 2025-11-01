@@ -44,38 +44,62 @@ class ProductDeleteView(LoginRequiredMixin, VendorRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Product.objects.filter(vendor=self.request.user)
-    
-def product_detail_api(request, pk): # Changed argument from product_id to pk
-    """
-    API endpoint to get product details as JSON.
-    """
+
+def product_detail_api(request, pk):
     try:
-        # Use pk for lookup
         product = Product.objects.select_related('vendor__vendorprofile').get(pk=pk)
         
-        # FIX 1: Correctly set the placeholder URL using static path if no image
         if product.image:
             image_url = product.image.url
         else:
-            image_url = '/static/icons/placeholder.png' # Using the correct static path
+            image_url = '/static/icons/placeholder.png'
 
         data = {
             'id': product.pk,
             'name': product.name,
             'description': product.description,
-            'price': f"₱{product.price}", # Price already includes the currency symbol
+            'price': f"₱{product.price}",
             'stock': product.stock,
-            'category': product.get_category_display(), # Gets the readable name
+            'category': product.get_category_display(),
             'image_url': image_url,
-            
-            # FIX 2: Use key names expected by JavaScript
-            'shop_name': product.vendor.vendorprofile.shop_name, 
+            'shop_name': product.vendor.vendorprofile.shop_name,
             'seller_name': product.vendor.username,
-            'vendor_user_id': product.vendor.pk, # The ID used to construct links
+            'vendor_user_id': product.vendor.pk,
         }
         return JsonResponse(data)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Product not found'}, status=404)
     except Exception as e:
-        # Catch other errors, like missing vendorprofile 
-        return JsonResponse({'error': f'Server error: Vendor profile data incomplete. {str(e)}'}, status=500)
+        return JsonResponse({'error': f'Server error: {str(e)}'}, status=500)
+
+def product_list_api(request):
+    """
+    API endpoint to list products with optional filtering by category.
+    Accessed via /my-products/api/list/?category=Category Name
+    """
+    category_filter = request.GET.get('category')
+    
+    products_qs = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at')
+    
+    if category_filter and category_filter != 'all':
+        # Filter by the category field using the exact name
+        products_qs = products_qs.filter(category=category_filter)
+        
+    products_data = []
+    for product in products_qs:
+        # Check if vendorprofile exists before accessing it
+        vendor_profile = getattr(product.vendor, 'vendorprofile', None)
+        shop_name = vendor_profile.shop_name if vendor_profile else 'Unknown Vendor'
+        
+        image_url = product.image.url if product.image else '/static/icons/placeholder.png'
+        
+        products_data.append({
+            'id': product.pk,
+            'name': product.name,
+            'price': f"₱{product.price}",
+            'image_url': image_url,
+            'shop_name': shop_name,
+            'vendor_id': product.vendor.pk,
+        })
+        
+    return JsonResponse({'products': products_data})
