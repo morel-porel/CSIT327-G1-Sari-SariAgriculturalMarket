@@ -18,30 +18,25 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-<<<<<<< HEAD
-
-urlpatterns = [
-=======
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('password_reset_form/', 
-         auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), 
-         name='password_reset_form'),
+    path('password_reset_form/',
+        auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), 
+        name='password_reset_form'),
 
-    path('password_reset_done/', 
-         auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), 
-         name='password_reset_done'),
+    path('password_reset_done/',
+        auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), 
+        name='password_reset_done'),
 
-    path('reset/<uidb64>/<token>/', 
-         auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), 
-         name='password_reset_confirm'),
+    path('reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), 
+        name='password_reset_confirm'),
 
-    path('reset/done/', 
-         auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), 
-         name='password_reset_complete'),
+    path('reset/done/',
+        auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), 
+        name='password_reset_complete'),
 
->>>>>>> ea4a784 (Add password reset feature with Gmail integration)
     path('admin/', admin.site.urls),
     path('auth/', include('users.urls')),
     path('my-products/', include('products.urls')),
