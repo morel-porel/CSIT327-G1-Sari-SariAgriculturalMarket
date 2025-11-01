@@ -13,5 +13,5 @@ urlpatterns = [
     path('consumer_profile/', views.profile_view, name='profile'),
     path('vendor_profile/', views.vendor_profile_view, name='vendor_profile'),
 
-    path('vendors/<int:vendor_id>/', views.consumer_vendor_profile_view, name='vendor_public_profile'),
+    path('api/vendor/<int:pk>/', views.vendor_detail_api, name='vendor_detail_api'),
 ]
