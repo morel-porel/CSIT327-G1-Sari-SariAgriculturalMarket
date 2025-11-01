@@ -5,6 +5,8 @@ from django.db.models import Count, Q
 from .models import Conversation, Message
 from users.models import CustomUser
 from notifications.utils import create_notification
+from django.urls import reverse
+from notifications.models import Notification
 
 import datetime # <--- IMPORT IS ADDED HERE
 
@@ -77,9 +79,7 @@ def conversation_detail_view(request, conversation_id):
 
             if recipient:
                 notification_text = f"New message from {request.user.username}"
-                notification_link = request.build_absolute_uri(
-                    redirect('conversation_detail', conversation_id=conversation.id).url
-                )
+                notification_link = reverse('conversation_detail', kwargs={'conversation_id': conversation.id})
 
                 # Call your helper function
                 create_notification(
@@ -91,6 +91,15 @@ def conversation_detail_view(request, conversation_id):
         return redirect('conversation_detail', conversation_id=conversation.id)
 
     # --- GET Request Logic ---
+
+    # Construct the URL path for the current conversation
+    conversation_url = reverse('conversation_detail', kwargs={'conversation_id': conversation.id})
+
+    Notification.objects.filter(
+        recipient=request.user, 
+        is_read=False, 
+        link=conversation_url
+    ).update(is_read=True)
 
     # 1. Get data for the Right Panel (Active Chat)
     messages = conversation.messages.all().order_by('timestamp')
