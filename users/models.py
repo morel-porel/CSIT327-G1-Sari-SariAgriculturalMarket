@@ -22,5 +22,9 @@ class VendorProfile(models.Model):
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     profile_image = models.ImageField(upload_to='vendor_images/', blank=True, null=True)
     
+    shop_description = models.TextField(blank=True, null=True) # Detailed Shop Information
+    farming_practices = models.TextField(blank=True, null=True) # Farming Practices
+    experience_years = models.IntegerField(blank=True, null=True) # Vendor Experience
+    
     def __str__(self):
         return self.shop_name

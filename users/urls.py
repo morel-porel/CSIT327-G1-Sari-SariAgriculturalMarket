@@ -9,7 +9,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-     # --- Profile URLs ---
+    # --- Profile URLs ---
     path('consumer_profile/', views.profile_view, name='profile'),
     path('vendor_profile/', views.vendor_profile_view, name='vendor_profile'),
+
+    path('vendors/<int:vendor_id>/', views.consumer_vendor_profile_view, name='vendor_public_profile'),
 ]
