@@ -78,7 +78,12 @@
             </div>
 
             <div class="chat-window" id="chat-window">
+<<<<<<< HEAD
                 {% for message in chat_messages %}  <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+=======
+                {% for message in messages %}
+                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+>>>>>>> ea4a784 (Add password reset feature with Gmail integration)
                         <div class="message-bubble">
                             <p>{{ message.text_content }}</p>
 
