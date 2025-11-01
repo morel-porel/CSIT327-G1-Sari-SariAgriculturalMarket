@@ -1,14 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404 # get_object_or_404 is now grouped
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import ConsumerSignUpForm, VendorSignUpForm
+from .forms import ConsumerSignUpForm, VendorSignUpForm, VendorProfileForm, ConsumerProfileForm # Group all forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
-from .models import VendorProfile 
-from .forms import VendorProfileForm 
-from .forms import ConsumerProfileForm
+# from django.db.models import F # Removed, as it's not used
+
+from .models import VendorProfile, CustomUser # Single, comprehensive model import
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -98,3 +97,18 @@ def vendor_profile_view(request):
         form = VendorProfileForm(instance=profile)
 
     return render(request, 'pages/vendor_profile.html', {'form': form})
+
+def consumer_vendor_profile_view(request, vendor_id):
+    """
+    Displays the public-facing vendor profile to a consumer/public user.
+    """
+    # Fetch the vendor's CustomUser and the associated VendorProfile
+    vendor_user = get_object_or_404(CustomUser, pk=vendor_id, role=CustomUser.Role.VENDOR)
+    profile = get_object_or_404(VendorProfile, user=vendor_user)
+    
+    context = {
+        'vendor_user': vendor_user,
+        'profile': profile,
+    }
+    # Renders the new public profile template
+    return render(request, 'pages/vendor_public_profile.html', context)

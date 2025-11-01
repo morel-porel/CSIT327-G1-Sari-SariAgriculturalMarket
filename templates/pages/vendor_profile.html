@@ -1,10 +1,15 @@
-<!-- templates/pages/vendor_profile.html -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <style>
+        /* Add basic style for full-width elements in the form grid */
+        .form-grid .form-group.full-width {
+            grid-column: 1 / -1; 
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -30,18 +35,15 @@
         <div class="form-box">
             <h1>Edit Your Vendor Profile</h1>
             <p>View and manage your vendor profile.</p>
-            <!-- IMPORTANT: enctype is required for file uploads -->
             <form method="post" enctype="multipart/form-data" class="profile-form">
                 {% csrf_token %}
                 <div class="profile-picture-section">
                     {% if form.instance.profile_image %}
                         <img src="{{ form.instance.profile_image.url }}" alt="Profile Avatar" class="profile-avatar">
                     {% else %}
-                        <!-- You can have a default placeholder image here -->
                         <img src="{% static 'icons/placeholder.png' %}" alt="Profile Avatar" class="profile-avatar">
                     {% endif %}
                     <div>
-                        <!-- Render the image upload field -->
                         {{ form.profile_image.label_tag }}
                         {{ form.profile_image }}
                         {{ form.profile_image.errors }}
@@ -63,7 +65,23 @@
                         {{ form.business_permit_number }}
                         {{ form.business_permit_number.errors }}
                     </div>
-                </div>
+                    
+                    <div class="form-group full-width">
+                        {{ form.shop_description.label_tag }}
+                        {{ form.shop_description }}
+                        {{ form.shop_description.errors }}
+                    </div>
+                    <div class="form-group full-width">
+                        {{ form.farming_practices.label_tag }}
+                        {{ form.farming_practices }}
+                        {{ form.farming_practices.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.experience_years.label_tag }}
+                        {{ form.experience_years }}
+                        {{ form.experience_years.errors }}
+                    </div>
+                    </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">Save Changes</button>

@@ -70,7 +70,22 @@ class VendorSignUpForm(CustomUserCreationForm):
 class VendorProfileForm(forms.ModelForm):
     class Meta:
         model = VendorProfile
-        fields = ['shop_name', 'business_permit_number', 'contact_number', 'profile_image']
+        fields = [
+            'shop_name',
+            'business_permit_number',
+            'contact_number',
+            'profile_image',
+            # ADDED NEW FIELDS
+            'shop_description',
+            'farming_practices',
+            'experience_years',
+        ]
+        widgets = {
+            # Use Textarea for long text inputs
+            'shop_description': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell customers about your shop, your mission, and your products.'}),
+            'farming_practices': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe your farming/business practices (e.g., organic, local, sustainable).'}),
+            'experience_years': forms.NumberInput(attrs={'placeholder': 'Years of Experience'}),
+        }
 
 class ConsumerProfileForm(forms.ModelForm):
     class Meta:
