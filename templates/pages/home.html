@@ -4,7 +4,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-{% endblock css %}
+{% endblock %}
 
 {% block content %}
 <header class="navbar">
@@ -50,39 +50,39 @@
 <main class="container">
     <aside class="sidebar">
         <h2>Main Menu</h2>
-        <button class="sidebar-btn home-btn">
+        <button class="sidebar-btn home-btn category-filter-btn" data-category="all">
             <div class="circle">
                 <img src="{% static 'icons/home.png' %}" alt="Home Icon" class="icon">
             </div>
-            <span>Home</span>
+            <span>All Products</span>
         </button>
 
         <h2>Categories</h2>
-        <button class="sidebar-btn fresh-btn">
+        <button class="sidebar-btn fresh-btn category-filter-btn" data-category="Fresh Produce">
             <div class="circle"><img src="{% static 'icons/fresh.png' %}" alt="Fresh Icon" class="icon"></div>
             <span>Fresh Produce</span>
         </button>
-        <button class="sidebar-btn grains-btn">
+        <button class="sidebar-btn grains-btn category-filter-btn" data-category="Grains and Staples">
             <div class="circle"><img src="{% static 'icons/grains.png' %}" alt="Grains Icon" class="icon"></div>
             <span>Grains and Staples</span>
         </button>
-        <button class="sidebar-btn meat-btn">
+        <button class="sidebar-btn meat-btn category-filter-btn" data-category="Meat, Poultry and Seafood">
             <div class="circle"><img src="{% static 'icons/meat.png' %}" alt="Meat Icon" class="icon"></div>
             <span>Meat, Poultry and Seafood</span>
         </button>
-        <button class="sidebar-btn dairy-btn">
+        <button class="sidebar-btn dairy-btn category-filter-btn" data-category="Dairy & Eggs">
             <div class="circle"><img src="{% static 'icons/dairy.png' %}" alt="Dairy Icon" class="icon"></div>
             <span>Dairy & Eggs</span>
         </button>
-        <button class="sidebar-btn packaged-btn">
+        <button class="sidebar-btn packaged-btn category-filter-btn" data-category="Packaged Goods">
             <div class="circle"><img src="{% static 'icons/packaged.png' %}" alt="Packaged Icon" class="icon"></div>
             <span>Packaged Goods</span>
         </button>
-        <button class="sidebar-btn local-btn">
+        <button class="sidebar-btn local-btn category-filter-btn" data-category="Local & Specialty Products">
             <div class="circle"><img src="{% static 'icons/local.png' %}" alt="Local Icon" class="icon"></div>
             <span>Local & Specialty Products</span>
         </button>
-        <button class="sidebar-btn service-btn">
+        <button class="sidebar-btn service-btn category-filter-btn" data-category="Services">
             <div class="circle"><img src="{% static 'icons/service.png' %}" alt="Service Icon" class="icon"></div>
             <span>Services</span>
         </button>
@@ -102,7 +102,7 @@
             </div>
 
             <h2>Daily Discover</h2>
-            <div class="grid">
+            <div class="grid" id="product-grid-container">
                 {% for product in products %}
                     <div class="grid-item" data-product-id="{{ product.id }}" style="cursor: pointer;">
                         {% if product.image %}
@@ -119,7 +119,7 @@
                         </div>
                     </div>
                 {% empty %}
-                <p>No products are available at the moment.</p>
+                <p id="no-products-message">No products are available at the moment.</p>
                 {% endfor %}
             </div>
         </section>
@@ -186,31 +186,33 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Product Modal Elements ---
-        const modal = document.getElementById('product-modal');
-        const backdrop = document.getElementById('product-modal-backdrop');
-        const closeBtn = document.getElementById('modal-close-btn');
+        // --- Modal Element Definitions ---
+        const productModal = document.getElementById('product-modal');
+        const productBackdrop = document.getElementById('product-modal-backdrop');
+        const productCloseBtn = document.getElementById('modal-close-btn');
 
-        // --- Vendor Modal Elements ---
         const vendorModal = document.getElementById('vendor-modal');
         const vendorBackdrop = document.getElementById('vendor-modal-backdrop');
         const vendorCloseBtn = document.getElementById('vendor-modal-close-btn');
+        
+        const shopLink = document.getElementById('modal-shop-link');
+        const gridContainer = document.getElementById('product-grid-container');
 
         let currentVendorId = null; 
 
         // --- Modal Control Functions ---
-        const openModal = () => {
-            modal.style.display = 'block'; 
-            backdrop.style.display = 'block';
+        const openProductModal = () => {
+            productModal.style.display = 'block'; 
+            productBackdrop.style.display = 'block';
         };
 
-        const closeModal = () => {
-            modal.style.display = 'none';
-            backdrop.style.display = 'none';
+        const closeProductModal = () => {
+            productModal.style.display = 'none';
+            productBackdrop.style.display = 'none';
         };
         
         const openVendorModal = () => {
-            closeModal(); 
+            closeProductModal();
             vendorModal.style.display = 'block';
             vendorBackdrop.style.display = 'block';
         };
@@ -221,13 +223,126 @@
         };
 
         // --- Event Listeners for Closing ---
-        closeBtn.addEventListener('click', closeModal);
-        backdrop.addEventListener('click', closeModal);
+        productCloseBtn.addEventListener('click', closeProductModal);
+        productBackdrop.addEventListener('click', closeProductModal);
         vendorCloseBtn.addEventListener('click', closeVendorModal);
         vendorBackdrop.addEventListener('click', closeVendorModal);
         
-        const shopLink = document.getElementById('modal-shop-link');
+        // --- Rendering Function ---
+        const renderProducts = (products) => {
+            let html = '';
+            
+            if (products.length === 0) {
+                gridContainer.innerHTML = '<p id="no-products-message">No products found for this category.</p>';
+                return;
+            }
 
+            products.forEach(product => {
+                const imageStyle = `background-image: url('${product.image_url}'); background-size: cover;`;
+                
+                html += `
+                    <div class="grid-item" data-product-id="${product.id}" style="cursor: pointer;">
+                        <div class="product-image" style="${imageStyle}"></div>
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-price">${product.price}</p>
+                            <p class="product-vendor">Seller: ${product.shop_name}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            gridContainer.innerHTML = html;
+            // IMPORTANT: Re-attach the click listener to the newly rendered products
+            attachProductClickListeners();
+        };
+
+        // --- Core Filter Function ---
+        const fetchAndFilterProducts = (category) => {
+            const apiEndpoint = `/my-products/api/list/?category=${encodeURIComponent(category)}`;
+            
+            // Optional: Show a loading state
+            gridContainer.innerHTML = '<p>Loading products...</p>'; 
+
+            fetch(apiEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    renderProducts(data.products);
+                })
+                .catch(err => {
+                    console.error('Filtering error:', err);
+                    gridContainer.innerHTML = '<p style="color: red;">Failed to load products. Please try again later.</p>';
+                });
+        };
+
+        // --- Attach Filter Listeners (Initial Load) ---
+        document.querySelectorAll('.category-filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                fetchAndFilterProducts(category);
+                
+                // Visual feedback (optional)
+                document.querySelectorAll('.category-filter-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // --- Attach Product Modal Listeners ---
+        const attachProductClickListeners = () => {
+            document.querySelectorAll('.grid-item').forEach(card => {
+                const productId = card.dataset.productId;
+                if (!productId) return;
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('a')) { return; }
+                    
+                    // 1. Set loading state
+                    document.getElementById('modal-name').textContent = 'Loading...';
+                    document.getElementById('modal-description').textContent = 'Fetching details...';
+                    // ... (rest of loading states) ...
+                    
+                    openProductModal();
+                    
+                    // 2. FETCH DATA
+                    fetch(`/my-products/api/${productId}/`) 
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Could not load product details. (Status ' + response.status + ')');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.error) {
+                                document.getElementById('modal-description').textContent = data.error;
+                                return;
+                            }
+
+                            currentVendorId = data.vendor_user_id; 
+
+                            // 3. Populate the product modal
+                            document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
+                            document.getElementById('modal-name').textContent = data.name;
+                            document.getElementById('modal-price').textContent = data.price; 
+                            document.getElementById('modal-description').textContent = data.description;
+                            
+                            shopLink.textContent = data.shop_name;
+                            // shopLink.href is handled dynamically by the shopLink listener
+                            
+                            const sellerName = data.seller_name || data.shop_name;
+                            document.getElementById('modal-seller-name').textContent = sellerName;
+                            document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
+
+                            document.getElementById('modal-category').textContent = data.category || 'N/A';
+                            document.getElementById('modal-stock').textContent = data.stock || 'N/A';
+                            
+                        })
+                        .catch(err => {
+                            console.error('Error fetching product:', err);
+                            document.getElementById('modal-description').textContent = 'Error loading product details: ' + err.message;
+                        });
+                });
+            });
+        };
+        
         // --- Shop Link Click Handler (Opens Vendor Modal) ---
         shopLink.addEventListener('click', function(e) {
             e.preventDefault(); 
@@ -239,7 +354,6 @@
             
             openVendorModal();
 
-            // 2. Fetch vendor details using the /auth/ prefix and the saved ID
             fetch(`/auth/api/vendor/${currentVendorId}/`)
                 .then(response => {
                     if (!response.ok) {
@@ -248,12 +362,7 @@
                     return response.json();
                 })
                 .then(vendorData => {
-                    if (vendorData.error) {
-                        document.getElementById('vendor-description').textContent = vendorData.error;
-                        return;
-                    }
-
-                    // 3. Populate Vendor Modal fields
+                    // ... (Vendor Modal population logic) ...
                     document.getElementById('vendor-shop-name').textContent = vendorData.shop_name;
                     document.getElementById('vendor-profile-img').src = vendorData.profile_image_url || "{% static 'icons/placeholder.png' %}";
                     document.getElementById('vendor-description').textContent = vendorData.description;
@@ -277,76 +386,9 @@
                     console.error('Vendor Fetch Error:', err);
                 });
         });
-
-        // --- Product Grid Click Listener (The primary event) ---
-        const productCards = document.querySelectorAll('.grid-item');
-
-        productCards.forEach(card => {
-            const productId = card.dataset.productId;
-            if (!productId) return;
-
-            card.addEventListener('click', (e) => {
-                // Ignore clicks on internal links/buttons
-                if (e.target.closest('a')) {
-                    return;
-                }
-                
-                // 1. Set loading state
-                document.getElementById('modal-name').textContent = 'Loading...';
-                document.getElementById('modal-description').textContent = 'Fetching details...';
-                document.getElementById('modal-price').textContent = '';
-                document.getElementById('modal-shop-link').textContent = '';
-                document.getElementById('modal-shop-link').href = '#';
-                document.getElementById('modal-seller-name').textContent = 'Vendor';
-                document.getElementById('modal-chat-btn').href = '#'; 
-                document.getElementById('modal-img').src = "{% static 'icons/placeholder.png' %}";
-                document.getElementById('modal-category').textContent = '...';
-                document.getElementById('modal-stock').textContent = '...';
-                
-                openModal(); // Open Product Modal
-                
-                // 2. FETCH DATA
-                fetch(`/my-products/api/${productId}/`) 
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Could not load product details. (Status ' + response.status + ')');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.error) {
-                            document.getElementById('modal-description').textContent = data.error;
-                            return;
-                        }
-
-                        // CRITICAL: Save Vendor ID globally
-                        currentVendorId = data.vendor_user_id; 
-
-                        // 3. Populate the product modal
-                        document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
-                        document.getElementById('modal-name').textContent = data.name;
-                        document.getElementById('modal-price').textContent = data.price; 
-                        document.getElementById('modal-description').textContent = data.description;
-                        
-                        // Shop Name Link (Set text)
-                        shopLink.textContent = data.shop_name;
-                        
-                        // Seller/Chat Link
-                        const sellerName = data.seller_name || data.shop_name;
-                        document.getElementById('modal-seller-name').textContent = sellerName;
-                        document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
-
-                        // Additional fields
-                        document.getElementById('modal-category').textContent = data.category || 'N/A';
-                        document.getElementById('modal-stock').textContent = data.stock || 'N/A';
-                        
-                    })
-                    .catch(err => {
-                        console.error('Error fetching product:', err);
-                        document.getElementById('modal-description').textContent = 'Error loading product details: ' + err.message;
-                    });
-            });
-        });
+        
+        // Initial attachment of listeners when the page first loads
+        attachProductClickListeners();
     });
 </script>
 {% endblock content %}

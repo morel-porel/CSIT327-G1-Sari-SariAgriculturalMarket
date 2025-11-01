@@ -1,4 +1,4 @@
-# products/urls.py - CORRECTED to match the browser request
+# products/urls.py - UPDATED
 
 from django.urls import path
 from .views import (
@@ -7,6 +7,7 @@ from .views import (
     ProductUpdateView,
     ProductDeleteView,
     product_detail_api,
+    product_list_api, # Added new API view
 )
 
 urlpatterns = [
@@ -15,6 +16,9 @@ urlpatterns = [
     path('<int:pk>/edit/', ProductUpdateView.as_view(), name='product_update'),
     path('<int:pk>/delete/', ProductDeleteView.as_view(), name='product_delete'),
 
-    # FIXED: This path now correctly matches /products/api/<pk>/
+    # Existing API for product detail modal
     path('api/<int:pk>/', product_detail_api, name='product_detail_api'),
+    
+    # NEW API for filtering the product list (AJAX)
+    path('api/list/', product_list_api, name='product_list_api'),
 ]
