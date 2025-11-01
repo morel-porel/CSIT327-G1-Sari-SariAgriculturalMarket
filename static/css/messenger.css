@@ -24,7 +24,7 @@ main.main-container {
     width: 1700px;
     height: 750px;
     
-    margin-top: 12px;
+    margin-top: 70px;
     margin-left: 80px;
     
     border: 1px solid #cccccc;
@@ -183,7 +183,7 @@ main.main-container {
 }
 .convo-unread-count {
     display: inline-block;
-    background-color: #0d6efd; /* Blue */
+    background-color: #175e52; /* Blue */
     color: white;
     font-weight: bold;
     font-size: 0.85em;
@@ -266,7 +266,7 @@ main.main-container {
 }
 .read-receipt {
     font-style: italic;
-    color: #0d6efd; /* Blue */
+    color: #4CAF50; /* Blue */
 }
 
 /* Sent Messages (Current User) */
@@ -274,7 +274,7 @@ main.main-container {
     align-self: flex-end; /* Aligns to the right */
 }
 .message.sent .message-bubble {
-    background-color: #0d6efd; /* Blue */
+    background-color: #175e52; /* Blue */
     color: white;
     border-bottom-right-radius: 5px;
 }
@@ -358,11 +358,11 @@ main.main-container {
     background-color: #f0f0f0;
 }
 .btn-send {
-    background-color: #0d6efd; /* Blue */
+    background-color: #175e52; /* Blue */
 }
 .btn-send img {
     filter: brightness(0) invert(1); /* Makes the icon white */
 }
 .btn-send:hover {
-    background-color: #0a58ca; /* Darker blue */
+    background-color: #175e52; /* Darker blue */
 }

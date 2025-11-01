@@ -1,4 +1,4 @@
-# products/urls.py
+# products/urls.py - CORRECTED to match the browser request
 
 from django.urls import path
 from .views import (
@@ -6,7 +6,7 @@ from .views import (
     ProductCreateView,
     ProductUpdateView,
     ProductDeleteView,
-    product_detail_api,  # <-- 1. Add the function to your import list
+    product_detail_api,
 )
 
 urlpatterns = [
@@ -15,6 +15,6 @@ urlpatterns = [
     path('<int:pk>/edit/', ProductUpdateView.as_view(), name='product_update'),
     path('<int:pk>/delete/', ProductDeleteView.as_view(), name='product_delete'),
 
-    # 2. Remove the "views." prefix so it uses the function directly
-    path('api/detail/<int:product_id>/', product_detail_api, name='product_detail_api'),
+    # FIXED: This path now correctly matches /products/api/<pk>/
+    path('api/<int:pk>/', product_detail_api, name='product_detail_api'),
 ]

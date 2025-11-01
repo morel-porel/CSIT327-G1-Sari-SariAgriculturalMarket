@@ -4,7 +4,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-{% endblock %}
+{% endblock css %}
 
 {% block content %}
 <header class="navbar">
@@ -116,12 +116,6 @@
                             {% if product.vendor.vendorprofile %}
                             <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
                             {% endif %}
-
-                            {% if user.is_authenticated and product.vendor and product.vendor != request.user %}
-                                <a href="{% url 'start_conversation' product.vendor.id %}" class="btn-message-vendor" style="text-decoration: none; font-size: 0.9em;">
-                                    Chat with Vendor
-                                </a>
-                            {% endif %}
                         </div>
                     </div>
                 {% empty %}
@@ -141,7 +135,7 @@
             </div>
             <div class="modal-details">
                 <h2 id="modal-name">Product Name</h2>
-                <span class="modal-vendor" id="modal-vendor">by Vendor</span>
+                <p class="modal-vendor">by <a href="#" id="modal-shop-link">Shop Name</a></p>
                 
                 <div class="modal-price" id="modal-price">₱0.00</div>
                 
@@ -155,73 +149,204 @@
                 </div>
                 
                 <a href="#" class="btn-message-vendor" id="modal-chat-btn">
-                    Chat with Vendor
+                    Chat with <span id="modal-seller-name">Vendor</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('product-modal');
-            const backdrop = document.getElementById('product-modal-backdrop');
-            const closeBtn = document.getElementById('modal-close-btn');
+<div class="modal-backdrop" id="vendor-modal-backdrop" style="display: none;"></div>
+<div class="modal vendor-modal" id="vendor-modal" style="display: none;">
+    <button class="modal-close" id="vendor-modal-close-btn">&times;</button>
+    <div class="modal-content portrait-content">
+        <h2 id="vendor-shop-name" class="modal-title">Shop Name</h2>
+        <div class="vendor-header-image">
+            <img src="" alt="Shop Profile" id="vendor-profile-img" class="vendor-profile-img">
+            <span class="verification-status" id="vendor-verified"></span>
+        </div>
+        
+        <div class="vendor-details-section">
+            <h3>Shop Description</h3>
+            <p id="vendor-description"></p>
+            
+            <h3>Farming & Business Practices</h3>
+            <p id="vendor-practices"></p>
+            
+            <div class="meta-grid">
+                <span>Experience: <strong id="vendor-experience"></strong> years</span>
+                <span>Permit No: <strong id="vendor-permit-number"></strong></span>
+                <span>Contact: <strong id="vendor-contact"></strong></span>
+            </div>
+            
+            <hr>
+            <p class="small-text">Seller Email: <span id="vendor-email"></span></p>
+        </div>
+    </div>
+</div>
 
-            // Function to open the modal
-            const openModal = () => {
-                modal.style.display = 'block';
-                backdrop.style.display = 'block';
-            };
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Product Modal Elements ---
+        const modal = document.getElementById('product-modal');
+        const backdrop = document.getElementById('product-modal-backdrop');
+        const closeBtn = document.getElementById('modal-close-btn');
 
-            // Function to close the modal
-            const closeModal = () => {
-                modal.style.display = 'none';
-                backdrop.style.display = 'none';
-            };
+        // --- Vendor Modal Elements ---
+        const vendorModal = document.getElementById('vendor-modal');
+        const vendorBackdrop = document.getElementById('vendor-modal-backdrop');
+        const vendorCloseBtn = document.getElementById('vendor-modal-close-btn');
 
-            // Close modal events
-            closeBtn.addEventListener('click', closeModal);
-            backdrop.addEventListener('click', closeModal);
+        let currentVendorId = null; 
 
-            // Get all product cards
-            const productCards = document.querySelectorAll('.grid-item');
+        // --- Modal Control Functions ---
+        const openModal = () => {
+            modal.style.display = 'block'; 
+            backdrop.style.display = 'block';
+        };
 
-            productCards.forEach(card => {
-                // Get the product ID from a data attribute
-                const productId = card.dataset.productId;
-                if (!productId) return;
+        const closeModal = () => {
+            modal.style.display = 'none';
+            backdrop.style.display = 'none';
+        };
+        
+        const openVendorModal = () => {
+            closeModal(); 
+            vendorModal.style.display = 'block';
+            vendorBackdrop.style.display = 'block';
+        };
 
-                card.addEventListener('click', (e) => {
-                    // Don't open modal if they clicked the chat button directly
-                    if (e.target.classList.contains('btn-message-vendor')) {
+        const closeVendorModal = () => {
+            vendorModal.style.display = 'none';
+            vendorBackdrop.style.display = 'none';
+        };
+
+        // --- Event Listeners for Closing ---
+        closeBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+        vendorCloseBtn.addEventListener('click', closeVendorModal);
+        vendorBackdrop.addEventListener('click', closeVendorModal);
+        
+        const shopLink = document.getElementById('modal-shop-link');
+
+        // --- Shop Link Click Handler (Opens Vendor Modal) ---
+        shopLink.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            
+            if (!currentVendorId) return;
+
+            document.getElementById('vendor-shop-name').textContent = 'Loading...';
+            document.getElementById('vendor-description').textContent = 'Fetching shop details...';
+            
+            openVendorModal();
+
+            // 2. Fetch vendor details using the /auth/ prefix and the saved ID
+            fetch(`/auth/api/vendor/${currentVendorId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Could not load vendor details. Status: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(vendorData => {
+                    if (vendorData.error) {
+                        document.getElementById('vendor-description').textContent = vendorData.error;
                         return;
                     }
 
-                    // Fetch product data from our new API
-                    fetch(`/products/api/detail/${productId}/`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.error) {
-                                console.error(data.error);
-                                return;
-                            }
-
-                            // Populate the modal with data
-                            document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
-                            document.getElementById('modal-name').textContent = data.name;
-                            document.getElementById('modal-vendor').textContent = `by ${data.vendor_name}`;
-                            document.getElementById('modal-price').textContent = data.price;
-                            document.getElementById('modal-description').textContent = data.description;
-                            document.getElementById('modal-category').textContent = data.category;
-                            document.getElementById('modal-stock').textContent = data.stock;
-                            document.getElementById('modal-chat-btn').href = data.vendor_chat_url;
-                            
-                            // Open the modal
-                            openModal();
-                        })
-                        .catch(err => console.error('Error fetching product:', err));
+                    // 3. Populate Vendor Modal fields
+                    document.getElementById('vendor-shop-name').textContent = vendorData.shop_name;
+                    document.getElementById('vendor-profile-img').src = vendorData.profile_image_url || "{% static 'icons/placeholder.png' %}";
+                    document.getElementById('vendor-description').textContent = vendorData.description;
+                    document.getElementById('vendor-practices').textContent = vendorData.practices;
+                    document.getElementById('vendor-experience').textContent = vendorData.experience;
+                    document.getElementById('vendor-permit-number').textContent = vendorData.business_permit_number;
+                    document.getElementById('vendor-contact').textContent = vendorData.contact_number;
+                    document.getElementById('vendor-email').textContent = vendorData.email;
+                    
+                    const statusElement = document.getElementById('vendor-verified');
+                    if (vendorData.is_verified) {
+                        statusElement.textContent = 'Verified';
+                        statusElement.className = 'verification-status verified';
+                    } else {
+                        statusElement.textContent = 'Unverified';
+                        statusElement.className = 'verification-status unverified';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('vendor-description').textContent = 'Failed to load vendor details: ' + err.message;
+                    console.error('Vendor Fetch Error:', err);
                 });
+        });
+
+        // --- Product Grid Click Listener (The primary event) ---
+        const productCards = document.querySelectorAll('.grid-item');
+
+        productCards.forEach(card => {
+            const productId = card.dataset.productId;
+            if (!productId) return;
+
+            card.addEventListener('click', (e) => {
+                // Ignore clicks on internal links/buttons
+                if (e.target.closest('a')) {
+                    return;
+                }
+                
+                // 1. Set loading state
+                document.getElementById('modal-name').textContent = 'Loading...';
+                document.getElementById('modal-description').textContent = 'Fetching details...';
+                document.getElementById('modal-price').textContent = '';
+                document.getElementById('modal-shop-link').textContent = '';
+                document.getElementById('modal-shop-link').href = '#';
+                document.getElementById('modal-seller-name').textContent = 'Vendor';
+                document.getElementById('modal-chat-btn').href = '#'; 
+                document.getElementById('modal-img').src = "{% static 'icons/placeholder.png' %}";
+                document.getElementById('modal-category').textContent = '...';
+                document.getElementById('modal-stock').textContent = '...';
+                
+                openModal(); // Open Product Modal
+                
+                // 2. FETCH DATA
+                fetch(`/my-products/api/${productId}/`) 
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Could not load product details. (Status ' + response.status + ')');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('modal-description').textContent = data.error;
+                            return;
+                        }
+
+                        // CRITICAL: Save Vendor ID globally
+                        currentVendorId = data.vendor_user_id; 
+
+                        // 3. Populate the product modal
+                        document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
+                        document.getElementById('modal-name').textContent = data.name;
+                        document.getElementById('modal-price').textContent = data.price; 
+                        document.getElementById('modal-description').textContent = data.description;
+                        
+                        // Shop Name Link (Set text)
+                        shopLink.textContent = data.shop_name;
+                        
+                        // Seller/Chat Link
+                        const sellerName = data.seller_name || data.shop_name;
+                        document.getElementById('modal-seller-name').textContent = sellerName;
+                        document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
+
+                        // Additional fields
+                        document.getElementById('modal-category').textContent = data.category || 'N/A';
+                        document.getElementById('modal-stock').textContent = data.stock || 'N/A';
+                        
+                    })
+                    .catch(err => {
+                        console.error('Error fetching product:', err);
+                        document.getElementById('modal-description').textContent = 'Error loading product details: ' + err.message;
+                    });
             });
         });
-    </script>
-{% endblock %}
+    });
+</script>
+{% endblock content %}
