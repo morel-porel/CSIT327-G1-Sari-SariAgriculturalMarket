@@ -27,11 +27,11 @@
             <tbody>
                 {% for product in products %}
                 <tr>
-                    <td><strong>{{ product.name }}</strong></td>
-                    <td>₱{{ product.price }}</td>
-                    <td>{{ product.stock }}</td>
-                    <td>{{ product.category }}</td>
-                    <td class="actions">
+                    <td data-label="Product Name"><strong>{{ product.name }}</strong></td>
+                    <td data-label="Price">₱{{ product.price }}</td>
+                    <td data-label="Stock">{{ product.stock }}</td>
+                    <td data-label="Category">{{ product.category }}</td>
+                    <td class="actions" data-label="Actions">
                         <a href="{% url 'product_update' product.pk %}" class="btn btn-info">Edit</a>
                         <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">Delete</a>
                     </td>
