@@ -22,7 +22,20 @@ footer { border-top: 1px solid #ccc; margin-top: auto; }
     margin: 0 1rem;
 }
 
+<<<<<<< HEAD
 /* This is the original rule for your homepage, etc. */
+=======
+/* This <main> tag rule helps center the content */
+main.content-wrapper {
+    flex-grow: 1; /* Expands to fill space */
+    display: flex; /* Allows the chat container to be centered */
+    flex-direction: column;
+    padding: 20px 10px; /* Adds some top/bottom and side breathing room */
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
+>>>>>>> ea4a784 (Add password reset feature with Gmail integration)
 .main-container {
     display: flex;
     flex: 1;
@@ -93,9 +106,251 @@ p { text-align: center; }
     color: #175e52; /* A color from your theme */
 }
 
+<<<<<<< HEAD
 
 /* ========================================= */
 /* PRODUCT MODAL STYLES (This is OK to keep)
+=======
+/* ========================================= */
+/* MESSAGING UI (Messenger Layout) - CLEANER
+/* ========================================= */
+
+/* Main layout container */
+.chat-container-layout {
+    display: flex;
+    width: 100%;
+
+    /* === ADJUST THIS to control the *overall box size* === */
+    max-width: 1000px; /* Made smaller */
+    height: 60vh;     /* 60% of the screen height */
+    min-height: 500px; /* Minimum height */
+    /* === END OF ADJUSTMENT === */
+
+    margin: auto; /* This centers the container */
+    
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    background: #fff;
+}
+
+/* ----------------------------------------- */
+/* Left Panel: Inbox (NARROWER)
+/* ----------------------------------------- */
+.inbox-panel {
+    width: 35%; 
+    min-width: 260px; /* Reduced */
+    border-right: 1px solid #e0e0e0; 
+    display: flex;
+    flex-direction: column;
+    background-color: #fcfcfc;
+}
+.inbox-header {
+    padding: 12px 15px; /* Reduced */
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+.inbox-header h2 {
+    margin: 0;
+    font-size: 1.1em; /* Reduced */
+}
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px; /* Reduced */
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+.convo-avatar {
+    flex-shrink: 0;
+}
+.convo-avatar img {
+    width: 32px; /* === VERY SMALL ICON === */
+    height: 32px; /* === VERY SMALL ICON === */
+    border-radius: 50%;
+    margin-right: 10px; /* Reduced */
+    object-fit: cover;
+}
+.convo-details {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+}
+.convo-user {
+    font-weight: 600;
+    font-size: 0.9em; /* Reduced */
+    color: #222;
+}
+.convo-excerpt {
+    font-size: 0.8em; /* Reduced */
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ----------------------------------------- */
+/* Right Panel: Chat Window (WIDER)
+/* ----------------------------------------- */
+
+/* ... (chat-panel and chat-placeholder rules are fine) ... */
+
+/* Chat Header */
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px; /* Reduced */
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+.chat-avatar img {
+    width: 34px; /* === VERY SMALL ICON === */
+    height: 34px; /* === VERY SMALL ICON === */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px; 
+}
+.chat-info h2 {
+    margin: 0;
+    font-size: 1em; /* Reduced */
+}
+.chat-info .shop-name {
+    margin: 0;
+    font-size: 0.8em; 
+    color: #666;
+}
+
+/* Chat Window */
+.chat-window {
+    flex-grow: 1; 
+    padding: 15px; 
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Chat bubble styles */
+.message {
+    display: flex;
+    margin-bottom: 12px; 
+    max-width: 75%;
+}
+.message-bubble {
+    padding: 8px 12px; /* Reduced */
+    border-radius: 16px; /* Reduced */
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 0.85em; /* Reduced */
+}
+.message-bubble p {
+    margin: 0 0 4px 0; 
+}
+.message-timestamp {
+    font-size: 0.75em; 
+    display: block;
+}
+.message-media img {
+    max-width: 200px; 
+    border-radius: 8px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.message-media a {
+    color: inherit;
+    font-weight: bold;
+}
+
+/* Sent Messages (Current User) */
+.message.sent {
+    align-self: flex-end; 
+}
+.message.sent .message-bubble {
+    background-color: var(--primary-color);
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+.message.sent .message-timestamp {
+    color: #eee;
+    text-align: right;
+}
+
+/* Received Messages (Other User) */
+.message.received {
+    align-self: flex-start; 
+}
+.message.received .message-bubble {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #e9e9e9;
+    border-bottom-left-radius: 5px;
+}
+.message.received .message-timestamp {
+    color: #888;
+    text-align: left;
+}
+
+/* Message Form */
+.message-form {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px; /* Reduced */
+    border-top: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+.message-form textarea {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 6px 12px; /* Reduced */
+    margin-right: 8px; /* Reduced */
+    font-family: inherit;
+    font-size: 0.85em; /* Reduced */
+    resize: none;
+    height: 32px; /* Reduced */
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+.message-form .form-actions {
+    display: flex;
+    align-items: center;
+}
+.file-label,
+.btn-send {
+    padding: 4px; /* Reduced */
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em; /* Reduced */
+    color: #555;
+}
+.file-label:hover,
+.btn-send:hover {
+    background-color: #f0f0f0;
+}
+.btn-send {
+    background-color: var(--primary-color);
+    color: white;
+}
+.btn-send:hover {
+    background-color: var(--accent-color);
+}
+
+/* ========================================= */
+/* PRODUCT MODAL STYLES
+>>>>>>> ea4a784 (Add password reset feature with Gmail integration)
 /* ========================================= */
 
 .modal-backdrop {
@@ -209,7 +464,11 @@ p { text-align: center; }
 }
 
 /* ========================================= */
+<<<<<<< HEAD
 /* PROFILE PAGE AVATAR FIX (This is OK to keep)
+=======
+/* PROFILE PAGE AVATAR FIX
+>>>>>>> ea4a784 (Add password reset feature with Gmail integration)
 /* ========================================= */
 .profile-avatar {
     width: 120px;
@@ -221,6 +480,136 @@ p { text-align: center; }
 }
 
 /*
+<<<<<<< HEAD
  * ALL THE MESSENGER CSS THAT WAS HERE HAS BEEN REMOVED
  * IT NOW LIVES IN 'messenger.css'
  */
+=======
+ * This file (style.css) OVERRIDES the styles from home.css
+ */
+
+/* * STEP 1: We override the home page's conflicting styles
+ */
+main.main-container {
+    flex-grow: 1;
+    display: flex;
+    
+    /* --- These rules RESET home.css --- */
+    justify-content: normal;  /* Resets 'center' */
+    align-items: normal;     /* Resets 'center' */
+    gap: 0;                  /* Resets '5rem' */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* * STEP 2: Your rectangle.
+ * We add 'display: flex' to make it a container for the panels.
+ */
+.my-centered-rectangle {
+    width: 1700px;
+    height: 750px;
+    
+    margin-top: 12px;
+    margin-left: 80px;
+    
+    border: 1px solid #cccccc;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    /* === NEW STYLES ADDED === */
+    display: flex;       /* This makes the panels line up side-by-side */
+    overflow: hidden;    /* Hides anything that spills out */
+}
+
+
+/* === STEP 3: NEW STYLES FOR THE PANELS === */
+
+/* Left Panel (Inbox) */
+.chat-left-panel {
+    /* Starting width (the JS will change this) */
+    flex-basis: 350px;
+    width: 400px;
+
+    /* Don't let it get smaller than this */
+    min-width: 250px;
+
+    height: 100%; /* Fill the rectangle */
+    overflow-y: auto; /* Add scrollbar if content is too tall */
+    background: #fdfdfd;
+}
+
+/* The Divider */
+.chat-divider {
+    flex-basis: 2px; /* Width of the divider */
+    height: 100%;    /* Fill the rectangle */
+    background-color: #e0e0e0;
+    cursor: col-resize; /* Shows the "resize" mouse cursor */
+    transition: background-color 0.2s;
+}
+
+.chat-divider:hover {
+    background-color: #cccccc; /* Darker on hover */
+}
+
+/* Right Panel (Active Chat) */
+.chat-right-panel {
+    flex-grow: 1; /* Takes up all remaining space */
+    height: 100%; /* Fill the rectangle */
+    background: #ffffff;
+    display: flex; /* This will help us later */
+    flex-direction: column;
+}
+
+/* === STEP 4: STYLES FOR PANEL CONTENTS === */
+
+/* Header for the left panel */
+.chat-panel-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0; /* Prevents header from shrinking */
+}
+
+.chat-panel-header h2 {
+    margin: 0 0 15px 0; /* Space below the "Messages" title */
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+/* Container for the search bar */
+.chat-search-container {
+    position: relative; /* This is needed to position the icon */
+    width: 100%;
+}
+
+/* The search icon inside the bar */
+.chat-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+}
+
+/* The search input field */
+.chat-search-input {
+    width: 100%;
+    padding: 10px 10px 10px 38px; /* Left padding to make space for icon */
+    font-size: 0.9em;
+    border: none; /* Remove default border */
+    border-radius: 20px; /* Makes it pill-shaped */
+    background-color: #f0f0f0;
+    box-sizing: border-box; /* Important for 100% width + padding */
+    outline: none; /* Removes blue glow on focus */
+    transition: background-color 0.2s;
+}
+
+.chat-search-input:focus {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    /* We add 1px border on focus, so we remove 1px of padding to prevent a layout jump */
+    padding: 9px 9px 9px 37px;
+}
+>>>>>>> ea4a784 (Add password reset feature with Gmail integration)
