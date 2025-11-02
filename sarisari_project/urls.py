@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from pages import views
 
 urlpatterns = [
     path('password_reset_form/',
@@ -28,6 +29,12 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('messages/', include('messaging.urls')),
     path('dashboard/', include('dashboard.urls')),
+
+    # Search routes
+    path('', include('pages.urls')),
+    path('search/', views.search_view, name='search'),
+    path('search/delete/<int:history_id>/', views.delete_search_history, name='delete_search_history'),
+    path('search/clear/', views.clear_search_history, name='clear_search_history'),
 ]
 
 # CRITICAL FIX: Conditionally serve Static and Media files only when DEBUG=True

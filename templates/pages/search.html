@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+
+<div class="search-container">
+    <h1>Search</h1>
+
+    <form method="get" action="{% url 'search' %}">
+        <div class="search-box">
+            <input type="text" name="query" placeholder="Search vendors or products..." required>
+            <button type="submit">Search</button>
+        </div>
+    </form>
+
+<div class="search-history">
+    <h2>Recent Searches</h2>
+
+    {% if search_history %}
+        <ul class="history-list">
+            {% for item in search_history %}
+                <li>
+                    <span class="history-term" onclick="fillSearch('{{ item }}')">{{ item }}</span>
+                    <a href="?delete={{ item }}" class="delete-btn">✕</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="?clear=1" class="clear-all-btn">Clear All</a>
+    {% else %}
+        <p>No recent searches yet.</p>
+    {% endif %}
+</div>
+<script>
+function fillSearch(value) {
+    const input = document.querySelector('input[name="query"]');
+    input.value = value;
+    input.focus();
+}
+</script>
+{% endblock %}

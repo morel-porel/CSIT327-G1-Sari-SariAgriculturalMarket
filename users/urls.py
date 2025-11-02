@@ -14,4 +14,8 @@ urlpatterns = [
     path('vendor_profile/', views.vendor_profile_view, name='vendor_profile'),
 
     path('api/vendor/<int:pk>/', views.vendor_detail_api, name='vendor_detail_api'),
+
+    path('search/', views.search_view, name='search'),
+    path('search/delete/<int:history_id>/', views.delete_search_history, name='delete_search_history'),
+    path('search/clear/', views.clear_search_history, name='clear_search_history'),
 ]

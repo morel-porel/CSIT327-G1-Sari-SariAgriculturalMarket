@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import VendorProfile, CustomUser
 from django.http import JsonResponse # CRITICAL: Ensure JsonResponse is imported
+from django.db.models import Q  # ✅ Added for search filtering
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -133,3 +134,49 @@ def vendor_detail_api(request, pk):
         # This will catch any unexpected errors and return a 500, with a message for the console
         print(f"Vendor API Crash for PK {pk}: {e}") 
         return JsonResponse({'error': 'An internal server error occurred.'}, status=500)
+    
+# ----------------------------
+# SEARCH VIEWS
+# ----------------------------
+
+@login_required
+def search_view(request):
+    """Search vendors by shop name or description."""
+    query = request.GET.get('q', '').strip()
+    results = []
+
+    if query:
+        # ✅ Save search history only if non-empty
+        SearchHistory.objects.create(user=request.user, query=query)
+
+        results = VendorProfile.objects.filter(
+            Q(shop_name__icontains=query) |
+            Q(shop_description__icontains=query)
+        )
+
+    # ✅ Order by most recent first
+    recent_searches = SearchHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
+
+    context = {
+        'query': query,
+        'results': results,
+        'recent_searches': recent_searches,
+    }
+    return render(request, 'pages/search.html', context)
+
+
+@login_required
+def delete_search_history(request, history_id):
+    """Delete a single search record."""
+    history = get_object_or_404(SearchHistory, id=history_id, user=request.user)
+    history.delete()
+    messages.success(request, "Search entry deleted successfully.")
+    return redirect('search')
+
+
+@login_required
+def clear_search_history(request):
+    """Clear all search history for the current user."""
+    SearchHistory.objects.filter(user=request.user).delete()
+    messages.success(request, "All search history cleared.")
+    return redirect('search')
