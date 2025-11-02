@@ -12,12 +12,22 @@
         <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
         <span>Sari-Sari</span>
     </div>
-    <div class="search-bar">
-        <input type="text" placeholder="Search products...">
-        <button>
-            <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
-        </button>
-    </div>
+
+<div class="search-section">
+  <div class="search-bar">
+    <form method="get" action="{% url 'search' %}">
+      <input type="text" name="q" placeholder="Search products..." required>
+      <button type="submit">
+        <img src="{% static 'icons/search.png' %}" alt="Search" class="search-icon">
+      </button>
+    </form>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'search' %}" class="recent-search-link">Recent Searches</a>
+    {% endif %}
+  </div>
+</div>
+
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
             <a href="{% url 'product_list' %}">
