@@ -35,7 +35,11 @@
                         <span class="convo-excerpt">
                             {% if last_message %}
                                 {% if last_message.sender == request.user %}You: {% endif %}
-                                {{ last_message.text_content|truncatechars:30 }}
+                                {% if last_message.is_moderator_deleted %}
+                                    <span style="color: red;">[Message Removed]</span>
+                                {% else %}
+                                    {{ last_message.text_content|truncatechars:30 }}
+                                {% endif %}
                             {% else %}
                                 Start the conversation
                             {% endif %}
@@ -81,30 +85,52 @@
                 {% for message in chat_messages %}
                     <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
                         <div class="message-bubble">
-                            <p>{{ message.text_content }}</p>
-
-                            {% if message.media_file %}
-                                <div class="message-media">
-                                    {% if 'jpg' in message.media_file.url or 'png' in message.media_file.url or 'jpeg' in message.media_file.url %}
-                                        <a href="{{ message.media_file.url }}" target="_blank">
-                                            <img src="{{ message.media_file.url }}" alt="Attached media">
-                                        </a>
-                                    {% else %}
-                                        <a href="{{ message.media_file.url }}" target="_blank" class="file-attachment">
-                                            <img src="{% static 'icons/search.png' %}" alt="File" style="width: 16px; margin-right: 8px;">
-                                            View Attached File
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
                             
-                            <span class="message-timestamp">
-                                {{ message.timestamp|date:"P M d" }}
-                                {% if message.sender == request.user and message.is_read %}
-                                    <span class="read-receipt">(Read)</span>
+                            {% if message.is_moderator_deleted %}
+                                <p style="color: red; font-style: italic;">This message has been removed by a moderator.</p>
+                            {% else %}
+                                <p>{{ message.text_content }}</p>
+
+                                {% if message.media_file %}
+                                    <div class="message-media">
+                                        {% if 'jpg' in message.media_file.url or 'png' in message.media_file.url or 'jpeg' in message.media_file.url %}
+                                            <a href="{{ message.media_file.url }}" target="_blank">
+                                                <img src="{{ message.media_file.url }}" alt="Attached media">
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ message.media_file.url }}" target="_blank" class="file-attachment">
+                                                <img src="{% static 'icons/search.png' %}" alt="File" style="width: 16px; margin-right: 8px;">
+                                                View Attached File
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 {% endif %}
-                            </span>
+                                
+                                <span class="message-timestamp">
+                                    {{ message.timestamp|date:"P M d" }}
+                                    {% if message.sender == request.user and message.is_read %}
+                                        <span class="read-receipt">(Read)</span>
+                                    {% endif %}
+                                </span>
+                            {% endif %}
                         </div>
+
+                        {% if message.sender != request.user and not message.is_moderator_deleted %}
+                            <div class="report-btn-container">
+                                <span class="report-btn-icon"
+                                      onclick="openReportModal('{{ message.id }}')"
+                                      style="font-size: 1.2rem; 
+                                             color: #D9534F; 
+                                             font-weight: 900; 
+                                             line-height: 16px; 
+                                             text-align: center;
+                                             width: 16px;
+                                             height: 16px;
+                                             display: block;">
+                                    !
+                                </span>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -113,14 +139,26 @@
                 {% csrf_token %}
                 
                 <label for="media_file_input" class="file-label">
-                    <img src="{% static 'icons/search.png' %}" alt="Attach File" style="width:20px; height:20px; opacity: 0.6;">
+                    <span style="font-size: 40px;
+                                color: #175e52;
+                                font-weight: 300;
+                                line-height: 20px;
+                                opacity: 0.8;
+                                    ">
+                        +
+                    </span>
                 </label>
                 <input type="file" name="media_file" id="media_file_input" style="display: none;">
                 
                 <textarea name="text_content" placeholder="Type your message..." rows="1" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" autocomplete="off"></textarea>
                 
                 <button type="submit" class="btn-send">
-                    <img src="{% static 'icons/search.png' %}" alt="Send" style="width:20px; height:20px;">
+                    <span style="font-size: 20px;
+                                line-height: 20px;
+                                color: white;
+                                display: inline-block;">
+                        &#10148;
+                    </span>
                 </button>
             </form>
 
@@ -135,8 +173,112 @@
 
 </div>
 
-
+<div id="reportModal" class="report-modal" onclick="closeReportModalOutside(event)">
+    <div class="report-modal-content">
+        <h3>Report Message</h3>
+        <p>Please briefly explain why you are reporting this message:</p>
+        <textarea id="reportReason" placeholder="e.g., Hate speech, spam, harassment, etc." maxlength="500"></textarea>
+        <input type="hidden" id="messageIdToReport">
+        <div class="report-actions">
+            <button class="btn btn-secondary" onclick="closeReportModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="submitReport()">Submit Report</button>
+        </div>
+        <p id="reportFeedback" style="color: green; margin-top: 10px;"></p>
+    </div>
+</div>
 <script>
+    // Helper function to get the CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // --- Report Modal Functions ---
+
+    function openReportModal(messageId) {
+        document.getElementById('messageIdToReport').value = messageId;
+        document.getElementById('reportModal').style.display = 'flex';
+        document.getElementById('reportReason').value = ''; // Clear previous reason
+        document.getElementById('reportFeedback').textContent = ''; // Clear feedback
+    }
+
+    function closeReportModal() {
+        document.getElementById('reportModal').style.display = 'none';
+    }
+
+    function closeReportModalOutside(event) {
+        if (event.target.id === 'reportModal') {
+            closeReportModal();
+        }
+    }
+
+    function submitReport() {
+        const messageId = document.getElementById('messageIdToReport').value;
+        const reason = document.getElementById('reportReason').value.trim();
+        const feedbackElement = document.getElementById('reportFeedback');
+
+        if (reason.length < 5) {
+            feedbackElement.style.color = 'red';
+            feedbackElement.textContent = 'Please provide a brief reason (at least 5 characters).';
+            return;
+        }
+
+        feedbackElement.style.color = 'gray';
+        feedbackElement.textContent = 'Submitting...';
+
+        // *** THIS IS THE FIX ***
+        // Replaced '12345F' with '123456' to match the string being replaced
+        const url = "{% url 'report_message' message_id=123456 %}".replace('123456', messageId);
+        
+        const csrfToken = getCookie('csrftoken');
+        
+        const formData = new FormData();
+        formData.append('reason', reason);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok && response.headers.get('content-type')?.includes('application/json')) {
+                return response.json(); 
+            } else if (!response.ok) {
+                throw new Error('Server returned an error.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success' || data.status === 'exists') {
+                feedbackElement.style.color = 'green';
+                feedbackElement.textContent = data.message;
+                setTimeout(closeReportModal, 2000); 
+            } else {
+                feedbackElement.style.color = 'red';
+                feedbackElement.textContent = data.message || 'An unknown error occurred during submission.';
+            }
+        })
+        .catch(error => {
+            console.error('Error reporting message:', error);
+            feedbackElement.style.color = 'red';
+            feedbackElement.textContent = 'Failed to submit report. Please try again.';
+        });
+    }
+
+    // --- Existing DOM Content Loaded Logic ---
     document.addEventListener('DOMContentLoaded', function() {
         // --- SCROLL TO BOTTOM ---
         const chatWindow = document.getElementById('chat-window');

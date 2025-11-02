@@ -14,4 +14,6 @@ urlpatterns = [
 
     # REMOVED THE REDUNDANT/ERRONEOUS LINE:
     # path('start/<int:recipient_id>/', views.start_chat, name='start_chat'),
+
+    path('report/<int:message_id>/', views.report_message_view, name='report_message'),
 ]

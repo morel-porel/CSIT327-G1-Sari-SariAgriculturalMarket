@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/notification_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="notification-page-wrapper">
+    <div class="notification-container-main">
+        <h2 class="page-title">Alerts & Warnings</h2>
+        
+        {% if notifications %}
+            <ul class="notification-list">
+                {% for notification in notifications %}
+                    {% comment %} Uses the 'warning' class for messages without links (moderation warnings) {% endcomment %}
+                    <li class="notification-item {% if not notification.is_read %}unread{% endif %} 
+                                        {% if not notification.link %}warning{% endif %}">
+                        
+                        <div class="icon-section">
+                            {% if not notification.link %}
+                                <img src="{% static 'icons/warning.png' %}" alt="Warning" class="alert-icon">
+                            {% else %}
+                                <img src="{% static 'icons/message.png' %}" alt="Message" class="alert-icon">
+                            {% endif %}
+                        </div>
+
+                        <div class="content-section">
+                            {% if notification.link %}
+                                <a href="{{ notification.link }}" class="notification-link">
+                                    <p class="notification-message">{{ notification.message }}</p>
+                                </a>
+                            {% else %}
+                                <p class="notification-message" style="font-weight: bold; color: #cc0000;">
+                                    {{ notification.message }}
+                                </p>
+                            {% endif %}
+                            <small class="notification-timestamp">
+                                Received {{ notification.timestamp|timesince }} ago
+                            </small>
+                        </div>
+                        
+                        {% if not notification.is_read %}
+                            <span class="status-dot"></span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-notifications">
+                <p>All clear! You have no new alerts or warnings.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
