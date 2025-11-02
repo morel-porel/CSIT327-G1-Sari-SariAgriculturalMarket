@@ -38,12 +38,14 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                if user.is_superuser:
+                    return redirect('admin_dashboard')
                 if user.role == 'VENDOR':
                     return redirect('home') 
                 elif user.role == 'CONSUMER':
                     return redirect('home')
                 else: 
-                    return redirect('/admin/')
+                    return redirect('home')
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})

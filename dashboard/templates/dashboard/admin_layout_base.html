@@ -1,0 +1,56 @@
+<!-- dashboard/templates/dashboard/admin_layout_base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - Sari-Sari</title>
+    <link rel="stylesheet" href="{% static 'dashboard/admin_panel.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <header class="panel-header">
+        <div class="header-title">Sari-Sari Agricultural Market</div>
+        <div class="panel-user-info">
+            <span>Admin Panel</span>
+            <!-- You can add a user icon here -->
+        </div>
+    </header>
+
+    <div class="panel-container">
+        <aside class="panel-sidebar">
+            <nav>
+                <ul>
+                    <li {% if request.resolver_match.url_name == 'admin_dashboard' %}class="active"{% endif %}>
+                        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+                    </li>
+                    <!-- <li {% if request.resolver_match.url_name == 'reported_users' %}class="active"{% endif %}>
+                        <a href="#">Reported Users</a>
+                    </li> -->
+                    
+                    <li {% if request.resolver_match.url_name == 'vendor_verification' %}class="active"{% endif %}>
+                        <a href="{% url 'vendor_verification' %}">Vendor Verification</a>
+                    </li>
+                    <!-- <li><a href="{% url 'inbox' %}">Messages</a></li>
+                    <li><a href="#">Settings</a></li> -->
+                    <li style="margin-top: 2rem;">
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="panel-content">
+            {% block panel_content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer class="panel-footer">
+        &copy; {% now "Y" %} Sari-Sari | Admin Montion
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

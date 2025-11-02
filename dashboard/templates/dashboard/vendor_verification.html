@@ -1,17 +1,14 @@
-{% extends 'dashboard/dashboard_base.html' %}
+{% extends 'dashboard/admin_layout_base.html' %}
 {% load static %}
+
+{% block title %}Vendor Verification{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
 {% endblock %}
 
-{% block content %}
-<div class="admin-container">
-    <header class="admin-header">
-        <h1>Vendor Verification</h1>
-        <a href="{% url 'admin_dashboard' %}" style="color:white;">Back to Dashboard</a>
-    </header>
-
+{% block panel_content %}
+    <h2 class="section-title">Vendor Verification</h2>
     <div class="table-container">
         <table class="report-table">
             <thead>
@@ -44,5 +41,4 @@
             </tbody>
         </table>
     </div>
-</div>
 {% endblock %}
