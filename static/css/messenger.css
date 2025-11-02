@@ -353,10 +353,6 @@ main.main-container {
     justify-content: center;
     transition: background-color 0.2s;
 }
-.file-label:hover,
-.btn-send:hover {
-    background-color: #f0f0f0;
-}
 .btn-send {
     background-color: #175e52; /* Blue */
 }
@@ -366,3 +362,106 @@ main.main-container {
 .btn-send:hover {
     background-color: #175e52; /* Darker blue */
 }
+
+/* --- Report Button --- */
+.message {
+    position: relative; /* Ensure report button is positioned relative to the message */
+    /* Add extra padding to message container to make room for the report icon */
+    padding-right: 30px; 
+}
+
+.report-btn-container {
+    /* Position the report icon near the received message bubble */
+    position: absolute;
+    top: 50%; 
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 5;
+}
+
+/* Position for received messages (left side) */
+.message.received .report-btn-container {
+    right: 5px; /* Adjust this value to place it correctly next to the bubble */
+}
+
+/* Hide report button on sent messages (optional, but good UX) */
+.message.sent .report-btn-container {
+    display: none;
+}
+
+.report-btn-icon {
+    width: 16px; 
+    height: 16px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.report-btn-icon:hover {
+    opacity: 1.0;
+    filter: invert(30%) sepia(80%) saturate(600%) hue-rotate(330deg); /* Optional: turn icon red on hover */
+}
+
+
+/* --- Report Modal --- */
+.report-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
+    display: none; /* Hidden by default, controlled by JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top of everything */
+}
+
+.report-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    animation: fadeIn 0.3s ease-out; /* Optional fade-in effect */
+}
+
+.report-modal-content h3 {
+    margin-top: 0;
+    color: #cc0000; /* Red color for warning tone */
+}
+
+.report-modal-content textarea {
+    width: 100%;
+    height: 100px;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.report-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+/* Assuming you have .btn styles defined elsewhere */
+.report-actions .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.report-actions .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+

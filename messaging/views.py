@@ -2,13 +2,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from .models import Conversation, Message
+# UPDATED: Import the new MessageReport model
+from .models import Conversation, Message, MessageReport 
 from users.models import CustomUser
 from notifications.utils import create_notification
 from django.urls import reverse
 from notifications.models import Notification
+# NEW IMPORTS for the report AJAX endpoint
+from django.http import JsonResponse, HttpResponseBadRequest 
+from django.views.decorators.http import require_POST 
 
-import datetime # <--- IMPORT IS ADDED HERE
+import datetime 
 
 # This is our new, single template file
 MESSENGER_TEMPLATE = 'messaging/messenger.html'
@@ -27,7 +31,9 @@ def inbox_view(request):
     conversations_with_recipient = []
     for convo in all_conversations:
         recipient = convo.participants.exclude(id=request.user.id).first()
-        last_message = convo.messages.all().order_by('-timestamp').first()
+        # NOTE: If you want to only show the last *undeleted* message in the inbox list, 
+        # modify this line: .filter(is_moderator_deleted=False)
+        last_message = convo.messages.all().order_by('-timestamp').first() 
         unread_count = convo.messages.filter(Q(is_read=False) & ~Q(sender=request.user)).count()
         
         conversations_with_recipient.append((convo, recipient, last_message, unread_count))
@@ -61,7 +67,7 @@ def conversation_detail_view(request, conversation_id):
 
     # Security check
     if request.user not in conversation.participants.all():
-        return redirect('inbox') # 'inbox' should be the name of your inbox_view URL
+        return redirect('inbox')
 
     # --- Handle sending a new message (POST request) ---
     if request.method == 'POST':
@@ -102,7 +108,9 @@ def conversation_detail_view(request, conversation_id):
     ).update(is_read=True)
 
     # 1. Get data for the Right Panel (Active Chat)
-    messages = conversation.messages.all().order_by('timestamp')
+    # UPDATED: Filter out messages that have been deleted by a moderator
+    messages = conversation.messages.filter(is_moderator_deleted=False).order_by('timestamp')
+    
     # Mark messages from the *other* user as read
     messages.filter(conversation=conversation).exclude(sender=request.user).update(is_read=True)
     other_participant = conversation.participants.exclude(id=request.user.id).first()
@@ -132,18 +140,53 @@ def conversation_detail_view(request, conversation_id):
         
         # Data for the Right Panel
         'conversation': conversation,
-        'chat_messages': messages,  # <--- RENAMED (This fixes the bug)
+        'chat_messages': messages,
         'other_participant': other_participant
     }
     
     # Render the new messenger.html template
     return render(request, MESSENGER_TEMPLATE, context)
 
+
+# NEW VIEW: To handle the report message feature (AJAX endpoint)
+@login_required
+@require_POST
+def report_message_view(request, message_id):
+    """
+    Handles the AJAX request to report a message.
+    """
+    message = get_object_or_404(Message, id=message_id)
+    reporter = request.user
+    reason = request.POST.get('reason', '').strip() # The 'reason' is the report message
+
+    # Security check: User must be a participant in the conversation
+    if reporter not in message.conversation.participants.all():
+        return HttpResponseBadRequest("Cannot report a message in a conversation you are not part of.")
+
+    if not reason:
+        return HttpResponseBadRequest("A reason for the report is required.")
+    
+    # Prevent duplicate reports from the same user on the same message
+    if MessageReport.objects.filter(message=message, reporter=reporter).exists():
+        return JsonResponse({'status': 'exists', 'message': 'You have already reported this message.'}, status=200)
+
+    # Create the report
+    MessageReport.objects.create(
+        message=message,
+        reporter=reporter,
+        reason=reason
+    )
+    
+    # Optional: Send a notification to staff/admin to alert them of the new report
+    # The report will also appear in the Django Admin Moderation Dashboard (Message Reports)
+    
+    return JsonResponse({'status': 'success', 'message': 'Message reported successfully. An admin will review it shortly.'})
+
+
 @login_required
 def start_conversation_view(request, recipient_id):
     """
     Finds or creates a 1-on-1 conversation and redirects to it.
-    (This view logic does not need to change)
     """
     recipient = get_object_or_404(CustomUser, id=recipient_id)
 
