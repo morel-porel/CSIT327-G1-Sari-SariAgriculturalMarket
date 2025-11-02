@@ -1,18 +1,13 @@
-{% extends 'dashboard/dashboard_base.html' %}
+{% extends 'dashboard/admin_layout_base.html' %}
 {% load static %}
+
+{% block title %}Dashboard{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
 {% endblock %}
 
-{% block content %}
-<div class="admin-container">
-    <header class="admin-header">
-        <h1>Sari-Sari Agricultural Market</h1>
-        <div class="admin-profile">
-            <span>{{ request.user.username }} (Admin)</span>
-        </div>
-    </header>
+{% block panel_content %}
 
     <div class="filter-bar">
         <input type="date" name="start_date">
@@ -68,7 +63,7 @@
             </div>
         </div>
     </div>
-</div>
+
 {% endblock %}
 
 {% block scripts %}
