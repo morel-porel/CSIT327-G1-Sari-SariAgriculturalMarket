@@ -1,0 +1,141 @@
+/* dashboard/static/dashboard/admin.css */
+
+:root {
+    --admin-bg: #f4f7f6;
+    --admin-primary: #175e52;
+    --admin-light-green: #e8f5e9;
+    --admin-text: #333;
+    --admin-white: #fff;
+    --admin-border: #e0e0e0;
+}
+
+.dashboard-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--admin-bg);
+    font-family: sans-serif;
+}
+
+/* We give the main container a max-width and let it handle the overall padding */
+.admin-container {
+    padding: 1.5rem; /* CHANGE: Reduced padding */
+    max-width: 1200px;
+    width: 95%; /* Ensure it doesn't touch screen edges */
+    margin: 1rem auto;
+    background-color: var(--admin-white); /* Give it a background to contain everything */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--admin-primary);
+    color: var(--admin-white);
+    padding: 0.75rem 1.5rem; /* CHANGE: Reduced vertical padding */
+    border-radius: 8px; /* CHANGE: Slightly smaller radius */
+    margin-bottom: 1.5rem; /* CHANGE: Reduced margin */
+}
+.admin-header h1 { margin: 0; font-size: 1.25rem; } /* CHANGE: Reduced font size */
+.admin-profile { display: flex; align-items: center; gap: 0.5rem; }
+
+.filter-bar {
+    display: flex;
+    gap: 0.75rem; /* CHANGE: Reduced gap */
+    align-items: center;
+    background: var(--admin-white);
+    padding: 0.75rem; /* CHANGE: Reduced padding */
+    border-radius: 8px;
+    margin-bottom: 1.5rem; /* CHANGE: Reduced margin */
+    border: 1px solid var(--admin-border);
+}
+.filter-bar input, .filter-bar select {
+    padding: 0.5rem; /* CHANGE: Reduced padding */
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+}
+.btn-generate {
+    background-color: var(--admin-primary);
+    color: var(--admin-white);
+    padding: 0.5rem 1rem; /* CHANGE: Reduced padding */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.section-title {
+    font-size: 1.1rem; /* CHANGE: Reduced font size */
+    font-weight: bold;
+    color: var(--admin-text);
+    margin-bottom: 0.75rem; /* CHANGE: Reduced margin */
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; /* CHANGE: Reduced gap */
+    margin-bottom: 1.5rem; /* CHANGE: Reduced margin */
+}
+
+.stat-card {
+    background: var(--admin-light-green);
+    padding: 1rem; /* CHANGE: Reduced padding */
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #d4e9d7;
+}
+.stat-card .label { font-size: 0.8rem; } /* CHANGE: Reduced font size */
+.stat-card .value { font-size: 1.5rem; font-weight: bold; color: var(--admin-primary); margin-top: 0.25rem; } /* CHANGE: Reduced font size and margin */
+
+.report-details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem; /* CHANGE: Reduced gap */
+}
+
+.chart-container, .table-container {
+    background: var(--admin-white);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--admin-border);
+}
+
+/* --- ADD THIS NEW RULE FOR THE CHART --- */
+.chart-container {
+    position: relative; /* Required for the canvas to be constrained */
+    height: 300px; /* Give the container a fixed height */
+}
+
+.report-table { width: 100%; border-collapse: collapse; }
+.report-table th, .report-table td {
+    padding: 0.5rem; /* CHANGE: Reduced padding */
+    font-size: 0.85rem; /* CHANGE: Reduced font size */
+    text-align: left;
+    border-bottom: 1px solid var(--admin-border);
+}
+.report-table th { background-color: #f8f9fa; }
+
+.export-buttons {
+    margin-top: 0.75rem; /* CHANGE: Reduced margin */
+    display: flex;
+    gap: 0.5rem; /* CHANGE: Reduced gap */
+    justify-content: flex-end;
+}
+.btn-export {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 0.4rem 0.8rem; /* CHANGE: Reduced padding */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem; /* CHANGE: Reduced font size */
+}
+
+/* Vendor Verification Page Specific Styles */
+.vendor-table-actions {
+    width: 100px; /* Give the action column a fixed width */
+}
