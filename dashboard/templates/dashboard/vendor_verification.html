@@ -1,0 +1,48 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <header class="admin-header">
+        <h1>Vendor Verification</h1>
+        <a href="{% url 'admin_dashboard' %}" style="color:white;">Back to Dashboard</a>
+    </header>
+
+    <div class="table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Shop Name</th>
+                    <th>Owner</th>
+                    <th>Permit Number</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendor in vendors %}
+                <tr>
+                    <td>{{ vendor.shop_name }}</td>
+                    <td>{{ vendor.user.username }}</td>
+                    <td>{{ vendor.business_permit_number }}</td>
+                    <td>{% if vendor.is_verified %}Verified{% else %}Not Verified{% endif %}</td>
+                    <td>
+                        <form method="post" style="margin:0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="profile_id" value="{{ vendor.user.id }}">
+                            <button type="submit" class="btn-generate">
+                                {% if vendor.is_verified %}Un-verify{% else %}Verify{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

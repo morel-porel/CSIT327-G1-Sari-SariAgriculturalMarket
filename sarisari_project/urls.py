@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('pages.urls')), # Include the pages app URLs
     path('notifications/', include('notifications.urls')),
     path('messages/', include('messaging.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]
 
 # CRITICAL FIX: Conditionally serve Static and Media files only when DEBUG=True

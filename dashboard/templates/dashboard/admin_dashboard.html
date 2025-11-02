@@ -1,0 +1,123 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <header class="admin-header">
+        <h1>Sari-Sari Agricultural Market</h1>
+        <div class="admin-profile">
+            <span>{{ request.user.username }} (Admin)</span>
+        </div>
+    </header>
+
+    <div class="filter-bar">
+        <input type="date" name="start_date">
+        <input type="date" name="end_date">
+        <input type="text" placeholder="Products">
+        <button class="btn-generate">Generate Report</button>
+    </div>
+
+    <h2 class="section-title">Analytics Overview</h2>
+    <div class="analytics-grid">
+        <div class="stat-card">
+            <div class="label">Total Users</div>
+            <div class="value">{{ total_users }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Vendors</div>
+            <div class="value">{{ total_vendors }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Sales</div>
+            <div class="value">{{ total_sales_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Reported Listings</div>
+            <div class="value">{{ total_sales_value }}</div>
+        </div>
+    </div>
+
+    <h2 class="section-title">Report Details</h2>
+    <div class="report-details-grid">
+        <div class="chart-container">
+            <strong>Sales Trends</strong>
+            <!-- The canvas where our chart will be drawn -->
+            <canvas id="salesTrendChart"></canvas>
+        </div>
+        <div class="table-container">
+            <table class="report-table">
+                <thead><tr><th>ID</th><th>Type</th><th>Value</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for item in report_data %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.type }}</td>
+                        <td>{{ item.value }}</td>
+                        <td>{{ item.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="export-buttons">
+                <button class="btn-export">Download PDF</button>
+                <button class="btn-export">Export CSV</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ chart_labels|json_script:"chart-labels" }}
+    {{ chart_data|json_script:"chart-data" }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const labels = JSON.parse(document.getElementById('chart-labels').textContent);
+            const data = JSON.parse(document.getElementById('chart-data').textContent);
+            
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            
+            const salesTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales',
+                        data: data,
+                        borderColor: 'rgb(23, 94, 82)',
+                        backgroundColor: 'rgba(232, 245, 233, 0.5)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- dashboard/templates/dashboard/dashboard_base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sari-Sari</title>
+    <!-- This links to your dashboard-specific CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block css %}{% endblock %}
+</head>
+<body class="dashboard-body">
+    {% block content %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
