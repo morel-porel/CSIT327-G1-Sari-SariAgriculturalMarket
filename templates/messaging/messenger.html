@@ -93,16 +93,18 @@
 
                                 {% if message.media_file %}
                                     <div class="message-media">
-                                        {% if 'jpg' in message.media_file.url or 'png' in message.media_file.url or 'jpeg' in message.media_file.url %}
-                                            <a href="{{ message.media_file.url }}" target="_blank">
-                                                <img src="{{ message.media_file.url }}" alt="Attached media">
-                                            </a>
-                                        {% else %}
-                                            <a href="{{ message.media_file.url }}" target="_blank" class="file-attachment">
-                                                <img src="{% static 'icons/search.png' %}" alt="File" style="width: 16px; margin-right: 8px;">
-                                                View Attached File
-                                            </a>
-                                        {% endif %}
+                                        {% with message_url_lower=message.media_file.url|lower %}
+                                            {% if '.jpg' in message_url_lower or '.png' in message_url_lower or '.jpeg' in message_url_lower or '.gif' in message_url_lower %}
+                                                <a href="{{ message.media_file.url }}" target="_blank">
+                                                    <img src="{{ message.media_file.url }}" alt="Attached media">
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ message.media_file.url }}" target="_blank" class="file-attachment">
+                                                    <img src="{% static 'icons/search.png' %}" alt="File" style="width: 16px; margin-right: 8px;">
+                                                    View Attached File
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
                                     </div>
                                 {% endif %}
                                 
@@ -135,28 +137,44 @@
                 {% endfor %}
             </div>
 
+            <div id="file-preview-container" 
+                 style="display: none; 
+                        padding: 10px 20px; 
+                        background-color: #f0f0f0; 
+                        border-top: 1px solid #e0e0e0;
+                        font-size: 0.9em; 
+                        color: #333;">
+            </div>
             <form class="message-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
                 <label for="media_file_input" class="file-label">
-                    <span style="font-size: 40px;
-                                color: #175e52;
-                                font-weight: 300;
-                                line-height: 20px;
-                                opacity: 0.8;
-                                    ">
+                    <span style="font-size: 26px; 
+                                 color: #175e52; 
+                                 font-weight: 300; 
+                                 line-height: 20px; 
+                                 opacity: 0.8;
+                                 padding-bottom: 4px;">
                         +
                     </span>
                 </label>
-                <input type="file" name="media_file" id="media_file_input" style="display: none;">
+                
+                <input type="file" 
+                       name="media_file" 
+                       id="media_file_input" 
+                       style="display: none;" 
+                       onchange="updateFilePreview()">
                 
                 <textarea name="text_content" placeholder="Type your message..." rows="1" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" autocomplete="off"></textarea>
                 
                 <button type="submit" class="btn-send">
-                    <span style="font-size: 20px;
-                                line-height: 20px;
-                                color: white;
-                                display: inline-block;">
+                    <span style="font-size: 20px; 
+                                 line-height: 20px; 
+                                 color: white; 
+                                 margin-left: 2px; 
+                                 margin-bottom: 2px;
+                                 transform: rotate(45deg);
+                                 display: inline-block;">
                         &#10148;
                     </span>
                 </button>
@@ -186,6 +204,7 @@
         <p id="reportFeedback" style="color: green; margin-top: 10px;"></p>
     </div>
 </div>
+
 <script>
     // Helper function to get the CSRF token from cookies
     function getCookie(name) {
@@ -205,7 +224,6 @@
     }
 
     // --- Report Modal Functions ---
-
     function openReportModal(messageId) {
         document.getElementById('messageIdToReport').value = messageId;
         document.getElementById('reportModal').style.display = 'flex';
@@ -237,8 +255,6 @@
         feedbackElement.style.color = 'gray';
         feedbackElement.textContent = 'Submitting...';
 
-        // *** THIS IS THE FIX ***
-        // Replaced '12345F' with '123456' to match the string being replaced
         const url = "{% url 'report_message' message_id=123456 %}".replace('123456', messageId);
         
         const csrfToken = getCookie('csrftoken');
@@ -276,6 +292,32 @@
             feedbackElement.style.color = 'red';
             feedbackElement.textContent = 'Failed to submit report. Please try again.';
         });
+    }
+
+    // --- File Preview Functions ---
+    function updateFilePreview() {
+        const fileInput = document.getElementById('media_file_input');
+        const previewContainer = document.getElementById('file-preview-container');
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            const filename = fileInput.files[0].name;
+            // Display the file name and a 'remove' button
+            previewContainer.innerHTML = 'Attached: <strong>' + filename + '</strong>' +
+                ' <span onclick="removeFile()" style="cursor: pointer; color: #D9534F; font-weight: bold; margin-left: 10px; float: right;">Remove</span>';
+            previewContainer.style.display = 'block';
+        } else {
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'none';
+        }
+    }
+
+    function removeFile() {
+        const fileInput = document.getElementById('media_file_input');
+        fileInput.value = ''; // This clears the selected file
+        
+        const previewContainer = document.getElementById('file-preview-container');
+        previewContainer.innerHTML = '';
+        previewContainer.style.display = 'none';
     }
 
     // --- Existing DOM Content Loaded Logic ---
