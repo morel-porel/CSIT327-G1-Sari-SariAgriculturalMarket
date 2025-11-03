@@ -1,0 +1,164 @@
+/* NEW FILE: dashboard/static/dashboard/reports.css */
+
+/* Header and Filter Bar */
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-bar input[type="text"] {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-filter {
+    padding: 0.5rem 1rem;
+    background-color: var(--panel-white);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-filter:hover {
+    background-color: #f9f9f9;
+}
+
+/* Table container */
+.table-container {
+    background: var(--panel-white);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 0.9rem;
+}
+
+.report-table th {
+    background-color: #fcfcfc;
+    color: #555;
+    font-weight: 600;
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Make resolved reports look different */
+.report-table tr.is-resolved td {
+    color: #888;
+    background-color: #fafafa;
+}
+
+.message-content small {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+/* Status Labels */
+.status-pending {
+    background-color: #fffbeb;
+    color: #b45309;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.status-resolved {
+    background-color: #f0fdf4;
+    color: #166534;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.4rem 0.6rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-resolve {
+    background-color: #dcfce7;
+    color: #166534;
+}
+.btn-resolve:hover {
+    background-color: #bbf7d0;
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+.btn-delete:hover {
+    background-color: #fecaca;
+}
+
+.btn-delete-msg {
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-size: 0.8rem;
+}
+.btn-delete-msg:hover {
+    background-color: #fecaca;
+}
+
+/* Footer Buttons */
+.report-footer-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.btn-export-reports {
+    padding: 0.6rem 1.2rem;
+    background-color: var(--panel-white);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-export-reports:hover {
+    background-color: #f9f9f9;
+}

@@ -1,0 +1,84 @@
+{% extends 'dashboard/admin_layout_base.html' %}
+{% load static %}
+
+{% block title %}Reported Messages{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/reports.css' %}">
+{% endblock %}
+
+{% block panel_content %}
+
+    <div class="report-header">
+        <h2 class="section-title">Reported Messages</h2>
+        <div class="filter-bar">
+            <input type="text" placeholder="Search Reports...">
+            <button class="btn-filter">Filter</button>
+        </div>
+    </div>
+
+    <form method="POST" class="report-form">
+        {% csrf_token %}
+        <div class="table-container">
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Reported Message</th>
+                        <th>Reason</th>
+                        <th>Reported By</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr class_name="{% if report.is_resolved %}is-resolved{% endif %}">
+                        <td>{{ report.id }}</td>
+                        <td class="message-content">"{{ report.message.text_content|truncatechars:100 }}"
+                            <small>(from: {{ report.message.sender.username }})</small>
+                        </td>
+                        <td>{{ report.reason|truncatechars:50 }}</td>
+                        <td>{{ report.reporter.username }}</td>
+                        <td>{{ report.reported_at|date:"Oct d, Y" }}</td>
+                        <td>
+                            {% if report.is_resolved %}
+                                <span class="status-resolved">Resolved</span>
+                            {% else %}
+                                <span class="status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-buttons">
+                            {% if not report.is_resolved %}
+                                <button type="submit" name="action_resolve" value="1" formaction="{% url 'reported_messages' %}" class="btn-action btn-resolve" title="Mark as Resolved">
+                                    <input type="hidden" name="report_id" value="{{ report.id }}">
+                                    &#x2713;
+                                </button>
+                            {% endif %}
+                            <button type="submit" name="action_delete_report" value="1" formaction="{% url 'reported_messages' %}" class="btn-action btn-delete" title="Delete Report">
+                                <input type="hidden" name="report_id" value="{{ report.id }}">
+                                &#x1F5D1;
+                            </button>
+                            <button type="submit" name="action_delete_message" value="1" formaction="{% url 'reported_messages' %}" class="btn-action btn-delete-msg" title="Delete Original Message">
+                                <input type="hidden" name="report_id" value="{{ report.id }}">
+                                &#x1F5D1; (Msg)
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">No reported messages found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="report-footer-buttons">
+            <button type="button" class="btn-export-reports">Refresh Data</button>
+            <button type="button" class="btn-export-reports">Export CSV</button>
+        </div>
+    </form>
+
+{% endblock %}

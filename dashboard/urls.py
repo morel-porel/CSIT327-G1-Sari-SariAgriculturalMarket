@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.admin_dashboard_view, name='admin_dashboard'),
     # The new page for verifying vendors
     path('vendors/', views.vendor_verification_view, name='vendor_verification'),
+    path('reported-messages/', views.reported_messages_view, name='reported_messages'),
 ]
