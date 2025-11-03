@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required
 from users.models import CustomUser, VendorProfile
 from datetime import datetime, timedelta
 from django.utils import timezone  # Import timezone
+from django.contrib import messages  # <-- IMPORT THIS
 
-# Import your MessageReport model
+# Import your models
 from messaging.models import MessageReport
+from notifications.models import Notification
 
 @login_required
 def admin_dashboard_view(request):
@@ -82,7 +84,7 @@ def vendor_verification_view(request):
     return render(request, 'dashboard/vendor_verification.html', context)
 
 
-# --- NEW VIEW FOR REPORTED MESSAGES ---
+# --- VIEW FOR REPORTED MESSAGES ---
 
 @login_required
 def reported_messages_view(request):
@@ -92,7 +94,34 @@ def reported_messages_view(request):
     # Handle POST requests for actions
     if request.method == 'POST':
         report_id = request.POST.get('report_id')
-        report = MessageReport.objects.get(id=report_id)
+        
+        try:
+            report = MessageReport.objects.get(id=report_id)
+        except MessageReport.DoesNotExist:
+            # Report might have been deleted in another tab, just redirect
+            return redirect('reported_messages')
+
+        # --- THIS LOGIC PREVENTS *NEW* STUCK NOTIFICATIONS ---
+        try:
+            # Get the user who sent the offending message
+            offending_user = report.message.sender
+            
+            # Find all "Warning" notifications for this user (which have no link)
+            notifications_to_delete = Notification.objects.filter(
+                recipient=offending_user,
+                message__startswith="Warning: Your message,",
+                link__isnull=True
+            )
+            
+            # Delete them all
+            if notifications_to_delete.exists():
+                notifications_to_delete.delete()
+                
+        except Exception as e:
+            # If this fails, we still want the admin action to complete.
+            print(f"Error deleting user warning notifications for report {report_id}: {e}")
+        # --- END NOTIFICATION LOGIC ---
+
 
         if 'action_resolve' in request.POST:
             # Mark the report as resolved
@@ -104,6 +133,7 @@ def reported_messages_view(request):
         
         elif 'action_delete_report' in request.POST:
             # Delete the report itself
+            # The notifications are already deleted from the logic above.
             report.delete()
 
         elif 'action_delete_message' in request.POST:
@@ -129,3 +159,32 @@ def reported_messages_view(request):
         'reports': reports
     }
     return render(request, 'dashboard/reported_messages.html', context)
+
+
+# --- NEW VIEW TO CLEAR *ALL* STUCK WARNINGS ---
+@login_required
+def clear_all_warnings_view(request):
+    if not request.user.is_superuser:
+        return redirect('home')
+
+    if request.method == 'POST':
+        # Find ALL moderation warnings in the entire database
+        # These are defined as having a message starting with "Warning:"
+        # AND having no link (link__isnull=True)
+        #
+        warnings_to_delete = Notification.objects.filter(
+            message__startswith="Warning: Your message,",
+            link__isnull=True
+        )
+        
+        count = warnings_to_delete.count()
+        if count > 0:
+            warnings_to_delete.delete()
+            messages.success(request, f"Successfully cleared {count} stuck warning notifications.")
+        else:
+            messages.info(request, "No stuck warning notifications were found.")
+            
+        return redirect('reported_messages')
+
+    # If GET request, just go back to the reports page
+    return redirect('reported_messages')

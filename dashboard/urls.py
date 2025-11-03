@@ -8,4 +8,5 @@ urlpatterns = [
     # The new page for verifying vendors
     path('vendors/', views.vendor_verification_view, name='vendor_verification'),
     path('reported-messages/', views.reported_messages_view, name='reported_messages'),
+    path('reported-messages/clear-warnings/', views.clear_all_warnings_view, name='clear_all_warnings'),
 ]
