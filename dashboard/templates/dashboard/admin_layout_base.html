@@ -33,6 +33,11 @@
                     <li {% if request.resolver_match.url_name == 'vendor_verification' %}class="active"{% endif %}>
                         <a href="{% url 'vendor_verification' %}">Vendor Verification</a>
                     </li>
+
+                    <li {% if request.resolver_match.url_name == 'reported_messages' %}class="active"{% endif %}>
+                        <a href="{% url 'reported_messages' %}">Reported Messages</a>
+                    </li>
+                    
                     <!-- <li><a href="{% url 'inbox' %}">Messages</a></li>
                     <li><a href="#">Settings</a></li> -->
                     <li style="margin-top: 2rem;">

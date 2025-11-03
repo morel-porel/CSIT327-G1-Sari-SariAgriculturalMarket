@@ -3,6 +3,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from users.models import CustomUser, VendorProfile
 from datetime import datetime, timedelta
+from django.utils import timezone  # Import timezone
+
+# Import your MessageReport model
+from messaging.models import MessageReport
 
 @login_required
 def admin_dashboard_view(request):
@@ -76,3 +80,52 @@ def vendor_verification_view(request):
         'vendors': all_vendors
     }
     return render(request, 'dashboard/vendor_verification.html', context)
+
+
+# --- NEW VIEW FOR REPORTED MESSAGES ---
+
+@login_required
+def reported_messages_view(request):
+    if not request.user.is_superuser:
+        return redirect('home')
+
+    # Handle POST requests for actions
+    if request.method == 'POST':
+        report_id = request.POST.get('report_id')
+        report = MessageReport.objects.get(id=report_id)
+
+        if 'action_resolve' in request.POST:
+            # Mark the report as resolved
+            report.is_resolved = True
+            report.moderator = request.user
+            report.resolved_at = timezone.now()
+            report.resolution_notes = "Marked as resolved from dashboard."
+            report.save()
+        
+        elif 'action_delete_report' in request.POST:
+            # Delete the report itself
+            report.delete()
+
+        elif 'action_delete_message' in request.POST:
+            # Soft-delete the original message
+            report.message.is_moderator_deleted = True
+            report.message.save()
+            # And also resolve the report
+            report.is_resolved = True
+            report.moderator = request.user
+            report.resolved_at = timezone.now()
+            report.resolution_notes = "Original message deleted by moderator."
+            report.save()
+
+        return redirect('reported_messages')
+
+    # Get all reports, pre-fetching related user data for efficiency
+    reports = MessageReport.objects.all().select_related(
+        'reporter', 
+        'message__sender'
+    ).order_by('is_resolved', '-reported_at') # Show unresolved first
+    
+    context = {
+        'reports': reports
+    }
+    return render(request, 'dashboard/reported_messages.html', context)
