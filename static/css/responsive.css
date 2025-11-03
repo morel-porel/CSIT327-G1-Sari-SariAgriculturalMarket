@@ -67,31 +67,157 @@ body {
    ========================================================================== */
 @media (max-width: 768px) {
 
-    /* --- Global Navbar --- */
+    /* --- NAVBAR: COMPLETE MOBILE RESTRUCTURE --- */
     .navbar {
-        flex-direction: column; /* Stack logo, search, and icons vertically */
-        align-items: flex-start;
-        padding: 10px 15px;
-        gap: 10px;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 100 !important;
+        background: #ffffff !important;
+        border-bottom: 2px solid #e4e4e4 !important;
+        
+        /* Vertical stacking */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 12px 15px !important;
+        gap: 12px !important;
+        height: auto !important;
+    }
+    
+    /* Row 1: Logo (Sari-Sari) */
+    .navbar .logo {
+        order: 1 !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+    }
+    
+    .navbar .logo span {
+        font-size: 22px !important;
+    }
+    
+    .logo-icon {
+        width: 38px !important;
+        height: 38px !important;
+    }
+    
+    /* Row 2: Search Section (includes search bar + recent searches link) */
+    .navbar .search-section {
+        order: 2 !important;
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
     }
     
     .navbar .search-bar {
-        width: 100%;
-        margin: 0; /* Remove the large left margin */
-    }
-
-    .navbar .nav-icons {
-        align-self: flex-end; /* Move icons to the right */
+        width: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
     }
     
-    /* Hide text-based login/signup links on mobile, icons are enough */
-    .nav-text-link {
-        display: none;
+    .navbar .search-bar form {
+        width: 100% !important;
+        display: flex !important;
     }
+    
+    .navbar .search-bar input {
+        width: 100% !important;
+        flex: 1 !important;
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+    }
+    
+    .navbar .search-bar button {
+        padding: 10px 15px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Recent Searches Link - Full width below search */
+    .navbar .recent-search-link {
+        order: 3 !important;
+        width: 100% !important;
+        text-align: center !important;
+        padding: 8px 15px !important;
+        font-size: 13px !important;
+        display: block !important;
+        margin: 0 !important;
+    }
+    
+    /* Row 3: Nav Icons (centered, evenly spaced) */
+    .navbar .nav-icons {
+        order: 4 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 35px !important; /* Even spacing between icons */
+        width: 100% !important;
+        padding: 8px 0 !important;
+        margin: 0 !important;
+    }
+    
+    .navbar .nav-icons a {
+        margin: 0 !important;
+        position: relative !important;
+        display: inline-block !important;
+    }
+    
+    .navbar .nav-icons img.nav-icon {
+        width: 26px !important;
+        height: 26px !important;
+        display: block !important;
+    }
+    
+    /* Hide text login/signup links on mobile */
+    .nav-text-link,
     .navbar .nav-icons span {
-        display: none;
+        display: none !important;
     }
-
+    
+    /* Notification Badge */
+    .notification-count {
+        position: absolute !important;
+        top: -8px !important;
+        right: -8px !important;
+        background-color: #ff3b3b !important;
+        color: white !important;
+        border-radius: 50% !important;
+        padding: 3px 6px !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        min-width: 18px !important;
+        text-align: center !important;
+        line-height: 1 !important;
+    }
+    
+    /* --- PUSH CONTENT DOWN BELOW NAVBAR --- */
+    .container {
+        /* margin-top: 185px !important; Adjust based on navbar height */
+        padding-top: 20px !important;
+        overflow-y: auto !important;
+        height: auto !important;
+        display: block !important;
+    }
+    
+    main.main-container {
+        margin-top: 185px !important;
+        padding: 20px 15px !important;
+    }
+    
+    .search-container {
+        margin-top: 185px !important;
+        padding: 40px 15px !important;
+    }
 
     /* --- Login / Signup Pages --- */
     .main-container {
@@ -166,12 +292,6 @@ body {
      * FIX: Allow the main container on the homepage to scroll vertically on mobile.
      * This overrides the 'overflow: hidden' from home.css.
     */
-    .container {
-        overflow-y: auto; /* Allow vertical scrolling */
-        height: auto;     /* Let the container grow with its content */
-        display: block;   /* Change from flex to a simpler block layout */
-    }
-    
     .sidebar {
         /* We can remove fixed width and height on mobile */
         width: 100%;
@@ -248,5 +368,18 @@ body {
     .message-form textarea {
         padding: 8px 15px;
         margin: 0 5px;
+    }
+}
+
+
+/* ==========================================================================
+   NAVBAR & SEARCH BAR RESPONSIVENESS
+   ========================================================================== */
+
+/* --- TABLET STYLES (992px and smaller) --- */
+@media (max-width: 992px) {
+    .navbar .search-section {
+        flex-grow: 1; /* Allow the search section to take up available space */
+        min-width: 200px; /* Prevent it from getting too small */
     }
 }
