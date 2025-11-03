@@ -61,7 +61,7 @@
                                 <input type="hidden" name="report_id" value="{{ report.id }}">
                                 &#x1F5D1;
                             </button>
-                            <button type="submit" name="action_delete_message" value="1" formaction="{% url 'reported_messages' %}" class="btn-action btn-delete-msg" title="Delete Original Message">
+                             <button type="submit" name="action_delete_message" value="1" formaction="{% url 'reported_messages' %}" class="btn-action btn-delete-msg" title="Delete Original Message">
                                 <input type="hidden" name="report_id" value="{{ report.id }}">
                                 &#x1F5D1; (Msg)
                             </button>
@@ -75,10 +75,17 @@
                 </tbody>
             </table>
         </div>
-        <div class="report-footer-buttons">
-            <button type="button" class="btn-export-reports">Refresh Data</button>
-            <button type="button" class="btn-export-reports">Export CSV</button>
+    </form> <div class="report-footer-buttons">
+        <button type="button" class="btn-export-reports">Refresh Data</button>
+        <button type="button" class="btn-export-reports">Export CSV</button>
+
+        <form method="POST" action="{% url 'clear_all_warnings' %}" style="margin-left: 10px;" 
+            onsubmit="return confirm('Are you sure you want to clear ALL user warning notifications? This will fix stuck notifications and cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="btn-export-reports" style="background-color: #fee2e2; color: #991b1b; border-color: #fecaca;">
+                Clear Stuck Warnings
+            </button>
+        </form>
         </div>
-    </form>
 
 {% endblock %}
