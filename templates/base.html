@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sari-Sari Agricultural Market</title>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     {% block css %}{% endblock %}
@@ -46,6 +47,14 @@
             <a href="#">Follow Us</a>
             <a href="#">Feedback</a>
         </div>
+        <div class="theme-switcher-wrapper">
+            <select id="theme-switcher">
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+                <option value="contrast">High Contrast</option>
+            </select>
+        </div>
     </footer>
+<script src="{% static 'js/theme.js' %}"></script>
 </body>
 </html>

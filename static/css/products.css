@@ -6,18 +6,8 @@ body, html {
     height: auto !important;
 }
 
-:root {
-    --primary-color: #175e52;
-    --secondary-color: #6cdf6e;
-    --danger-color: #dc3545;
-    --info-color: #17a2b8;
-    --light-gray: #f8f9fa;
-    --dark-gray: #343a40;
-    --border-color: #dee2e6;
-}
-
 body {
-    background-color: var(--light-gray);
+    background-color: var(--bg-secondary);
     font-family: 'Song Myung', serif;
 }
 
@@ -26,7 +16,7 @@ body {
  * It is now 'position: fixed' and has all its styles.
 */
 .navbar {
-    background-color: #ffffff;
+    background-color: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
     padding: 12px 30px;
     display: flex;
@@ -43,7 +33,7 @@ body {
 
 .logo-link {
     text-decoration: none;
-    color: var(--dark-gray);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -56,7 +46,7 @@ body {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: var(--accent-primary);
     padding: 4px;
     object-fit: contain;
 }
@@ -86,7 +76,7 @@ body {
 
 .page-header h2 {
     font-size: 2rem;
-    color: var(--dark-gray);
+    color: var(--text-primary);
 }
 
 .btn {
@@ -100,39 +90,39 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
 }
 .btn-primary:hover {
-    background-color: #114e44;
+    background-color: var(--accent-secondary);
 }
 
 .btn-danger {
     background-color: var(--danger-color);
-    color: white;
+    color: var(--text-on-accent);
 }
 .btn-danger:hover {
-    background-color: #c82333;
+    opacity: 0.9;
 }
 
 .btn-info {
     background-color: var(--info-color);
-    color: white;
+    color: var(--text-on-accent);
 }
 .btn-info:hover {
-    background-color: #138496;
+    opacity: 0.9;
 }
 
 .btn-secondary {
-    background-color: #6c757d;
-    color: white;
+    background-color: var(--text-secondary);
+    color: var(--text-on-accent);
 }
 .btn-secondary:hover {
-    background-color: #5a6268;
+    opacity: 0.9;
 }
 
 .card {
-    background-color: #ffffff;
+    background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
@@ -152,7 +142,7 @@ body {
 
 .product-table th {
     font-weight: bold;
-    color: var(--dark-gray);
+    color: var(--text-primary);
 }
 
 .product-table tr:last-child td {
@@ -194,5 +184,5 @@ body {
     text-align: center;
     padding: 3rem;
     font-size: 1.2rem;
-    color: #6c757d;
+    color: var(--text-secondary);
 }

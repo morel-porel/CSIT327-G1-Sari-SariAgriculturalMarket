@@ -2,7 +2,7 @@
 
 /* --- Page Structure --- */
 .notification-page-wrapper {
-    background-color: #f8f9fa; 
+    background-color: var(--bg-secondary); 
     padding: 30px 0;
     min-height: 80vh;
 }
@@ -10,7 +10,7 @@
 .notification-container-main {
     max-width: 700px;
     margin: 0 auto;
-    background-color: #ffffff; 
+    background-color: var(--bg-primary); 
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 25px;
@@ -18,8 +18,8 @@
 }
 
 .page-title {
-    color: #343a40;
-    border-bottom: 2px solid #e9ecef;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 15px;
     margin-bottom: 20px;
     font-size: 1.8rem;
@@ -38,27 +38,27 @@
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 10px;
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
     transition: background-color 0.2s;
     position: relative;
 }
 
 .notification-item:hover {
-    background-color: #e9ecef; 
+    background-color: var(--bg-accent);
 }
 
 /* Style for unread notifications */
 .notification-item.unread {
-    background-color: #e6f7ff; /* Light blue background for unread */
-    border-left: 5px solid #007bff; /* Highlight border */
+    background-color: var(--bg-tertiary); /* Light blue background for unread */
+    border-left: 5px solid var(--info-color); /* Highlight border */
     padding-left: 10px;
 }
 
 /* Style for warning messages (like moderation actions) */
 .notification-item.warning {
-    background-color: #fff3cd; /* Light yellow background */
-    border-left: 5px solid #ffc107; /* Orange/Yellow highlight border */
+    background-color: var(--bg-form); /* Light yellow background */
+    border-left: 5px solid var(--warning-color); /* Orange/Yellow highlight border */
 }
 
 /* --- Item Sections --- */
@@ -79,7 +79,7 @@
 .notification-message {
     margin: 0;
     line-height: 1.4;
-    color: #212529;
+    color: var(--text-primary);
 }
 
 .notification-link {
@@ -89,7 +89,7 @@
 
 .notification-timestamp {
     display: block;
-    color: #6c757d;
+    color: var(--text-secondary);
     font-size: 0.8rem;
     margin-top: 3px;
 }
@@ -101,14 +101,14 @@
     right: 5px;
     width: 8px;
     height: 8px;
-    background-color: #dc3545; /* Red dot for new */
+    background-color: var(--danger-color); /* Red dot for new */
     border-radius: 50%;
 }
 
 .no-notifications {
     text-align: center;
     padding: 40px;
-    color: #6c757d;
-    border: 1px dashed #ced4da;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border-color);
     border-radius: 8px;
 }
