@@ -160,12 +160,29 @@ SUPABASE_BUCKET = os.getenv('SUPABASE_BUCKET')
 
 if DEBUG:
     # --- Local Development Settings ---
+    # Files are saved to a local 'media' folder.
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
     # --- Production Settings for Supabase Storage ---
-    DEFAULT_FILE_STORAGE = 'django_storage_supabase.storage.SupabaseStorage'
-    MEDIA_URL = f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3_boto3.S3Boto3Storage'
+    
+    # These variable names are standard for django-storages, even though we are using Supabase.
+    AWS_S3_ACCESS_KEY_ID = SUPABASE_URL.split('//')[1].split('.')[0] # Extracts your project ID
+    AWS_S3_SECRET_ACCESS_KEY = SUPABASE_KEY
+    AWS_STORAGE_BUCKET_NAME = SUPABASE_BUCKET
+    
+    AWS_S3_ENDPOINT_URL = f'{SUPABASE_URL}/storage/v1'
+    AWS_S3_REGION_NAME = 'ap-southeast-1' # IMPORTANT: Change this if your Supabase project is in a different region
+    AWS_S3_CUSTOM_DOMAIN = f'{SUPABASE_URL.split("//")[1]}/storage/v1/object/public/{SUPABASE_BUCKET}'
+    
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400', # Cache files in browsers for one day
+    }
+    AWS_LOCATION = '' # This tells storages to use the root of the bucket
+    
+    # This ensures that MEDIA_URL is correctly set to the public Supabase URL.
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
 # Email settings for password reset
