@@ -153,13 +153,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'django_storage_supabase.storage.SupabaseStorage'
-
 # Configuration for django-storage-supabase
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 SUPABASE_BUCKET = os.getenv('SUPABASE_BUCKET')
+
+if DEBUG:
+    # --- Local Development Settings ---
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    # --- Production Settings for Supabase Storage ---
+    DEFAULT_FILE_STORAGE = 'django_storage_supabase.storage.SupabaseStorage'
+    MEDIA_URL = f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/'
 
 
 # Email settings for password reset
