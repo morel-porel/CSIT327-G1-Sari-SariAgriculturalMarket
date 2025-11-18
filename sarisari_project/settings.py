@@ -167,28 +167,30 @@ else:
     # --- Production Settings for Supabase Storage ---
     DEFAULT_FILE_STORAGE = 'storages.backends.s3_boto3.S3Boto3Storage'
 
-    # 1. Use the specific S3 keys, not the Supabase API keys
+    # 1. Get the specific S3 credentials (NOT the Supabase API Key)
     AWS_S3_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_S3_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     
-    # 2. Define the bucket name (ensure this matches your Supabase bucket, e.g., 'product-images')
+    # 2. Define the bucket name
     AWS_STORAGE_BUCKET_NAME = os.getenv('SUPABASE_BUCKET')
 
     # 3. Correct S3 Endpoint (Must end in /s3)
-    # If SUPABASE_URL is "https://xyz.supabase.co", this becomes "https://xyz.supabase.co/storage/v1/s3"
+    # This automatically fixes the URL based on your .env SUPABASE_URL
     AWS_S3_ENDPOINT_URL = f"{os.getenv('SUPABASE_URL')}/storage/v1/s3"
 
-    AWS_S3_REGION_NAME = 'ap-southeast-1' # Ensure this matches your project region
+    # 4. Region Setting (Matches your DB host: aws-1-ap-southeast-1)
+    AWS_S3_REGION_NAME = 'ap-southeast-1'
     
-    # 4. File Parameters
+    # 5. File Parameters
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
-    AWS_S3_FILE_OVERWRITE = False # Prevent overwriting files with same name
+    AWS_S3_FILE_OVERWRITE = False 
     
-    # 5. Correct Media URL for serving files
-    # This builds the public URL: https://xyz.supabase.co/storage/v1/object/public/bucket-name/
-    AWS_S3_CUSTOM_DOMAIN = f"{os.getenv('SUPABASE_URL').split('//')[1]}/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
+    # 6. Correct Media URL for serving files publicly
+    # This constructs: https://[project-id].supabase.co/storage/v1/object/public/[bucket-name]/
+    _supabase_project_id = os.getenv('SUPABASE_URL').split('//')[1].split('.')[0]
+    AWS_S3_CUSTOM_DOMAIN = f"{_supabase_project_id}.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
