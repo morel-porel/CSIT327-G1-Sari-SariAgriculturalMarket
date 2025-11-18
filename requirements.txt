@@ -2,6 +2,8 @@ anyio==3.7.1
 asgiref==3.9.2
 atomicwrites==1.4.1
 attrs==25.4.0
+boto3==1.40.75
+botocore==1.40.75
 certifi==2025.11.12
 chardet==4.0.0
 charset-normalizer==3.4.4
@@ -10,7 +12,6 @@ dataclasses==0.6
 deprecation==2.1.0
 dj-database-url==3.0.1
 Django==5.2.6
-django-storage-supabase==0.1.0
 django-storages==1.14.6
 gotrue==0.2.0
 gunicorn==23.0.0
@@ -19,6 +20,7 @@ httpcore==0.13.7
 httpx==0.19.0
 idna==2.10
 iniconfig==2.3.0
+jmespath==1.0.1
 packaging==25.0
 pillow==11.3.0
 pluggy==1.6.0
@@ -31,6 +33,7 @@ python-dotenv==1.1.1
 realtime-py==0.1.3
 requests==2.25.1
 rfc3986==1.5.0
+s3transfer==0.14.0
 six==1.17.0
 sniffio==1.3.1
 sqlparse==0.5.3
