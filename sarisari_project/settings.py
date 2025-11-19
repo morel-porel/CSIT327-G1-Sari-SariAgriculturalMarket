@@ -175,11 +175,10 @@ else:
     AWS_S3_ENDPOINT_URL = f"{os.getenv('SUPABASE_URL')}/storage/v1/s3"
     AWS_S3_REGION_NAME = 'ap-southeast-1'
 
-    # --- CRITICAL FIX FOR 404 ERRORS ---
-    # This forces the uploader to use 'endpoint/bucket' instead of 'bucket.endpoint'
+    # --- ADD THIS MISSING LINE ---
+    # This forces the uploader to use 'endpoint/bucket' style, which Supabase requires.
     AWS_S3_ADDRESSING_STYLE = "path"
-    AWS_S3_SIGNATURE_VERSION = "s3v4"
-    # -----------------------------------
+    # -----------------------------
 
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
