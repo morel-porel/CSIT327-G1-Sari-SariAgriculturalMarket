@@ -49,6 +49,10 @@ def login_view(request):
                     return redirect('home')
     else:
         form = AuthenticationForm()
+        form.fields['username'].widget.attrs.update({'placeholder': 'Username'})
+        form.fields['password'].widget.attrs.update({'placeholder': 'Password'})
+        form.fields['username'].label = ''
+        form.fields['password'].label = ''
     return render(request, 'registration/login.html', {'form': form})
 
 def logout_view(request):

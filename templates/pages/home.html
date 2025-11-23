@@ -52,10 +52,12 @@
             </a>
         {% else %}
             <a href="{% url 'login' %}" class="nav-text-link">Login</a>
-            <span style="color: #000; margin: 0 5px;">/</span>
+            <span style="color: var(--text-color); margin: 0 5px;">/</span>
             <a href="{% url 'signup' %}" class="nav-text-link">Signup</a>
         {% endif %}
+
     </div>
+
 </header>
 
 <main class="container">

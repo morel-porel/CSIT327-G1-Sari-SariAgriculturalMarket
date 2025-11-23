@@ -155,6 +155,8 @@ body {
 
 .product-form .form-group {
     margin-bottom: 1.5rem;
+    background-color: var(--bg-primary); 
+    color: var(--text-primary);
 }
 
 .product-form label {
@@ -172,6 +174,8 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .product-form .form-actions {
@@ -185,4 +189,33 @@ body {
     padding: 3rem;
     font-size: 1.2rem;
     color: var(--text-secondary);
+}
+
+/* Theme Selector Styles */
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.theme-selector label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+#theme-switcher {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#theme-switcher:focus {
+  outline: none;
+  border-color: var(--accent-primary);
 }

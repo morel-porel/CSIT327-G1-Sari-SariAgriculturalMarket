@@ -50,6 +50,10 @@
     --warning-color: #ffd966;
     --info-color: #33c6de;
     --link-color: #6cdf6e;
+
+    .nav-icon, .search-icon, .alert-icon, .search-icon {
+        filter: invert(1) brightness(1.5);
+    }
 }
 
 /* --- 3. HIGH CONTRAST THEME OVERRIDES --- */
@@ -76,4 +80,14 @@
     --warning-color: #00ffff; /* Cyan */
     --info-color: #00ffff;
     --link-color: #ffff00;
+
+    .nav-icon, .search-icon, .alert-icon, .search-icon {
+        filter: invert(1);
+    }
+}
+
+/* --- GLOBAL ELEMENT STYLES --- */
+body {
+    background-color: var(--bg-primary); 
+    color: var(--text-primary);
 }

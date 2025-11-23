@@ -19,11 +19,9 @@
             {% csrf_token %}
             
             <!-- Django's form will render the username and password fields -->
-            {{ form.username.label_tag }}
-            {{ form.username }}
+            <div class="form-field">{{ form.username }}</div>
             
-            {{ form.password.label_tag }}
-            {{ form.password }}
+            <div class="form-field">{{ form.password }}</div>
             
             <button type="submit" class="btn-submit">Log in</button>
         </form>

@@ -34,11 +34,15 @@ body, html {
 }
 
 .search-bar input {
-    width: 100%;
-    padding: 8px;
+    width: 600px;
+    padding: 10px 12px;
     border: 2px solid var(--border-color);
     border-right: none;
-    border-radius: 4px 0 0 4px;
+    border-radius: 6px 0 0 6px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    background-color: var(--bg-primary); 
+    color: var(--text-primary);
 }
 
 .search-bar input:focus {
@@ -165,7 +169,7 @@ body, html {
     border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
-    color: var(--text-on-accent);
+    color: #ffffff;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -272,7 +276,7 @@ body, html {
 .banner-text {
     position: absolute;
     text-align: center;
-    color: var(--text-on-accent);
+    color: #ffffff;
     padding: 20px;
     z-index: 2;
 }
@@ -295,6 +299,7 @@ body, html {
 .content h2 {
     margin-bottom: 15px;
     font-size: 16px;
+    color: var(--text-primary);
 }
 
 .grid {
@@ -341,12 +346,14 @@ body, html {
     font-size: 15px;
     margin-bottom: 5px;
     font-weight: normal;
+    color: var(--text-primary);
 }
 
 .product-price {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 8px;
+    color: var(--text-primary);
 }
 
 .product-rating {
@@ -630,7 +637,7 @@ body, html {
 }
 
 .recent-search-link:hover {
-  background-color: var(--accent-primary);
+  background-color: var(--accent-secondary);
   transform: scale(1.05);
 }
 
@@ -645,4 +652,33 @@ body, html {
   width: 24px;
   height: 24px;
   cursor: pointer;
+}
+
+/* Theme Selector Styles */
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.theme-selector label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+#theme-switcher {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#theme-switcher:focus {
+  outline: none;
+  border-color: var(--accent-primary);
 }
