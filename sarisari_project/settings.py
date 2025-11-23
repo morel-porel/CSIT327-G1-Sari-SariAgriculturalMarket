@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 ROOT_URLCONF = 'sarisari_project.urls'
 
 TEMPLATES = [
@@ -153,8 +153,42 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Configuration for django-storage-supabase
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+SUPABASE_BUCKET = os.getenv('SUPABASE_BUCKET')
+
+if DEBUG:
+    # --- Local Development Settings ---
+    # Files are saved to a local 'media' folder.
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    # --- Production Settings for Supabase Storage ---
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3_boto3.S3Boto3Storage'
+
+    AWS_S3_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_S3_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('SUPABASE_BUCKET')
+
+    # S3 Endpoint
+    AWS_S3_ENDPOINT_URL = f"{os.getenv('SUPABASE_URL')}/storage/v1/s3"
+    AWS_S3_REGION_NAME = 'ap-southeast-1'
+
+    # --- ADD THIS MISSING LINE ---
+    # This forces the uploader to use 'endpoint/bucket' style, which Supabase requires.
+    AWS_S3_ADDRESSING_STYLE = "path"
+    # -----------------------------
+
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_S3_FILE_OVERWRITE = False 
+    
+    _supabase_project_id = os.getenv('SUPABASE_URL').split('//')[1].split('.')[0]
+    AWS_S3_CUSTOM_DOMAIN = f"{_supabase_project_id}.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
 
 # Email settings for password reset
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
