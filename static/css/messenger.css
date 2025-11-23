@@ -27,8 +27,8 @@ main.main-container {
     margin-top: 70px;
     margin-left: 80px;
     
-    border: 1px solid #cccccc;
-    background-color: #f7f7f7;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 
@@ -44,8 +44,8 @@ main.main-container {
     width: 400px;
     min-width: 250px; 
     height: 100%;
-    background: #fdfdfd;
-    border-right: 1px solid #e0e0e0;
+    background: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column; /* To stack header and list */
 }
@@ -53,18 +53,18 @@ main.main-container {
 .chat-divider {
     flex-basis: 2px;
     height: 100%;
-    background-color: #e0e0e0;
+    background-color: var(--border-color);
     cursor: col-resize;
     transition: background-color 0.2s;
 }
 .chat-divider:hover {
-    background-color: #cccccc;
+    background-color: var(--border-input);
 }
 
 .chat-right-panel {
     flex-grow: 1;
     height: 100%;
-    background: #ffffff;
+    background: var(--bg-primary);
     display: flex;
     flex-direction: column; /* To stack header, window, and form */
 }
@@ -73,7 +73,7 @@ main.main-container {
  */
 .chat-panel-header {
     padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0; /* Prevents header from shrinking */
 }
 
@@ -81,6 +81,7 @@ main.main-container {
     margin: 0 0 15px 0;
     font-size: 1.6em;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .chat-search-container {
@@ -104,14 +105,15 @@ main.main-container {
     font-size: 0.9em;
     border: none;
     border-radius: 20px;
-    background-color: #f0f0f0;
+    background-color: var(--bg-accent);
     box-sizing: border-box;
     outline: none;
     transition: background-color 0.2s;
+    color: var(--text-primary);
 }
 .chat-search-input:focus {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
     padding: 9px 9px 9px 37px; 
 }
 
@@ -124,7 +126,7 @@ main.main-container {
 .chat-list-empty {
     text-align: center;
     padding: 20px;
-    color: #888;
+    color: var(--text-secondary);
 }
 
 .conversation-item {
@@ -133,14 +135,15 @@ main.main-container {
     padding: 12px 15px;
     text-decoration: none;
     color: #333;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--bg-accent);
+    text-decoration: none; color: var(--text-primary);
     transition: background-color 0.2s;
 }
 .conversation-item:hover {
-    background-color: #f9f9f9;
+    background-color: var(--bg-accent);
 }
 .conversation-item.active {
-    background-color: #eef4ff;
+    background-color: var(--bg-success-light);
 }
 
 .convo-avatar {
@@ -161,12 +164,12 @@ main.main-container {
     display: block;
     font-weight: 600;
     font-size: 1em;
-    color: #222;
+    color: var(--text-primary);
 }
 .convo-excerpt {
     display: block;
     font-size: 0.9em;
-    color: #777;
+    color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -175,7 +178,7 @@ main.main-container {
     flex-shrink: 0;
     text-align: right;
     font-size: 0.8em;
-    color: #888;
+    color: var(--text-secondary);
 }
 .convo-timestamp {
     display: block;
@@ -183,8 +186,8 @@ main.main-container {
 }
 .convo-unread-count {
     display: inline-block;
-    background-color: #175e52; /* Blue */
-    color: white;
+    background-color: var(--accent-primary); /* Blue */
+    color: var(--text-on-accent);
     font-weight: bold;
     font-size: 0.85em;
     padding: 2px 7px;
@@ -197,8 +200,8 @@ main.main-container {
     display: flex;
     align-items: center;
     padding: 12px 18px;
-    border-bottom: 1px solid #e0e0e0;
-    background-color: #fdfdfd;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
     flex-shrink: 0; /* Prevents shrinking */
 }
 .chat-avatar img {
@@ -211,11 +214,12 @@ main.main-container {
 .chat-info h2 {
     margin: 0;
     font-size: 1.2em;
+    color: var(--text-primary);
 }
 .chat-info .shop-name {
     margin: 0;
     font-size: 0.85em;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* * STEP 7: Chat Window (Right Panel)
@@ -224,7 +228,7 @@ main.main-container {
     flex-grow: 1; /* Fills the space */
     padding: 20px;
     overflow-y: auto;
-    background-color: #f7f7f7;
+    background-color: var(--bg-secondary);
     display: flex;
     flex-direction: column;
 }
@@ -235,11 +239,12 @@ main.main-container {
     justify-content: center;
     height: 100%;
     text-align: center;
-    color: #888;
+    color: var(--text-secondary);
 }
 .chat-placeholder h2 {
     font-size: 1.5em;
     margin-bottom: 10px;
+    color: var(--text-primary);
 }
 
 /* * STEP 8: Message Bubbles
@@ -262,11 +267,11 @@ main.main-container {
 .message-timestamp {
     font-size: 0.75em;
     display: block;
-    color: #888;
+    color: var(--text-secondary);
 }
 .read-receipt {
     font-style: italic;
-    color: #4CAF50; /* Blue */
+    color: var(--info-color); /* Blue */
 }
 
 /* Sent Messages (Current User) */
@@ -274,12 +279,12 @@ main.main-container {
     align-self: flex-end; /* Aligns to the right */
 }
 .message.sent .message-bubble {
-    background-color: #175e52; /* Blue */
-    color: white;
+    background-color: var(--accent-primary); /* Blue */
+    color: var(--text-on-accent);;
     border-bottom-right-radius: 5px;
 }
 .message.sent .message-timestamp {
-    color: #eee;
+    color: var(--text-on-accent);
     text-align: right;
 }
 
@@ -288,9 +293,9 @@ main.main-container {
     align-self: flex-start; /* Aligns to the left */
 }
 .message.received .message-bubble {
-    background-color: #ffffff;
-    color: #333;
-    border: 1px solid #e9e9e9;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
     border-bottom-left-radius: 5px;
 }
 .message.received .message-timestamp {
@@ -324,13 +329,13 @@ main.main-container {
     display: flex;
     align-items: center;
     padding: 15px 20px;
-    border-top: 1px solid #e0e0e0;
-    background-color: #fdfdfd;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
     flex-shrink: 0; /* Prevents shrinking */
 }
 .message-form textarea {
     flex-grow: 1;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 10px 18px;
     margin: 0 10px;
@@ -339,6 +344,8 @@ main.main-container {
     resize: none;
     max-height: 120px; /* Max 5 lines approx */
     box-sizing: border-box;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .file-label,
@@ -354,13 +361,13 @@ main.main-container {
     transition: background-color 0.2s;
 }
 .btn-send {
-    background-color: #175e52; /* Blue */
+    background-color: var(--accent-primary);
 }
 .btn-send img {
     filter: brightness(0) invert(1); /* Makes the icon white */
 }
 .btn-send:hover {
-    background-color: #175e52; /* Darker blue */
+    background-color: var(--accent-secondary); /* Darker blue */
 }
 
 /* --- Report Button --- */
@@ -417,7 +424,7 @@ main.main-container {
 }
 
 .report-modal-content {
-    background: white;
+    background: var(--bg-primary);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -428,7 +435,7 @@ main.main-container {
 
 .report-modal-content h3 {
     margin-top: 0;
-    color: #cc0000; /* Red color for warning tone */
+    color: var(--danger-color); /* Red color for warning tone */
 }
 
 .report-modal-content textarea {
@@ -436,10 +443,12 @@ main.main-container {
     height: 100px;
     margin: 15px 0;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     resize: vertical;
     box-sizing: border-box; /* Include padding in width calculation */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .report-actions {
@@ -449,16 +458,16 @@ main.main-container {
 }
 /* Assuming you have .btn styles defined elsewhere */
 .report-actions .btn-danger {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--danger-color);
+    color: var(--text-on-accent);
     border: none;
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
 }
 .report-actions .btn-secondary {
-    background-color: #6c757d;
-    color: white;
+    background-color: var(--text-secondary);
+    color: var(--text-on-accent);
     border: none;
     padding: 8px 15px;
     border-radius: 5px;

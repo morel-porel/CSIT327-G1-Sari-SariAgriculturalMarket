@@ -1,0 +1,93 @@
+/* static/css/theme.css */
+
+/* --- 1. DEFAULT LIGHT THEME --- */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-tertiary: #f5f5f5;
+    --bg-accent: #f0f0f0;
+    --bg-form: #d8e4a9;
+    --bg-success-light: #e8f5e9;
+
+    --text-primary: #333333;
+    --text-secondary: #555555;
+    --text-on-accent: #ffffff;
+
+    --accent-primary: #175e52; /* Main dark green */
+    --accent-secondary: #2e7d32; /* Lighter action green */
+    --accent-highlight: #6cdf6e; /* Brightest green */
+
+    --border-color: #e0e0e0;
+    --border-input: #cccccc;
+
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --link-color: #175e52;
+}
+
+/* --- 2. DARK THEME OVERRIDES --- */
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #242424;
+    --bg-tertiary: #202020;
+    --bg-accent: #2c2c2c;
+    --bg-form: #3a3f2d;
+    --bg-success-light: #2c3e2e;
+
+    --text-primary: #f0f0f0;
+    --text-secondary: #aaaaaa;
+    --text-on-accent: #ffffff;
+
+    --accent-primary: #6cdf6e;
+    --accent-secondary: #7fe093;
+    --accent-highlight: #8affaa;
+
+    --border-color: #444444;
+    --border-input: #555555;
+
+    --danger-color: #ff5566;
+    --warning-color: #ffd966;
+    --info-color: #33c6de;
+    --link-color: #6cdf6e;
+
+    .nav-icon, .search-icon, .alert-icon, .search-icon {
+        filter: invert(1) brightness(1.5);
+    }
+}
+
+/* --- 3. HIGH CONTRAST THEME OVERRIDES --- */
+[data-theme="contrast"] {
+    --bg-primary: #000000;
+    --bg-secondary: #111111;
+    --bg-tertiary: #000000;
+    --bg-accent: #222222;
+    --bg-form: #000000;
+    --bg-success-light: #000000;
+
+    --text-primary: #ffffff;
+    --text-secondary: #eeeeee;
+    --text-on-accent: #000000;
+
+    --accent-primary: #ffff00; /* Yellow */
+    --accent-secondary: #ffff00;
+    --accent-highlight: #00ff00; /* Bright green */
+
+    --border-color: #ffffff;
+    --border-input: #ffffff;
+
+    --danger-color: #ff00ff; /* Magenta */
+    --warning-color: #00ffff; /* Cyan */
+    --info-color: #00ffff;
+    --link-color: #ffff00;
+
+    .nav-icon, .search-icon, .alert-icon, .search-icon {
+        filter: invert(1);
+    }
+}
+
+/* --- GLOBAL ELEMENT STYLES --- */
+body {
+    background-color: var(--bg-primary); 
+    color: var(--text-primary);
+}

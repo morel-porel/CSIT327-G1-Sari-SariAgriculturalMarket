@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: flex-start;
     min-height: 85vh;
-    background-color: #ffffff;
+    background-color: var(--bg-primary);
     padding: 60px 20px;
 }
 
@@ -13,7 +13,7 @@
 .search-container h1 {
     font-size: 2.2rem;
     font-weight: 700;
-    color: #1b4d3e;
+    color: var(--accent-primary);
     margin-bottom: 30px;
 }
 
@@ -24,7 +24,7 @@
     align-items: center;
     width: 90vw; /* use viewport width instead of max-width */
     max-width: 1600px;
-    background-color: #f9f9f9;
+    background-color: var(--bg-secondary);
     padding: 15px 25px;
     border-radius: 50px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -37,23 +37,24 @@
     width: 100%;
     max-width: none; /* remove restriction */
     padding: 15px 30px;
-    border: 2px solid #1b4d3e;
+    border: 2px solid var(--accent-primary);
     border-radius: 30px;
     font-size: 18px;
     outline: none;
-    background: #fff;
+    background: var(--bg-primary);
     transition: all 0.3s ease;
+    color: var(--text-primary);
 }
 
 .search-box input[type="text"]:focus {
-    border-color: #2e7d5a;
+    border-color: var(--accent-secondary);
     box-shadow: 0 0 5px rgba(46, 125, 90, 0.4);
 }
 
 /* Button styling */
 .search-box button {
-    background-color: #1b4d3e;
-    color: white;
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
     border: none;
     padding: 15px 35px;
     margin-left: 15px;
@@ -65,7 +66,7 @@
 }
 
 .search-box button:hover {
-    background-color: #2e7d5a;
+    background-color: var(--accent-secondary);
     transform: scale(1.05);
 }
 
@@ -79,12 +80,12 @@
 
 .search-history h2 {
     font-size: 1.3rem;
-    color: #1b4d3e;
+    color: var(--accent-primary);
     margin-bottom: 10px;
 }
 
 .search-history p {
-    color: #555;
+    color: var(--text-secondary);
 }
 
 /* ===== SEARCH HISTORY LIST ===== */
@@ -97,7 +98,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f1f1f1;
+    background: var(--bg-accent);
     padding: 10px 15px;
     border-radius: 10px;
     margin-bottom: 8px;
@@ -105,19 +106,19 @@
 }
 
 .history-list li:hover {
-    background: #e5f3ea;
+    background: var(--bg-success-light);
 }
 
 .history-term {
     font-size: 16px;
-    color: #1b4d3e;
+    color: var(--accent-primary);
 }
 
 /* Delete button (X) */
 .delete-btn {
     background: none;
     border: none;
-    color: #c0392b;
+    color: var(--danger-color);
     font-size: 18px;
     text-decoration: none;
     cursor: pointer;
@@ -125,7 +126,7 @@
 }
 
 .delete-btn:hover {
-    color: #e74c3c;
+    color: var(--danger-color);
 }
 
 /* Clear all button */
@@ -133,8 +134,8 @@
     display: inline-block;
     margin-top: 12px;
     padding: 8px 16px;
-    background-color: #1b4d3e;
-    color: white;
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
     border-radius: 20px;
     text-decoration: none;
     font-weight: 600;
@@ -142,18 +143,18 @@
 }
 
 .clear-all-btn:hover {
-    background-color: #2e7d5a;
+    background-color: var(--accent-secondary);
     transform: scale(1.05);
 }
 
 .history-term {
     font-size: 16px;
-    color: #1b4d3e;
+    color: var(--accent-primary);
     cursor: pointer;
     transition: color 0.2s, transform 0.2s;
 }
 
 .history-term:hover {
-    color: #2e7d5a;
+    color: var(--accent-secondary);
     transform: scale(1.05);
 }

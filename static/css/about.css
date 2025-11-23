@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  background-color: #f9fafb;
-  color: #333;
+  background-color: var(--bg-secondary);;
+  color: var(--text-primary);
 }
 
 header {
@@ -11,8 +10,8 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0.8rem 1.5rem;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color); 
   gap: 1rem;
 }
 
@@ -28,12 +27,13 @@ header button.back-btn {
   font-size: 1.2rem;
   cursor: pointer;
   margin-right: 0.5rem;
+  color: var(--text-primary);
 }
 
 header img.logo {
   width: 32px;
   height: 32px;
-  background-color: #ccc; /* Placeholder */
+  background-color: var(--bg-accent);
   border-radius: 4px;
 }
 
@@ -52,15 +52,17 @@ header h1 {
 .search-bar input[type="text"] {
   width: 100%;
   padding: 0.5rem 0.8rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 4px 0 0 4px;
   outline: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .search-bar button {
-  background-color: #2e7d32;
+  background-color: var(--accent-secondary);
   border: none;
-  color: white;
+  color: var(--text-on-accent);
   padding: 0.55rem 0.8rem;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
@@ -73,7 +75,7 @@ main {
 }
 
 .intro {
-  background-color: #e8f5e9;
+  background-color: var(--bg-success-light);
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -89,8 +91,8 @@ main {
   border-radius: 6px;
   cursor: pointer;
   margin-right: 1rem;
-  background-color: #2e7d32;
-  color: white;
+  background-color: var(--accent-secondary);
+  color: var(--text-on-accent);
 }
 
 .cards {
@@ -100,118 +102,37 @@ main {
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
-=======
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background-color: #f9fafb;
-  color: #333;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8rem 1.5rem;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  gap: 1rem;
-}
-
-header .left-section {
+/* Theme Selector Styles */
+.theme-selector {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-left: 1rem;
 }
 
-header button.back-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin-right: 0.5rem;
+.theme-selector label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
-header img.logo {
-  width: 32px;
-  height: 32px;
-  background-color: #ccc; /* Placeholder */
+#theme-switcher {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
-header h1 {
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-.search-bar {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  max-width: 500px;
-}
-
-.search-bar input[type="text"] {
-  width: 100%;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
+#theme-switcher:focus {
   outline: none;
+  border-color: var(--accent-primary);
 }
-
-.search-bar button {
-  background-color: #2e7d32;
-  border: none;
-  color: white;
-  padding: 0.55rem 0.8rem;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-}
-
-main {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 1rem;
-}
-
-.intro {
-  background-color: #e8f5e9;
-  padding: 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.intro h2 {
-  margin-top: 0;
-}
-
-.intro button {
-  padding: 0.6rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 1rem;
-  background-color: #2e7d32;
-  color: white;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.card {
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
->>>>>>> ea4a784 (Add password reset feature with Gmail integration)
