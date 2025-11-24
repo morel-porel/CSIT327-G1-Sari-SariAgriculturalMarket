@@ -1,3 +1,4 @@
+# users/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -6,7 +7,6 @@ class CustomUser(AbstractUser):
         VENDOR = "VENDOR", "Vendor"
         CONSUMER = "CONSUMER", "Consumer"
 
-    # Add any common fields here, like a phone number
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
@@ -22,9 +22,15 @@ class VendorProfile(models.Model):
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     profile_image = models.ImageField(upload_to='vendor_images/', blank=True, null=True)
     
-    shop_description = models.TextField(blank=True, null=True) # Detailed Shop Information
-    farming_practices = models.TextField(blank=True, null=True) # Farming Practices
-    experience_years = models.IntegerField(blank=True, null=True) # Vendor Experience
+    shop_description = models.TextField(blank=True, null=True) 
+    farming_practices = models.TextField(blank=True, null=True) 
+    experience_years = models.IntegerField(blank=True, null=True) 
+
+    # --- NEW FIELDS FOR STEP 1 (ADDRESS) ---
+    pickup_address = models.TextField(blank=True, null=True, help_text="Street Address / Landmark")
+    barangay = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    zip_code = models.CharField(max_length=20, blank=True, null=True)
     
     def __str__(self):
         return self.shop_name

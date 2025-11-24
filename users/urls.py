@@ -15,6 +15,11 @@ urlpatterns = [
 
     path('api/vendor/<int:pk>/', views.vendor_detail_api, name='vendor_detail_api'),
 
+    # --- Vendor Onboarding Flow ---
+    path('become-vendor/', views.become_vendor_view, name='become_vendor'),
+    path('onboarding/step1/', views.vendor_onboarding_step1, name='vendor_onboarding_step1'),
+
+    # --- Search ---
     path('search/', views.search_view, name='search'),
     path('search/delete/<int:history_id>/', views.delete_search_history, name='delete_search_history'),
     path('search/clear/', views.clear_search_history, name='clear_search_history'),

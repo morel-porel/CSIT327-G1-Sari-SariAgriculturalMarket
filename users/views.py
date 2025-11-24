@@ -1,12 +1,20 @@
+# users/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import ConsumerSignUpForm, VendorSignUpForm, VendorProfileForm, ConsumerProfileForm
+from .forms import (
+    ConsumerSignUpForm, 
+    VendorSignUpForm, 
+    VendorProfileForm, 
+    ConsumerProfileForm,
+    VendorStep1Form # Ensure this is imported
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import VendorProfile, CustomUser
-from django.http import JsonResponse # CRITICAL: Ensure JsonResponse is imported
-from django.db.models import Q  # ✅ Added for search filtering
+from .models import VendorProfile, CustomUser, SearchHistory
+from django.http import JsonResponse
+from django.db.models import Q
+from django.db import transaction 
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -61,8 +69,12 @@ def logout_view(request):
     return redirect('login')
 
 def home_view(request):
-    # This view likely needs to fetch products, but is fine as is for now
-    return render(request, 'home.html')
+    from products.models import Product
+    products = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at')
+    context = {
+        'products': products
+    }
+    return render(request, 'pages/home.html', context)
 
 @login_required 
 def profile_view(request):
@@ -101,6 +113,57 @@ def vendor_profile_view(request):
 
     return render(request, 'pages/vendor_profile.html', {'form': form})
 
+# --- VENDOR ONBOARDING LOGIC ---
+
+@login_required
+def become_vendor_view(request):
+    """
+    Landing page for the onboarding process.
+    Checks status and displays either 'Start' or 'Pending'.
+    """
+    user = request.user
+    
+    if user.role == 'VENDOR':
+        return redirect('vendor_profile')
+
+    try:
+        profile = VendorProfile.objects.get(user=user)
+    except VendorProfile.DoesNotExist:
+        profile = VendorProfile(user=user)
+
+    # Check if already verified or pending
+    if profile.shop_name and profile.pickup_address and not profile.is_verified:
+        return render(request, 'pages/become_vendor.html', {'status': 'pending'})
+
+    return render(request, 'pages/become_vendor.html', {'status': 'new'})
+
+@login_required
+def vendor_onboarding_step1(request):
+    """
+    STEP 1: Shop Information Form
+    """
+    user = request.user
+    try:
+        profile = VendorProfile.objects.get(user=user)
+    except VendorProfile.DoesNotExist:
+        profile = VendorProfile(user=user)
+
+    if request.method == 'POST':
+        form = VendorStep1Form(request.POST, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = user
+            profile.save()
+            
+            # TEMPORARY: Stay on page with success message until Step 2 is ready
+            messages.success(request, "Step 1 Saved! (Next step coming soon...)")
+            return redirect('vendor_onboarding_step1') 
+    else:
+        form = VendorStep1Form(instance=profile)
+
+    return render(request, 'pages/vendor_onboarding_step1.html', {'form': form})
+
+
 def consumer_vendor_profile_view(request, vendor_id):
     vendor_user = get_object_or_404(CustomUser, pk=vendor_id, role=CustomUser.Role.VENDOR)
     profile = get_object_or_404(VendorProfile, user=vendor_user)
@@ -116,17 +179,13 @@ def vendor_detail_api(request, pk):
         user = get_object_or_404(CustomUser, pk=pk, role='VENDOR')
         profile = get_object_or_404(VendorProfile, user=user) 
 
-        # Handle optional image field
         profile_image_url = profile.profile_image.url if profile.profile_image else '/static/icons/placeholder.png'
 
         data = {
             'shop_name': profile.shop_name,
             'description': profile.shop_description or 'No shop description provided.',
             'practices': profile.farming_practices or 'No farming practices detailed.',
-            
-            # CRITICAL FIX: Safely convert nullable IntegerField to string
             'experience': str(profile.experience_years) if profile.experience_years is not None else 'N/A', 
-            
             'contact_number': profile.contact_number or 'N/A',
             'email': user.email,
             'is_verified': profile.is_verified,
@@ -135,30 +194,21 @@ def vendor_detail_api(request, pk):
         }
         return JsonResponse(data)
     except Exception as e:
-        # This will catch any unexpected errors and return a 500, with a message for the console
         print(f"Vendor API Crash for PK {pk}: {e}") 
         return JsonResponse({'error': 'An internal server error occurred.'}, status=500)
     
-# ----------------------------
-# SEARCH VIEWS
-# ----------------------------
-
 @login_required
 def search_view(request):
-    """Search vendors by shop name or description."""
     query = request.GET.get('q', '').strip()
     results = []
 
     if query:
-        # ✅ Save search history only if non-empty
         SearchHistory.objects.create(user=request.user, query=query)
-
         results = VendorProfile.objects.filter(
             Q(shop_name__icontains=query) |
             Q(shop_description__icontains=query)
         )
 
-    # ✅ Order by most recent first
     recent_searches = SearchHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
 
     context = {
@@ -168,19 +218,15 @@ def search_view(request):
     }
     return render(request, 'pages/search.html', context)
 
-
 @login_required
 def delete_search_history(request, history_id):
-    """Delete a single search record."""
     history = get_object_or_404(SearchHistory, id=history_id, user=request.user)
     history.delete()
     messages.success(request, "Search entry deleted successfully.")
     return redirect('search')
 
-
 @login_required
 def clear_search_history(request):
-    """Clear all search history for the current user."""
     SearchHistory.objects.filter(user=request.user).delete()
     messages.success(request, "All search history cleared.")
     return redirect('search')

@@ -17,10 +17,10 @@ class CustomUserCreationForm(UserCreationForm):
         }
         
         for field_name, field in self.fields.items():
-            field.help_text = None  # Remove the default help text
+            field.help_text = None  
             if field_name in placeholders:
                 field.widget.attrs['placeholder'] = placeholders[field_name]
-                field.label = ''  # Remove the label
+                field.label = '' 
 
 
 class ConsumerSignUpForm(CustomUserCreationForm): 
@@ -66,26 +66,33 @@ class VendorSignUpForm(CustomUserCreationForm):
                 business_permit_number=self.cleaned_data.get('business_permit_number')
             )
         return user
-    
-class VendorProfileForm(forms.ModelForm):
+
+# --- NEW FORM FOR STEP 1 ONLY ---
+class VendorStep1Form(forms.ModelForm):
     class Meta:
         model = VendorProfile
         fields = [
             'shop_name',
-            'business_permit_number',
             'contact_number',
-            'profile_image',
-            # ADDED NEW FIELDS
-            'shop_description',
-            'farming_practices',
-            'experience_years',
+            'pickup_address',
+            'barangay',
+            'city',
+            'zip_code',
         ]
         widgets = {
-            # Use Textarea for long text inputs
-            'shop_description': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell customers about your shop, your mission, and your products.'}),
-            'farming_practices': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe your farming/business practices (e.g., organic, local, sustainable).'}),
-            'experience_years': forms.NumberInput(attrs={'placeholder': 'Years of Experience'}),
+            'shop_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Shop Name'}),
+            'contact_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '0912 345 6789'}),
+            'pickup_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'House/Unit No., Street Name'}),
+            'barangay': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Barangay'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
+            'zip_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zip Code'}),
         }
+
+class VendorProfileForm(forms.ModelForm):
+    class Meta:
+        model = VendorProfile
+        fields = '__all__'
+        exclude = ['user', 'is_verified']
 
 class ConsumerProfileForm(forms.ModelForm):
     class Meta:
