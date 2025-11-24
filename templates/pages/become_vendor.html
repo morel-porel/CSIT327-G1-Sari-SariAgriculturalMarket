@@ -9,9 +9,22 @@
 <div class="center-container">
     <div class="content-box">
         <h2>Sari-Sari</h2>
-        <p>To get started as a Sari - Sari vendor, register as a Vendor and provide necessary information</p>
-        <a href="{% url 'vendor_signup' %}" class="btn-start">Start</a>
+        
+        {% if status == 'pending' %}
+            <div style="margin-top: 20px;">
+                <p style="font-size: 1.2rem; font-weight: bold;">Thank you for your submission!</p>
+                <p>Your vendor application is currently <strong>Pending Approval</strong>.</p>
+                <p style="font-size: 1rem; color: #555;">
+                    Our admins are reviewing your details and ID. <br>
+                    Once verified, your account will be upgraded to a Vendor account automatically.
+                </p>
+                <a href="{% url 'home' %}" class="btn-start" style="padding: 0.5rem 2rem; font-size: 1rem;">Return Home</a>
+            </div>
+        {% else %}
+            <p>To get started as a Sari - Sari vendor, upgrade your account and provide necessary information.</p>
+            <p>Click below to start your application.</p>
+            <a href="{% url 'vendor_onboarding_step1' %}" class="btn-start">Start Application</a>
+        {% endif %}
     </div>
 </div>
-
 {% endblock %}
