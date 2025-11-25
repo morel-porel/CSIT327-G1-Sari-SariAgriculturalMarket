@@ -1,38 +1,216 @@
 {% extends 'dashboard/admin_layout_base.html' %}
 {% load static %}
 
-{% block title %}Vendor Verification{% endblock %}
+{% block title %}Vendor Applications{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+    <style>
+        /* Action Buttons */
+        .btn-approve {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-approve:hover { background-color: #1b5e20; }
+
+        .btn-deny {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-deny:hover { background-color: #b71c1c; }
+
+        .btn-view {
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-view:hover { background-color: #01579b; }
+
+        .badge-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .section-header {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .app-modal {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-backdrop.show .app-modal {
+            transform: translateY(0);
+        }
+
+        .app-modal-header {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-modal-header h3 { margin: 0; color: #333; }
+        .close-modal {
+            background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;
+        }
+
+        .app-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-group { margin-bottom: 15px; }
+        .info-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 1rem;
+            color: #222;
+            background: #f9f9f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .info-group.full-width { grid-column: 1 / -1; }
+
+        .id-preview-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+        .id-preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+        }
+    </style>
 {% endblock %}
 
 {% block panel_content %}
-    <h2 class="section-title">Vendor Verification</h2>
+    <h2 class="section-title">Vendor Applications Management</h2>
+
+    <h3 class="section-header" style="color: #e65100;">⚠️ Pending Applications</h3>
     <div class="table-container">
+        {% if pending_vendors %}
         <table class="report-table">
             <thead>
                 <tr>
                     <th>Shop Name</th>
-                    <th>Owner</th>
-                    <th>Permit Number</th>
+                    <th>Applicant</th>
+                    <th>Permit No.</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th style="text-align: center;">Forms</th> <th style="text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {% for vendor in vendors %}
+                {% for vendor in pending_vendors %}
                 <tr>
                     <td>{{ vendor.shop_name }}</td>
-                    <td>{{ vendor.user.username }}</td>
+                    <td>{{ vendor.user.username }} <br> <small>{{ vendor.user.email }}</small></td>
                     <td>{{ vendor.business_permit_number }}</td>
-                    <td>{% if vendor.is_verified %}Verified{% else %}Not Verified{% endif %}</td>
-                    <td>
-                        <form method="post" style="margin:0;">
+                    <td><span class="badge-pending">Pending Review</span></td>
+                    
+                    <td style="text-align: center;">
+                        <button type="button" class="btn-view" onclick="openAppModal(this)"
+                            data-shop="{{ vendor.shop_name }}"
+                            data-owner="{{ vendor.user.first_name }} {{ vendor.user.last_name }}"
+                            data-email="{{ vendor.user.email }}"
+                            data-contact="{{ vendor.contact_number }}"
+                            data-address="{{ vendor.pickup_address }}"
+                            data-barangay="{{ vendor.barangay }}"
+                            data-city="{{ vendor.city }}"
+                            data-zip="{{ vendor.zip_code }}"
+                            data-desc="{{ vendor.shop_description }}"
+                            data-practices="{{ vendor.farming_practices }}"
+                            data-exp="{{ vendor.experience_years }}"
+                            data-permit="{{ vendor.business_permit_number }}"
+                            data-dob="{{ vendor.user.date_of_birth|default:'N/A' }}"
+                            data-id-url="{% if vendor.profile_image %}{{ vendor.profile_image.url }}{% endif %}">
+                            View Form
+                        </button>
+                    </td>
+
+                    <td style="text-align: center;">
+                        <form method="post" style="display: inline-block;">
                             {% csrf_token %}
                             <input type="hidden" name="profile_id" value="{{ vendor.user.id }}">
-                            <button type="submit" class="btn-generate">
-                                {% if vendor.is_verified %}Un-verify{% else %}Verify{% endif %}
+                            <button type="submit" name="action" value="approve" class="btn-approve" title="Approve">
+                                &#10003;
+                            </button>
+                            <button type="submit" name="action" value="deny" class="btn-deny" title="Deny" onclick="return confirm('Are you sure you want to DENY this application? This will reset their application.');">
+                                &#10007;
                             </button>
                         </form>
                     </td>
@@ -40,5 +218,195 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <p style="padding: 20px; color: #666; text-align: center;">No pending applications at the moment.</p>
+        {% endif %}
     </div>
+
+    <h3 class="section-header" style="color: #2e7d32;">✅ Active Vendors</h3>
+    <div class="table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Shop Name</th>
+                    <th>Owner</th>
+                    <th>Contact</th>
+                    <th>Joined</th>
+                    <th style="text-align: center;">Forms</th>
+                    <th style="text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendor in approved_vendors %}
+                <tr>
+                    <td>{{ vendor.shop_name }}</td>
+                    <td>{{ vendor.user.username }}</td>
+                    <td>{{ vendor.contact_number }}</td>
+                    <td>{{ vendor.user.date_joined|date:"M Y" }}</td>
+                    
+                    <td style="text-align: center;">
+                         <button type="button" class="btn-view" onclick="openAppModal(this)"
+                            data-shop="{{ vendor.shop_name }}"
+                            data-owner="{{ vendor.user.first_name }} {{ vendor.user.last_name }}"
+                            data-email="{{ vendor.user.email }}"
+                            data-contact="{{ vendor.contact_number }}"
+                            data-address="{{ vendor.pickup_address }}"
+                            data-barangay="{{ vendor.barangay }}"
+                            data-city="{{ vendor.city }}"
+                            data-zip="{{ vendor.zip_code }}"
+                            data-desc="{{ vendor.shop_description }}"
+                            data-practices="{{ vendor.farming_practices }}"
+                            data-exp="{{ vendor.experience_years }}"
+                            data-permit="{{ vendor.business_permit_number }}"
+                            data-dob="{{ vendor.user.date_of_birth|default:'N/A' }}"
+                            data-id-url="{% if vendor.profile_image %}{{ vendor.profile_image.url }}{% endif %}">
+                            View
+                        </button>
+                    </td>
+
+                    <td style="text-align: center;">
+                        <form method="post" style="margin:0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="profile_id" value="{{ vendor.user.id }}">
+                            <button type="submit" name="action" value="deny" class="btn-generate" style="background-color: #555; font-size: 0.8rem;">
+                                Revoke
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No active vendors found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal-backdrop" id="appModalBackdrop" onclick="closeAppModal(event)">
+        <div class="app-modal">
+            <div class="app-modal-header">
+                <h3 id="modalShopName">Shop Name Application</h3>
+                <button class="close-modal" onclick="closeAppModal(null)">&times;</button>
+            </div>
+            <div class="app-modal-body">
+                
+                <h4 style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; color: #175e52;">Shop Information</h4>
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Shop Name</label>
+                        <div class="info-value" id="mShop"></div>
+                    </div>
+                    <div class="info-group">
+                        <label>Business Permit No.</label>
+                        <div class="info-value" id="mPermit"></div>
+                    </div>
+                    <div class="info-group full-width">
+                        <label>Pickup Address</label>
+                        <div class="info-value" id="mAddress"></div>
+                    </div>
+                    <div class="info-group full-width">
+                        <label>Shop Description</label>
+                        <div class="info-value" id="mDesc"></div>
+                    </div>
+                </div>
+
+                <h4 style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; color: #175e52;">Vendor Details</h4>
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Full Name</label>
+                        <div class="info-value" id="mOwner"></div>
+                    </div>
+                    <div class="info-group">
+                        <label>Date of Birth</label>
+                        <div class="info-value" id="mDob"></div>
+                    </div>
+                    <div class="info-group">
+                        <label>Email</label>
+                        <div class="info-value" id="mEmail"></div>
+                    </div>
+                    <div class="info-group">
+                        <label>Contact Number</label>
+                        <div class="info-value" id="mContact"></div>
+                    </div>
+                    <div class="info-group">
+                        <label>Experience (Years)</label>
+                        <div class="info-value" id="mExp"></div>
+                    </div>
+                    <div class="info-group full-width">
+                        <label>Farming Practices</label>
+                        <div class="info-value" id="mPractices"></div>
+                    </div>
+                </div>
+
+                <h4 style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; color: #175e52;">Valid ID</h4>
+                <div class="id-preview-container">
+                    <p id="noIdMsg" style="display:none; color: #999;">No ID uploaded.</p>
+                    <img id="mIdImage" src="" alt="Valid ID" style="display:none;">
+                    <p style="margin-top: 5px; font-size: 0.8rem; color: #777;">Click image to view full size (handled by browser)</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openAppModal(btn) {
+        const data = btn.dataset;
+
+        // Populate Text Fields
+        document.getElementById('modalShopName').textContent = "Application: " + data.shop;
+        document.getElementById('mShop').textContent = data.shop;
+        document.getElementById('mPermit').textContent = data.permit;
+        
+        // Format Address
+        const fullAddress = `${data.address || ''}, ${data.barangay || ''}, ${data.city || ''} ${data.zip || ''}`;
+        document.getElementById('mAddress').textContent = fullAddress.replace(/^, /, '').replace(/, $/, '');
+        
+        document.getElementById('mDesc').textContent = data.desc || 'N/A';
+        document.getElementById('mOwner').textContent = data.owner;
+        document.getElementById('mDob').textContent = data.dob;
+        document.getElementById('mEmail').textContent = data.email;
+        document.getElementById('mContact').textContent = data.contact;
+        document.getElementById('mExp').textContent = data.exp || '0';
+        document.getElementById('mPractices').textContent = data.practices || 'N/A';
+
+        // Handle Image
+        const img = document.getElementById('mIdImage');
+        const noId = document.getElementById('noIdMsg');
+        
+        if (data.idUrl) {
+            img.src = data.idUrl;
+            img.style.display = 'inline-block';
+            // Optional: Add a simple click to open in new tab
+            img.onclick = () => window.open(data.idUrl, '_blank');
+            noId.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            noId.style.display = 'block';
+        }
+
+        // Show Modal
+        const backdrop = document.getElementById('appModalBackdrop');
+        backdrop.style.display = 'flex';
+        // Slight delay to allow CSS transition
+        setTimeout(() => backdrop.classList.add('show'), 10);
+    }
+
+    function closeAppModal(event) {
+        // If triggered by backdrop click, ensure it wasn't a click inside the modal
+        if (event && event.target !== document.getElementById('appModalBackdrop')) {
+            return;
+        }
+
+        const backdrop = document.getElementById('appModalBackdrop');
+        backdrop.classList.remove('show');
+        setTimeout(() => {
+            backdrop.style.display = 'none';
+        }, 300); // Match CSS transition time
+    }
+</script>
 {% endblock %}

@@ -18,6 +18,9 @@ urlpatterns = [
     # --- Vendor Onboarding Flow ---
     path('become-vendor/', views.become_vendor_view, name='become_vendor'),
     path('onboarding/step1/', views.vendor_onboarding_step1, name='vendor_onboarding_step1'),
+    path('onboarding/step2/', views.vendor_onboarding_step2, name='vendor_onboarding_step2'),
+    path('onboarding/step3/', views.vendor_onboarding_step3, name='vendor_onboarding_step3'),
+    path('onboarding/success/', views.vendor_onboarding_success, name='vendor_onboarding_success'), # NEW
 
     # --- Search ---
     path('search/', views.search_view, name='search'),

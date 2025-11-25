@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib import messages
 from django.db import transaction 
+from notifications.utils import create_notification # <--- NEW IMPORT
 
-# Import your models
 from messaging.models import MessageReport
 from notifications.models import Notification
 
@@ -16,11 +16,8 @@ def admin_dashboard_view(request):
     if not request.user.is_superuser:
         return redirect('home')
 
-    # --- Calculate Analytics Overview data ---
     total_users = CustomUser.objects.count()
     total_vendors = CustomUser.objects.filter(role='VENDOR').count()
-
-    # --- PLACEHOLDER DATA ---
     total_sales_count = 0  
     total_sales_value = 0.00 
     
@@ -29,7 +26,6 @@ def admin_dashboard_view(request):
         {'id': '002', 'type': 'User Report', 'value': '2025-10-25', 'status': 'Pending'},
     ]
 
-    # --- PREPARE DATA FOR THE SALES TREND CHART ---
     today = datetime.now()
     chart_labels = [(today - timedelta(days=i)).strftime('%b %d') for i in range(6, -1, -1)]
     chart_data = [0, 0, 0, 0, 0, 0, 0]
@@ -50,45 +46,64 @@ def vendor_verification_view(request):
     if not request.user.is_superuser:
         return redirect('home')
 
-    # Handle the verification update
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
+        action = request.POST.get('action') # 'approve' or 'deny'
         
         try:
             profile = VendorProfile.objects.get(user_id=profile_id)
             user = profile.user
             
-            with transaction.atomic():
-                # 1. Toggle the verification status
-                new_status = not profile.is_verified
-                profile.is_verified = new_status
-                profile.save()
-
-                # 2. AUTOMATICALLY UPDATE USER ROLE
-                if new_status:
+            if action == 'approve':
+                with transaction.atomic():
+                    profile.is_verified = True
+                    profile.save()
                     user.role = 'VENDOR'
-                    messages.success(request, f"Approved {profile.shop_name}! User is now a Vendor.")
-                else:
+                    user.save()
+                    
+                    # Notify User of Approval
+                    create_notification(
+                        recipient=user,
+                        message=f"Congratulations! Your shop '{profile.shop_name}' has been approved. You are now a Vendor.",
+                        link="/my-products/"
+                    )
+                    messages.success(request, f"Approved {profile.shop_name}.")
+                    
+            elif action == 'deny':
+                with transaction.atomic():
+                    shop_name = profile.shop_name
+                    # Notify User of Denial BEFORE deleting the profile reference
+                    create_notification(
+                        recipient=user,
+                        message=f"Your vendor application for '{shop_name}' was denied. You may update your details and apply again.",
+                        link="/become-vendor/"
+                    )
+                    
+                    # Delete the pending profile so they can start fresh (or you could keep it with a 'denied' status flag if you modify models)
+                    # For now, resetting is the cleanest way to handle "Deny" without schema changes.
+                    profile.delete()
+                    
+                    # Ensure they are Consumer
                     user.role = 'CONSUMER'
-                    messages.warning(request, f"Revoked approval for {profile.shop_name}. User reverted to Consumer.")
-                
-                user.save()
-
+                    user.save()
+                    
+                    messages.warning(request, f"Denied application for {shop_name}.")
+                    
         except VendorProfile.DoesNotExist:
             messages.error(request, "Vendor profile not found.")
 
         return redirect('vendor_verification')
 
-    # Get all vendors for display
-    all_vendors = VendorProfile.objects.all().select_related('user')
+    # Split the lists
+    pending_vendors = VendorProfile.objects.filter(is_verified=False).select_related('user')
+    approved_vendors = VendorProfile.objects.filter(is_verified=True).select_related('user')
     
     context = {
-        'vendors': all_vendors
+        'pending_vendors': pending_vendors,
+        'approved_vendors': approved_vendors,
     }
     return render(request, 'dashboard/vendor_verification.html', context)
 
-
-# --- VIEW FOR REPORTED MESSAGES ---
 
 @login_required
 def reported_messages_view(request):
@@ -102,7 +117,6 @@ def reported_messages_view(request):
         except MessageReport.DoesNotExist:
             return redirect('reported_messages')
 
-        # Delete stuck notifications logic
         try:
             offending_user = report.message.sender
             notifications_to_delete = Notification.objects.filter(
@@ -146,8 +160,6 @@ def reported_messages_view(request):
     }
     return render(request, 'dashboard/reported_messages.html', context)
 
-
-# --- NEW VIEW TO CLEAR *ALL* STUCK WARNINGS ---
 @login_required
 def clear_all_warnings_view(request):
     if not request.user.is_superuser:

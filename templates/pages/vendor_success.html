@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        background-color: #ffffff;
+    }
+
+    /* Main container overrides to center content perfectly */
+    .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 80px); /* Adjust for navbar/footer */
+        background-color: #ffffff;
+    }
+
+    .success-card {
+        background-color: #d8e4a9; /* Matching Green Box */
+        width: 80%;
+        max-width: 900px;
+        padding: 80px 40px;
+        border-radius: 4px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .success-title {
+        font-family: 'Song Myung', serif;
+        font-size: 4rem;
+        color: #000;
+        margin-bottom: 40px;
+        line-height: 1;
+    }
+
+    .success-message {
+        font-family: 'Song Myung', serif;
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 50px;
+        line-height: 1.6;
+        font-style: italic;
+    }
+    
+    .btn-home {
+        display: inline-block;
+        background-color: #e0e0e0;
+        border: 1px solid #333;
+        color: #333;
+        padding: 10px 40px;
+        text-decoration: none;
+        font-family: 'Song Myung', serif;
+        font-size: 1.1rem;
+        border-radius: 2px;
+        transition: background-color 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-home:hover {
+        background-color: #d0d0d0;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .success-title {
+            font-size: 2.5rem;
+        }
+        .success-message {
+            font-size: 1rem;
+        }
+        .success-card {
+            width: 90%;
+            padding: 40px 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="success-card">
+        <h1 class="success-title">Sari-Sari</h1>
+        
+        <div class="success-message">
+            <p>Thank you for submitting the required information.</p>
+            <p>Your vendor status application has been submitted for review.</p>
+            <p>We encourage you to be honest in all transactions and wish you great success in your selling journey!</p>
+        </div>
+        
+        <a href="{% url 'home' %}" class="btn-home">Home</a>
+    </div>
+{% endblock %}

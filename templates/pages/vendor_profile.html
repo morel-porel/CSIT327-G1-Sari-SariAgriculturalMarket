@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
-        /* Add basic style for full-width elements in the form grid */
         .form-grid .form-group.full-width {
             grid-column: 1 / -1; 
         }
@@ -20,13 +19,14 @@
                 <li><a href="{% url 'profile' %}">My Account</a></li>
                 <li><a href="#">Addresses</a></li>
                 <li><a href="#">Password</a></li>
-                <li><a href="#">Notification</a></li>
+                <li><a href="{% url 'notification_list' %}">Notification</a></li>
                 <li><a href="#">Delete Account</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
-                {% if not request.user.vendorprofile %}
-                <li><a href="{% url 'vendor_signup' %}" class="vendor-link">Be a Vendor!</a></li>
+                
+                {% if user.role == 'VENDOR' %}
+                    <li class="active"><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
                 {% else %}
-                <li class="active"><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
+                    <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -67,6 +67,22 @@
                     </div>
                     
                     <div class="form-group full-width">
+                        {{ form.pickup_address.label_tag }}
+                        {{ form.pickup_address }}
+                        {{ form.pickup_address.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.barangay.label_tag }}
+                        {{ form.barangay }}
+                        {{ form.barangay.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.city.label_tag }}
+                        {{ form.city }}
+                        {{ form.city.errors }}
+                    </div>
+                    
+                    <div class="form-group full-width">
                         {{ form.shop_description.label_tag }}
                         {{ form.shop_description }}
                         {{ form.shop_description.errors }}
@@ -81,7 +97,7 @@
                         {{ form.experience_years }}
                         {{ form.experience_years.errors }}
                     </div>
-                    </div>
+                </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">Save Changes</button>

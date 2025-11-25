@@ -1,4 +1,3 @@
-<!-- dashboard/templates/dashboard/admin_layout_base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +14,6 @@
         <div class="header-title">Sari-Sari Agricultural Market</div>
         <div class="panel-user-info">
             <span>Admin Panel</span>
-            <!-- You can add a user icon here -->
         </div>
     </header>
 
@@ -26,20 +24,15 @@
                     <li {% if request.resolver_match.url_name == 'admin_dashboard' %}class="active"{% endif %}>
                         <a href="{% url 'admin_dashboard' %}">Dashboard</a>
                     </li>
-                    <!-- <li {% if request.resolver_match.url_name == 'reported_users' %}class="active"{% endif %}>
-                        <a href="#">Reported Users</a>
-                    </li> -->
                     
                     <li {% if request.resolver_match.url_name == 'vendor_verification' %}class="active"{% endif %}>
-                        <a href="{% url 'vendor_verification' %}">Vendor Verification</a>
+                        <a href="{% url 'vendor_verification' %}">Vendor Applications</a>
                     </li>
 
                     <li {% if request.resolver_match.url_name == 'reported_messages' %}class="active"{% endif %}>
                         <a href="{% url 'reported_messages' %}">Reported Messages</a>
                     </li>
                     
-                    <!-- <li><a href="{% url 'inbox' %}">Messages</a></li>
-                    <li><a href="#">Settings</a></li> -->
                     <li style="margin-top: 2rem;">
                         <a href="{% url 'logout' %}">Logout</a>
                     </li>
@@ -53,7 +46,7 @@
     </div>
 
     <footer class="panel-footer">
-        &copy; {% now "Y" %} Sari-Sari | Admin Montion
+        &copy; {% now "Y" %} Sari-Sari | Admin Panel
     </footer>
     
     {% block scripts %}{% endblock %}

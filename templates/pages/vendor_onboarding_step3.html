@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .onboarding-container {
+        max-width: 800px;
+        margin: 60px auto;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .wizard-header {
+        background-color: #d8e4a9; 
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .wizard-title {
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: 'Song Myung', serif;
+    }
+
+    /* Progress Bar */
+    .progress-track {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .track-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #555;
+        z-index: 1;
+        transform: translateY(-50%);
+    }
+
+    .step-node {
+        position: relative;
+        z-index: 2;
+        background-color: #d8e4a9; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+    }
+
+    .dot {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #333;
+        border: 2px solid #333;
+        transition: all 0.3s ease;
+    }
+
+    .step-node.active .dot, .step-node.completed .dot {
+        transform: scale(1.3);
+        background-color: #333; 
+        box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+    }
+    
+    .step-node.completed .dot {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+    }
+
+    .step-label {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Summary Body */
+    .wizard-body {
+        padding: 40px 60px;
+        background-color: #e4eeb3; 
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+    }
+
+    .summary-col {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .summary-col h3 {
+        font-size: 1rem;
+        text-decoration: underline;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .info-item {
+        font-size: 0.9rem;
+        color: #333;
+        font-style: italic;
+    }
+    
+    .info-item strong {
+        font-style: normal;
+        font-weight: 600;
+        display: block;
+        font-size: 0.8rem;
+        color: #555;
+    }
+
+    .id-preview {
+        width: 100%;
+        height: 150px;
+        background-color: #fff;
+        border: 1px solid #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    
+    .id-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Footer */
+    .wizard-footer {
+        padding: 20px 60px 40px;
+        background-color: #e4eeb3;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    .btn-wizard {
+        padding: 10px 25px;
+        border: 1px solid #333;
+        background-color: #ccc;
+        color: #333;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-wizard:hover {
+        background-color: #bbb;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .wizard-body { 
+            grid-template-columns: 1fr; 
+            padding: 20px;
+        }
+        .id-preview { height: 200px; }
+        .wizard-footer { padding: 20px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="wizard-header">
+        <h2 class="wizard-title">Sari-Sari</h2>
+        
+        <div class="progress-track">
+            <div class="track-line"></div>
+            
+            <div class="step-node completed">
+                <div class="dot"></div>
+                <span class="step-label">Shop's Information</span>
+            </div>
+            
+            <div class="step-node completed">
+                <div class="dot"></div>
+                <span class="step-label">Vendor's Information</span>
+            </div>
+            
+            <div class="step-node active">
+                <div class="dot"></div>
+                <span class="step-label">Submit</span>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="wizard-body">
+            
+            <div class="summary-col">
+                <h3>Shop's Information</h3>
+                
+                <div class="info-item">
+                    <strong>Shop Name</strong>
+                    {{ profile.shop_name }}
+                </div>
+                
+                <div class="info-item">
+                    <strong>Shop's Email</strong>
+                    {{ user.email }}
+                </div>
+                
+                <div class="info-item">
+                    <strong>Shop's Pickup Address</strong>
+                    {{ profile.pickup_address }} <br>
+                    {{ profile.barangay }}, {{ profile.city }} <br>
+                    {{ profile.zip_code }}
+                </div>
+            </div>
+
+            <div class="summary-col">
+                <h3>Vendor's Information</h3>
+                
+                <div class="info-item">
+                    <strong>Vendor's Full Name</strong>
+                    {{ user.first_name }} {{ user.last_name }}
+                </div>
+                
+                <div class="info-item">
+                    <strong>Contact Number</strong>
+                    {{ profile.contact_number }}
+                </div>
+                
+                <div class="info-item">
+                    <strong>Date of Birth</strong>
+                    {{ user.date_of_birth|date:"M d, Y" }}
+                </div>
+            </div>
+
+            <div class="summary-col" style="text-align: center;">
+                <h3>Valid ID</h3>
+                
+                <div class="id-preview">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="Uploaded ID">
+                    {% else %}
+                        <span style="color: #999;">No ID Uploaded</span>
+                    {% endif %}
+                </div>
+                <p style="font-size: 0.8rem; color: #555; margin-top: 5px;">// Show the ID</p>
+
+            </div>
+
+        </div>
+
+        <div class="wizard-footer">
+            <a href="{% url 'vendor_onboarding_step2' %}" class="btn-wizard" style="margin-right: auto;">Back</a>
+            <button type="submit" class="btn-wizard" style="background-color: #ddd;">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

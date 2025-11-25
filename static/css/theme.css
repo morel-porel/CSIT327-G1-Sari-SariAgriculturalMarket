@@ -51,7 +51,7 @@
     --info-color: #33c6de;
     --link-color: #6cdf6e;
 
-    .nav-icon, .search-icon, .alert-icon, .search-icon {
+    .nav-icon, .search-icon, .alert-icon {
         filter: invert(1) brightness(1.5);
     }
 }
@@ -81,7 +81,7 @@
     --info-color: #00ffff;
     --link-color: #ffff00;
 
-    .nav-icon, .search-icon, .alert-icon, .search-icon {
+    .nav-icon, .search-icon, .alert-icon {
         filter: invert(1);
     }
 }
@@ -90,4 +90,29 @@
 body {
     background-color: var(--bg-primary); 
     color: var(--text-primary);
+}
+
+/* --- NOTIFICATION BADGE (Added Here to be Safe) --- */
+.nav-icons a {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.notification-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: #ff0000; /* Red Circle */
+    color: white;
+    border-radius: 50%;
+    padding: 2px 4px;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 16px;
+    text-align: center;
+    line-height: 1.2;
+    border: 2px solid var(--bg-primary); /* Matches background to create 'cutout' effect */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 10;
 }

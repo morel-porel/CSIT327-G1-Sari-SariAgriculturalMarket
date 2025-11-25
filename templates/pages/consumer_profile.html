@@ -15,10 +15,12 @@
         </div>
     </a>
     <div class="search-bar">
-        <input type="text" placeholder="Search products...">
-        <button>
-            <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
-        </button>
+        <form method="get" action="{% url 'search' %}" style="width: 100%; display: flex;">
+            <input type="text" name="q" placeholder="Search products..." style="width: 100%;">
+            <button type="submit">
+                <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+            </button>
+        </form>
     </div>
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
@@ -30,9 +32,14 @@
                 <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
             </a>
         {% endif %}
-        <a href="#">
+        
+        <a href="{% url 'notification_list' %}">
             <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
+             {% if unread_notifications %}
+                <span class="notification-count">{{ unread_notifications.count }}</span>
+            {% endif %}
         </a>
+
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}">
                 <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
@@ -63,10 +70,11 @@
                 </li>
                 <li><a href="#">Delete Account</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
-                {% if not request.user.vendorprofile %}
-                <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
+                
+                {% if user.role == 'VENDOR' %}
+                    <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
                 {% else %}
-                <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
+                    <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -82,12 +90,10 @@
                 {% if form.instance.avatar %}
                     <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
                 {% else %}
-                    <!-- Otherwise, show the default placeholder -->
                     <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
                 {% endif %}
 
                 <div>
-                    <!-- Let Django render the label and the file input -->
                     {{ form.avatar.label_tag }}
                     {{ form.avatar }}
                     {{ form.avatar.errors }}
