@@ -13,20 +13,20 @@
         <span>Sari-Sari</span>
     </div>
 
-<div class="search-section">
-  <div class="search-bar">
-    <form method="get" action="{% url 'search' %}">
-      <input type="text" name="q" placeholder="Search products..." required>
-      <button type="submit">
-        <img src="{% static 'icons/search.png' %}" alt="Search" class="search-icon">
-      </button>
-    </form>
+    <div class="search-section">
+      <div class="search-bar">
+        <form method="get" action="{% url 'search' %}">
+          <input type="text" name="q" placeholder="Search products..." required>
+          <button type="submit">
+            <img src="{% static 'icons/search.png' %}" alt="Search" class="search-icon">
+          </button>
+        </form>
 
-    {% if user.is_authenticated %}
-      <a href="{% url 'search' %}" class="recent-search-link">Recent Searches</a>
-    {% endif %}
-  </div>
-</div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'search' %}" class="recent-search-link">Recent Searches</a>
+        {% endif %}
+      </div>
+    </div>
 
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
@@ -152,9 +152,7 @@
                 
                 <div class="modal-price" id="modal-price">₱0.00</div>
                 
-                <p class="modal-description" id="modal-description">
-                    Loading description...
-                </p>
+                <p class="modal-description" id="modal-description">Loading...</p>
                 
                 <div class="modal-meta">
                     <span>Category: <strong id="modal-category">...</strong></span>
@@ -199,60 +197,34 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Modal Element Definitions ---
         const productModal = document.getElementById('product-modal');
         const productBackdrop = document.getElementById('product-modal-backdrop');
         const productCloseBtn = document.getElementById('modal-close-btn');
-
         const vendorModal = document.getElementById('vendor-modal');
         const vendorBackdrop = document.getElementById('vendor-modal-backdrop');
         const vendorCloseBtn = document.getElementById('vendor-modal-close-btn');
-        
         const shopLink = document.getElementById('modal-shop-link');
         const gridContainer = document.getElementById('product-grid-container');
-
         let currentVendorId = null; 
 
-        // --- Modal Control Functions ---
-        const openProductModal = () => {
-            productModal.style.display = 'block'; 
-            productBackdrop.style.display = 'block';
-        };
+        const openProductModal = () => { productModal.style.display = 'block'; productBackdrop.style.display = 'block'; };
+        const closeProductModal = () => { productModal.style.display = 'none'; productBackdrop.style.display = 'none'; };
+        const openVendorModal = () => { closeProductModal(); vendorModal.style.display = 'block'; vendorBackdrop.style.display = 'block'; };
+        const closeVendorModal = () => { vendorModal.style.display = 'none'; vendorBackdrop.style.display = 'none'; };
 
-        const closeProductModal = () => {
-            productModal.style.display = 'none';
-            productBackdrop.style.display = 'none';
-        };
-        
-        const openVendorModal = () => {
-            closeProductModal();
-            vendorModal.style.display = 'block';
-            vendorBackdrop.style.display = 'block';
-        };
-
-        const closeVendorModal = () => {
-            vendorModal.style.display = 'none';
-            vendorBackdrop.style.display = 'none';
-        };
-
-        // --- Event Listeners for Closing ---
         productCloseBtn.addEventListener('click', closeProductModal);
         productBackdrop.addEventListener('click', closeProductModal);
         vendorCloseBtn.addEventListener('click', closeVendorModal);
         vendorBackdrop.addEventListener('click', closeVendorModal);
         
-        // --- Rendering Function ---
         const renderProducts = (products) => {
             let html = '';
-            
             if (products.length === 0) {
                 gridContainer.innerHTML = '<p id="no-products-message">No products found for this category.</p>';
                 return;
             }
-
             products.forEach(product => {
                 const imageStyle = `background-image: url('${product.image_url}'); background-size: cover;`;
-                
                 html += `
                     <div class="grid-item" data-product-id="${product.id}" style="cursor: pointer;">
                         <div class="product-image" style="${imageStyle}"></div>
@@ -261,121 +233,75 @@
                             <p class="product-price">${product.price}</p>
                             <p class="product-vendor">Seller: ${product.shop_name}</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             gridContainer.innerHTML = html;
-            // IMPORTANT: Re-attach the click listener to the newly rendered products
             attachProductClickListeners();
         };
 
-        // --- Core Filter Function ---
         const fetchAndFilterProducts = (category) => {
             const apiEndpoint = `/my-products/api/list/?category=${encodeURIComponent(category)}`;
-            
-            // Optional: Show a loading state
             gridContainer.innerHTML = '<p>Loading products...</p>'; 
-
             fetch(apiEndpoint)
                 .then(response => response.json())
-                .then(data => {
-                    renderProducts(data.products);
-                })
+                .then(data => { renderProducts(data.products); })
                 .catch(err => {
                     console.error('Filtering error:', err);
                     gridContainer.innerHTML = '<p style="color: red;">Failed to load products. Please try again later.</p>';
                 });
         };
 
-        // --- Attach Filter Listeners (Initial Load) ---
         document.querySelectorAll('.category-filter-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const category = this.getAttribute('data-category');
                 fetchAndFilterProducts(category);
-                
-                // Visual feedback (optional)
                 document.querySelectorAll('.category-filter-btn').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
             });
         });
         
-        // --- Attach Product Modal Listeners ---
         const attachProductClickListeners = () => {
             document.querySelectorAll('.grid-item').forEach(card => {
                 const productId = card.dataset.productId;
                 if (!productId) return;
-
                 card.addEventListener('click', (e) => {
                     if (e.target.closest('a')) { return; }
-                    
-                    // 1. Set loading state
                     document.getElementById('modal-name').textContent = 'Loading...';
                     document.getElementById('modal-description').textContent = 'Fetching details...';
-                    // ... (rest of loading states) ...
-                    
                     openProductModal();
-                    
-                    // 2. FETCH DATA
                     fetch(`/my-products/api/${productId}/`) 
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Could not load product details. (Status ' + response.status + ')');
-                            }
-                            return response.json();
-                        })
+                        .then(response => response.json())
                         .then(data => {
-                            if (data.error) {
-                                document.getElementById('modal-description').textContent = data.error;
-                                return;
-                            }
-
+                            if (data.error) { document.getElementById('modal-description').textContent = data.error; return; }
                             currentVendorId = data.vendor_user_id; 
-
-                            // 3. Populate the product modal
                             document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
                             document.getElementById('modal-name').textContent = data.name;
                             document.getElementById('modal-price').textContent = data.price; 
                             document.getElementById('modal-description').textContent = data.description;
-                            
                             shopLink.textContent = data.shop_name;
-                            // shopLink.href is handled dynamically by the shopLink listener
-                            
                             const sellerName = data.seller_name || data.shop_name;
                             document.getElementById('modal-seller-name').textContent = sellerName;
                             document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
-
                             document.getElementById('modal-category').textContent = data.category || 'N/A';
                             document.getElementById('modal-stock').textContent = data.stock || 'N/A';
-                            
                         })
                         .catch(err => {
                             console.error('Error fetching product:', err);
-                            document.getElementById('modal-description').textContent = 'Error loading product details: ' + err.message;
+                            document.getElementById('modal-description').textContent = 'Error loading product details.';
                         });
                 });
             });
         };
         
-        // --- Shop Link Click Handler (Opens Vendor Modal) ---
         shopLink.addEventListener('click', function(e) {
             e.preventDefault(); 
-            
             if (!currentVendorId) return;
-
             document.getElementById('vendor-shop-name').textContent = 'Loading...';
             document.getElementById('vendor-description').textContent = 'Fetching shop details...';
-            
             openVendorModal();
-
             fetch(`/auth/api/vendor/${currentVendorId}/`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Could not load vendor details. Status: ' + response.status);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(vendorData => {
-                    // ... (Vendor Modal population logic) ...
                     document.getElementById('vendor-shop-name').textContent = vendorData.shop_name;
                     document.getElementById('vendor-profile-img').src = vendorData.profile_image_url || "{% static 'icons/placeholder.png' %}";
                     document.getElementById('vendor-description').textContent = vendorData.description;
@@ -384,7 +310,6 @@
                     document.getElementById('vendor-permit-number').textContent = vendorData.business_permit_number;
                     document.getElementById('vendor-contact').textContent = vendorData.contact_number;
                     document.getElementById('vendor-email').textContent = vendorData.email;
-                    
                     const statusElement = document.getElementById('vendor-verified');
                     if (vendorData.is_verified) {
                         statusElement.textContent = 'Verified';
@@ -395,12 +320,10 @@
                     }
                 })
                 .catch(err => {
-                    document.getElementById('vendor-description').textContent = 'Failed to load vendor details: ' + err.message;
-                    console.error('Vendor Fetch Error:', err);
+                    document.getElementById('vendor-description').textContent = 'Failed to load vendor details.';
                 });
         });
         
-        // Initial attachment of listeners when the page first loads
         attachProductClickListeners();
     });
 </script>

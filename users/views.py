@@ -7,7 +7,9 @@ from .forms import (
     VendorSignUpForm, 
     VendorProfileForm, 
     ConsumerProfileForm,
-    VendorStep1Form # Ensure this is imported
+    VendorStep1Form,
+    VendorStep2UserForm,
+    VendorStep2ProfileForm
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,6 +17,7 @@ from .models import VendorProfile, CustomUser, SearchHistory
 from django.http import JsonResponse
 from django.db.models import Q
 from django.db import transaction 
+from notifications.utils import create_notification  # <--- NEW IMPORT
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -117,10 +120,6 @@ def vendor_profile_view(request):
 
 @login_required
 def become_vendor_view(request):
-    """
-    Landing page for the onboarding process.
-    Checks status and displays either 'Start' or 'Pending'.
-    """
     user = request.user
     
     if user.role == 'VENDOR':
@@ -131,17 +130,13 @@ def become_vendor_view(request):
     except VendorProfile.DoesNotExist:
         profile = VendorProfile(user=user)
 
-    # Check if already verified or pending
     if profile.shop_name and profile.pickup_address and not profile.is_verified:
-        return render(request, 'pages/become_vendor.html', {'status': 'pending'})
+        return redirect('vendor_onboarding_success')
 
     return render(request, 'pages/become_vendor.html', {'status': 'new'})
 
 @login_required
 def vendor_onboarding_step1(request):
-    """
-    STEP 1: Shop Information Form
-    """
     user = request.user
     try:
         profile = VendorProfile.objects.get(user=user)
@@ -154,14 +149,68 @@ def vendor_onboarding_step1(request):
             profile = form.save(commit=False)
             profile.user = user
             profile.save()
-            
-            # TEMPORARY: Stay on page with success message until Step 2 is ready
-            messages.success(request, "Step 1 Saved! (Next step coming soon...)")
-            return redirect('vendor_onboarding_step1') 
+            return redirect('vendor_onboarding_step2') 
     else:
         form = VendorStep1Form(instance=profile)
 
     return render(request, 'pages/vendor_onboarding_step1.html', {'form': form})
+
+@login_required
+def vendor_onboarding_step2(request):
+    user = request.user
+    try:
+        profile = VendorProfile.objects.get(user=user)
+    except VendorProfile.DoesNotExist:
+        return redirect('vendor_onboarding_step1')
+
+    if request.method == 'POST':
+        user_form = VendorStep2UserForm(request.POST, instance=user)
+        profile_form = VendorStep2ProfileForm(request.POST, request.FILES, instance=profile)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('vendor_onboarding_step3') 
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        user_form = VendorStep2UserForm(instance=user)
+        profile_form = VendorStep2ProfileForm(instance=profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+    return render(request, 'pages/vendor_onboarding_step2.html', context)
+
+@login_required
+def vendor_onboarding_step3(request):
+    user = request.user
+    try:
+        profile = VendorProfile.objects.get(user=user)
+    except VendorProfile.DoesNotExist:
+        return redirect('vendor_onboarding_step1')
+    
+    if request.method == 'POST':
+        # --- CREATE NOTIFICATION FOR USER ---
+        create_notification(
+            recipient=request.user,
+            message="Your vendor application has been submitted and is pending review.",
+            link="#" # Or link to a status page
+        )
+
+        messages.success(request, "Application Submitted Successfully!")
+        return redirect('vendor_onboarding_success')
+
+    context = {
+        'profile': profile,
+        'user': user
+    }
+    return render(request, 'pages/vendor_onboarding_step3.html', context)
+
+@login_required
+def vendor_onboarding_success(request):
+    return render(request, 'pages/vendor_success.html')
 
 
 def consumer_vendor_profile_view(request, vendor_id):

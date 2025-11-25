@@ -67,7 +67,7 @@ class VendorSignUpForm(CustomUserCreationForm):
             )
         return user
 
-# --- NEW FORM FOR STEP 1 ONLY ---
+# --- STEP 1 FORM: Shop Details ---
 class VendorStep1Form(forms.ModelForm):
     class Meta:
         model = VendorProfile
@@ -78,6 +78,7 @@ class VendorStep1Form(forms.ModelForm):
             'barangay',
             'city',
             'zip_code',
+            'shop_description',
         ]
         widgets = {
             'shop_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your Shop Name'}),
@@ -86,6 +87,27 @@ class VendorStep1Form(forms.ModelForm):
             'barangay': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Barangay'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
             'zip_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zip Code'}),
+            'shop_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tell customers about your shop...'}),
+        }
+
+# --- STEP 2 FORMS: Vendor Personal Details & ID ---
+class VendorStep2UserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'date_of_birth']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class VendorStep2ProfileForm(forms.ModelForm):
+    class Meta:
+        model = VendorProfile
+        # Re-using profile_image as the "Valid ID" upload for now
+        fields = ['profile_image'] 
+        widgets = {
+            'profile_image': forms.FileInput(attrs={'class': 'form-control-file', 'accept': 'image/*'}),
         }
 
 class VendorProfileForm(forms.ModelForm):

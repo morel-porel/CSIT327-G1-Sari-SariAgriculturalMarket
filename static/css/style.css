@@ -22,6 +22,30 @@ footer { border-top: 1px solid var(--border-color); margin-top: auto; }
     margin: 0 1rem;
 }
 
+/* --- NEW: Notification Badge Style --- */
+.nav-icons a {
+    position: relative; /* Needed to position the badge relative to the icon */
+    display: inline-block;
+    text-decoration: none;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 15px;
+    text-align: center;
+    line-height: 1.2;
+    border: 1px solid white; /* Optional: adds a tiny separation from the icon */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 /* This is the original rule for your homepage, etc. */
 .main-container {
     display: flex;
@@ -224,8 +248,3 @@ p { text-align: center;  color: var(--text-primary); }
     border: 3px solid var(--border-color);
     margin-bottom: 10px;
 }
-
-/*
- * ALL THE MESSENGER CSS THAT WAS HERE HAS BEEN REMOVED
- * IT NOW LIVES IN 'messenger.css'
- */
