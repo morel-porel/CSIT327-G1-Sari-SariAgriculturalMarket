@@ -264,9 +264,9 @@
 
 /* ===== POINTS & RANK CARD ===== */
 .loyalty-card {
-    background-color: #e0f7e9; /* light green */
+    background-color: #9ffda7; /* light green */
     border-radius: 20px;
-    padding: 60px 30px;
+    padding: 20px 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -300,27 +300,26 @@
 
 /* ===== PROGRESS BAR ===== */
 .progress-wrapper {
-    width: 100%;
-    max-width: 500px;
+    width: 250%;
+    max-width: 450px;
     background-color: #e6e6e6; /* pale green */
     border-radius: 30px;
     overflow: hidden;
     margin-bottom: 40px;
-    height: 28px;
+    height: 15px;
     border: 1px solid #a5d6a7;
 }
 
 .progress-bar {
     height: 100%;
-    width: 50%; /* Update dynamically */
-    background-color: #69e900; /* medium green */
-    border-radius: 30px;
+    width: 1%; /* Update dynamically */
+    background-color: #dae900; /* medium green */
     transition: width 0.5s ease-in-out;
 }
 
 /* ===== EARN POINTS BOX ===== */
 .reward-item {
-    background-color: #e0f7e9; /* very light green */
+    background-color: #6bda75; /* very light green */
     padding: 30px 20px;
     border-radius: 16px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
@@ -382,12 +381,35 @@
     object-fit: cover;
 }
 .perks-box {
-    background: #e9f7e6;
-    padding: 20px;
-    border-radius: 12px;
-    border: 2px solid #d2eacb;
+    background: #d6ffd6;                 /* lighter green like the reference */
+    padding: 10px 10px;
+    border-radius: 10px;                 /* smoother, more modern */
+    border: 1px solid #cce8c8;
+    
+    width: 200px;                        /* bigger card */
+    height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     text-align: center;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);  /* heavier shadow like ref */
+
+    transition: transform 0.25s ease;
+}
+
+.perks-box:hover {
+    transform: translateY(-4px);
+}
+
+/* Text under the perks image */
+.perks-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 20px;
+    color: #1d331f;
 }
 .progress-extra {
     font-size: 13px;

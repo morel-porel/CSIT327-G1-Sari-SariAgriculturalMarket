@@ -99,12 +99,33 @@ def clear_search_history(request):
 @login_required
 def loyalty_rewards(request):
     loyalty, created = LoyaltyProfile.objects.get_or_create(user=request.user)
-    if created:
-        loyalty.points = 0
-        loyalty.rank = 'Bronze'
-        loyalty.save()
-    
-    return render(request, 'pages/loyalty_rewards.html', {'loyalty': loyalty})
+
+    # Define tier thresholds
+    tiers = [
+        ("Bronze", 0),
+        ("Silver", 300),
+        ("Gold", 1500),
+        ("Platinum", 3000),
+    ]
+
+    current_points = loyalty.points
+
+    next_tier = None
+    points_needed = 0
+
+    for tier_name, threshold in tiers:
+        if current_points < threshold:
+            next_tier = tier_name
+            points_needed = threshold - current_points
+            break
+
+    context = {
+        "loyalty": loyalty,
+        "next_tier": next_tier,
+        "points_needed": points_needed,
+    }
+
+    return render(request, "pages/loyalty_rewards.html", context)
 
 
 @login_required
