@@ -1,5 +1,6 @@
 /* ===== SEARCH PAGE MAIN CONTAINER ===== */
 .search-container {
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,7 +23,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 90vw; /* use viewport width instead of max-width */
+    width: 90vw;
     max-width: 1600px;
     background-color: var(--bg-secondary);
     padding: 15px 25px;
@@ -31,11 +32,9 @@
     margin: 0 auto;
 }
 
-/* Input styling */
 .search-box input[type="text"] {
     flex-grow: 1;
     width: 100%;
-    max-width: none; /* remove restriction */
     padding: 15px 30px;
     border: 2px solid var(--accent-primary);
     border-radius: 30px;
@@ -51,7 +50,6 @@
     box-shadow: 0 0 5px rgba(46, 125, 90, 0.4);
 }
 
-/* Button styling */
 .search-box button {
     background-color: var(--accent-primary);
     color: var(--text-on-accent);
@@ -70,28 +68,118 @@
     transform: scale(1.05);
 }
 
-/* ===== RECENT SEARCHES ===== */
-.search-history {
-    margin-top: 50px;
+/* ===== TWO COLUMN LAYOUT ===== */
+.search-columns {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 50px;
     width: 100%;
-    max-width: 900px;
-    text-align: left;
+    max-width: 1600px;
+    margin-top: 40px;
+    position: relative;
+}
+
+/* ===== LEFT SIDE — RESULTS SECTION ===== */
+.results-section {
+    flex: 1;
+    width: 100%;
+}
+
+.results-section h2 {
+    font-size: 1.4rem;
+    color: var(--accent-primary);
+    margin-bottom: 15px;
+}
+
+/* ===== SEARCH PAGE PRODUCT GRID ===== */
+.grid {
+    width: 100%;
+    max-width: 1400px;
+    margin: 25px auto 0 auto;
+    padding: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.grid-item {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform .25s ease, box-shadow .25s ease;
+    cursor: pointer;
+}
+
+.grid-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f2f2f2;
+}
+
+.product-info {
+    padding: 15px 18px;
+}
+
+.product-info h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.product-info .product-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-secondary);
+}
+
+.product-vendor {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* ===================================================== */
+/* ===== FIXED RIGHT SIDE PANEL — RECENT SEARCHES ===== */
+/* ===================================================== */
+
+.search-history {
+    width: 320px;
+    min-width: 320px;
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+
+    /* Makes it behave like a true side panel */
+    position: sticky;
+    top: 120px;
+
+    /* Push to far right */
+    align-self: flex-start;
+    margin-left: auto;
 }
 
 .search-history h2 {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
     color: var(--accent-primary);
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.search-history p {
-    color: var(--text-secondary);
-}
-
-/* ===== SEARCH HISTORY LIST ===== */
 .history-list {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .history-list li {
@@ -99,10 +187,10 @@
     justify-content: space-between;
     align-items: center;
     background: var(--bg-accent);
-    padding: 10px 15px;
+    padding: 12px 14px;
     border-radius: 10px;
-    margin-bottom: 8px;
-    transition: background 0.3s;
+    margin-bottom: 10px;
+    transition: background .2s ease;
 }
 
 .history-list li:hover {
@@ -112,9 +200,14 @@
 .history-term {
     font-size: 16px;
     color: var(--accent-primary);
+    cursor: pointer;
+    transition: color 0.2s;
 }
 
-/* Delete button (X) */
+.history-term:hover {
+    color: var(--accent-secondary);
+}
+
 .delete-btn {
     background: none;
     border: none;
@@ -122,39 +215,21 @@
     font-size: 18px;
     text-decoration: none;
     cursor: pointer;
-    transition: color 0.3s;
 }
 
-.delete-btn:hover {
-    color: var(--danger-color);
-}
-
-/* Clear all button */
 .clear-all-btn {
     display: inline-block;
-    margin-top: 12px;
-    padding: 8px 16px;
+    margin-top: 15px;
+    padding: 10px 20px;
     background-color: var(--accent-primary);
     color: var(--text-on-accent);
-    border-radius: 20px;
+    border-radius: 18px;
     text-decoration: none;
     font-weight: 600;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color .2s, transform .2s;
 }
 
 .clear-all-btn:hover {
     background-color: var(--accent-secondary);
-    transform: scale(1.05);
-}
-
-.history-term {
-    font-size: 16px;
-    color: var(--accent-primary);
-    cursor: pointer;
-    transition: color 0.2s, transform 0.2s;
-}
-
-.history-term:hover {
-    color: var(--accent-secondary);
     transform: scale(1.05);
 }
