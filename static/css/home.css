@@ -682,3 +682,68 @@ body, html {
   outline: none;
   border-color: var(--accent-primary);
 }
+
+.btn-share {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: var(--text-primary);
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-share:hover {
+    background-color: #e0e0e0;
+}
+
+.share-panel {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--bg-accent);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.share-panel p {
+    margin: 0 0 10px;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.share-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.share-actions button {
+    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.share-actions button:hover {
+    background: var(--accent-highlight);
+    color: #fff;
+    border-color: var(--accent-highlight);
+}
+
+#qrcode-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px auto;
+    padding: 10px;
+    background: white;
+    width: 120px;
+    border-radius: 4px;
+}
