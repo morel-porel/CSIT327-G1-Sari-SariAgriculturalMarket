@@ -17,11 +17,16 @@
 
         <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
             <div>
+                <h2 style="font-size: 67;">Your Points Balance</h2>
                 <p class="loyalty-points">{{ loyalty.points }}</p>
-                <p>Total points</p>
+                <h3 style="font-size: 30;">Total points</h3>
 
-                <p style="font-size:13px; margin-top:10px;">
-                    Progress to next tier: <strong>{{ loyalty.rank }}</strong>
+                <p style="font-size:13px; margin-top:5px; color:#000000;">
+                    {% if next_tier %}
+                        Earn <strong>{{ points_needed }}</strong> more points for <strong>{{ next_tier }}</strong> tier
+                    {% else %}
+                        You reached the highest tier! 🎉
+                    {% endif %}
                 </p>
 
                 {% comment %} Example: calculate % for progress bar {% endcomment %}
@@ -34,8 +39,9 @@
             </div>
 
 <div class="perks-box">
-    <img src="{% static 'images/logo.png' %}" style="width:110px;">
-    <p>Exclusive<br>Member Perks</p>
+    <img src="{% static 'images/logo.png' %}" style="width:115px; border-radius: 20px;">
+    <br>
+    <p style="font-size:20px" > Exclusive<br>Member <br> Perks</p>
 </div>
 
         </div>
@@ -45,11 +51,11 @@
     <div style="display:flex; gap:20px; flex-wrap:wrap; max-width:900px; margin:auto;">
 
         <!-- Earn Points -->
-        <div class="reward-item" style="flex:1; min-width:250px;">
-            <h3>Earn Points</h3>
-            <p>• Message vendor first time → <strong>+20</strong></p>
-            <p>• Unique product search → <strong>+5</strong></p>
-            <p>• Unlock badges</p>
+        <div class="reward-item" style="flex:1; min-width:350px; min-height: 150px;">
+            <h3 style="font-size:30px">Earn Points</h3>
+            <br>
+            <p style="font-size:15px">• Message vendor first time  <strong>+20</strong></p>
+            <p style="font-size:15px">• Unique product search  <strong>+5</strong></p>
         </div>
     </div>
 
