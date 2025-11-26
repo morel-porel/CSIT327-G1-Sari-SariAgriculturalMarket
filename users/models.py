@@ -1,6 +1,10 @@
 # users/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class CustomUser(AbstractUser):
     class Role(models.TextChoices):
@@ -42,3 +46,31 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} searched '{self.query}'"
+
+class LoyaltyProfile(models.Model):
+    RANK_CHOICES = (
+        ('Bronze', 'Bronze'),
+        ('Silver', 'Silver'),
+        ('Gold', 'Gold'),
+    )
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    points = models.PositiveIntegerField(default=0)
+    rank = models.CharField(max_length=10, choices=RANK_CHOICES, default='Bronze')
+
+    def update_rank(self):
+        """Automatically update rank based on points."""
+        if self.points >= 100:
+            self.rank = 'Gold'
+        elif self.points >= 50:
+            self.rank = 'Silver'
+        else:
+            self.rank = 'Bronze'
+        self.save()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.rank}"
+    
+def create_loyalty_profile(sender, instance, created, **kwargs):
+    if created:
+        LoyaltyProfile.objects.create(user=instance)

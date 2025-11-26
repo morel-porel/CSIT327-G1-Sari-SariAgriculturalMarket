@@ -1,6 +1,7 @@
 # pages/urls.py
 from django.urls import path
 from . import views
+from .views import loyalty_rewards, redeem_points
 
 urlpatterns = [
     path('about/', views.about_us_view, name='about'),
@@ -10,4 +11,8 @@ urlpatterns = [
     path('search/', views.search_view, name='search'),
     path('search/delete/<int:history_id>/', views.delete_search_history, name='delete_search_history'),
     path('search/clear/', views.clear_search_history, name='clear_search_history'),
+
+    # loyalty rewards
+    path('loyalty/', views.loyalty_rewards, name='loyalty_rewards'),
+    path("loyalty/redeem/", redeem_points, name="redeem_points"),
 ]

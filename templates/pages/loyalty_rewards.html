@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+
+<div class="loyalty-container">
+
+    <!-- Back + Page Title -->
+    <div class="loyalty-header" style="text-align:left; display:flex; align-items:center; gap:10px;">
+        <a href="{% url 'profile' %}" style="color:var(--text-primary); font-size:22px;">←</a>
+        <h1 style="margin:0;">Loyalty Rewards</h1>
+    </div>
+
+    <!-- MAIN POINTS CARD -->
+    <div class="loyalty-card" style="max-width:900px; width:100%; margin:auto;">
+
+        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+            <div>
+                <p class="loyalty-points">{{ loyalty.points }}</p>
+                <p>Total points</p>
+
+                <p style="font-size:13px; margin-top:10px;">
+                    Progress to next tier: <strong>{{ loyalty.rank }}</strong>
+                </p>
+
+                {% comment %} Example: calculate % for progress bar {% endcomment %}
+                {% with progress=loyalty.points|divisibleby:150 %}
+                {% endwith %}
+
+                <div class="progress-wrapper">
+                    <div class="progress-bar" style="width:{{ loyalty.points|floatformat:0 }}px; "></div>
+                </div>
+            </div>
+
+<div class="perks-box">
+    <img src="{% static 'images/logo.png' %}" style="width:110px;">
+    <p>Exclusive<br>Member Perks</p>
+</div>
+
+        </div>
+    </div>
+
+    <!-- ROW: Recent Activity + Earn Points -->
+    <div style="display:flex; gap:20px; flex-wrap:wrap; max-width:900px; margin:auto;">
+
+        <!-- Earn Points -->
+        <div class="reward-item" style="flex:1; min-width:250px;">
+            <h3>Earn Points</h3>
+            <p>• Message vendor first time → <strong>+20</strong></p>
+            <p>• Unique product search → <strong>+5</strong></p>
+            <p>• Unlock badges</p>
+        </div>
+    </div>
+
+
+    <!-- REDEEM SECTION -->
+    <div id="redeem-section" style="max-width:900px; margin:auto;">
+        <h2>Redeem Rewards</h2>
+
+        <form method="POST" action="{% url 'redeem_points' %}">
+            {% csrf_token %}
+
+            <select name="reward" 
+                    style="padding:12px; border-radius:8px; border:1px solid var(--border-color); width:100%; margin-bottom:20px;">
+                <option value="5% Discount|150">5% Discount – 150 points</option>
+                <option value="Free Delivery|300">Free Delivery – 300 points</option>
+                <option value="VIP Badge|700">VIP Badge – 700 points</option>
+            </select>
+
+            <button type="submit" class="btn-redeem">Redeem</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
