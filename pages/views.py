@@ -51,6 +51,9 @@ def search_view(request):
     # ----- Actual search -----
     query = request.GET.get('query', '').strip()
 
+    # DEFAULT: no results
+    results = []
+
     if query:
         # Track in session history (UI only)
         if query not in search_history:
@@ -73,8 +76,16 @@ def search_view(request):
         # Permanent history (DB)
         SearchHistory.objects.create(user=request.user, query=query)
 
+        # ----- PRODUCT SEARCH -----
+        results = Product.objects.filter(
+            name__icontains=query
+        ) | Product.objects.filter(
+            category__icontains=query
+        )
+
     return render(request, 'pages/search.html', {
         "query": query,
+        "results": results,
         "search_history": search_history,
     })
 

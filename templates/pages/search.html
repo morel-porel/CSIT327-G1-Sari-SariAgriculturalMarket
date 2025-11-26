@@ -5,32 +5,81 @@
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
 
 <div class="search-container">
+
     <h1>Search</h1>
 
+    <!-- CENTERED SEARCH BAR -->
     <form method="get" action="{% url 'search' %}">
-        <div class="search-box">
+        <div class="search-box search-center">
             <input type="text" name="query" placeholder="Search vendors or products..." required>
             <button type="submit">Search</button>
         </div>
     </form>
 
-<div class="search-history">
-    <h2>Recent Searches</h2>
-
-    {% if search_history %}
-        <ul class="history-list">
-            {% for item in search_history %}
-                <li>
-                    <span class="history-term" onclick="fillSearch('{{ item }}')">{{ item }}</span>
-                    <a href="?delete={{ item }}" class="delete-btn">✕</a>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="?clear=1" class="clear-all-btn">Clear All</a>
-    {% else %}
-        <p>No recent searches yet.</p>
+    {% if query %}
+        <p>Showing results for “<strong>{{ query }}</strong>”</p>
     {% endif %}
+
+    <!-- TWO COLUMN LAYOUT -->
+    <div class="search-columns">
+
+        <!-- LEFT SIDE — RESULTS -->
+        <div class="results-section">
+
+            <h2>Search Results</h2>
+
+            <div class="grid" id="search-grid-container">
+                {% if results %}
+                    {% for product in results %}
+                        <div class="grid-item" data-product-id="{{ product.id }}" style="cursor: pointer;">
+                            
+                            {% if product.image %}
+                                <div class="product-image" style="background-image: url('{{ product.image.url }}');"></div>
+                            {% else %}
+                                <div class="product-image"></div>
+                            {% endif %}
+
+                            <div class="product-info">
+                                <h3 class="product-name">{{ product.name }}</h3>
+                                <p class="product-price">₱{{ product.price }}</p>
+
+                                {% if product.vendor.vendorprofile %}
+                                    <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% if query %}
+                        <p>No products found for this search.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE — RECENT SEARCHES -->
+        <div class="search-history">
+            <h2>Recent Searches</h2>
+
+            {% if search_history %}
+                <ul class="history-list">
+                    {% for item in search_history %}
+                        <li>
+                            <span class="history-term" onclick="fillSearch('{{ item }}')">{{ item }}</span>
+                            <a href="?delete={{ item }}" class="delete-btn">✕</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="?clear=1" class="clear-all-btn">Clear All</a>
+            {% else %}
+                <p>No recent searches yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
 </div>
+
 <script>
 function fillSearch(value) {
     const input = document.querySelector('input[name="query"]');
@@ -38,4 +87,5 @@ function fillSearch(value) {
     input.focus();
 }
 </script>
+
 {% endblock %}
