@@ -3,20 +3,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from .models import Conversation, Message, MessageReport 
-from users.models import CustomUser
+from users.models import CustomUser, LoyaltyProfile
 from notifications.utils import create_notification
 from django.urls import reverse
 from notifications.models import Notification
 from django.http import JsonResponse, HttpResponseBadRequest 
 from django.views.decorators.http import require_POST 
-
 import datetime 
 
 MESSENGER_TEMPLATE = 'messaging/messenger.html'
 
 @login_required
 def inbox_view(request):
-    # ... (Your existing inbox_view logic) ...
     all_conversations = Conversation.objects.filter(participants=request.user).prefetch_related('participants', 'messages')
     
     conversations_with_recipient = []
@@ -48,22 +46,26 @@ def conversation_detail_view(request, conversation_id):
         media_file = request.FILES.get('media_file')
         
         if text_content or media_file:
-            
-            # *** THIS IS THE FIX ***
-            # We create the message object first, *then* save the file.
-            # This is a more robust way to ensure the file is written to disk.
+            # Create the message
             new_message = Message.objects.create(
                 conversation=conversation,
                 sender=request.user,
                 text_content=text_content
-                # We add the media file in the next step
             )
             
             if media_file:
                 new_message.media_file = media_file
-                new_message.save() # This explicitly saves the file to the media directory
-            # *** END OF FIX ***
+                new_message.save()
 
+            # ===== LOYALTY POINTS LOGIC =====
+            loyalty, _ = LoyaltyProfile.objects.get_or_create(user=request.user)
+            sent_messages = Message.objects.filter(conversation=conversation, sender=request.user).count()
+            # First message in this conversation = 20 points, others = 10
+            loyalty.points += 20 if sent_messages == 1 else 10
+            loyalty.save()
+            # ===== END LOYALTY POINTS LOGIC =====
+
+            # Notification logic
             recipient = conversation.participants.exclude(id=request.user.id).first()
             if recipient:
                 notification_text = f"New message from {request.user.username}"
@@ -75,7 +77,7 @@ def conversation_detail_view(request, conversation_id):
                 )
         return redirect('conversation_detail', conversation_id=conversation.id)
 
-    # --- GET Request Logic ---
+    # --- GET Request Logic (unchanged) ---
     conversation_url = reverse('conversation_detail', kwargs={'conversation_id': conversation.id})
     Notification.objects.filter(
         recipient=request.user, 
@@ -108,8 +110,7 @@ def conversation_detail_view(request, conversation_id):
     
     return render(request, MESSENGER_TEMPLATE, context)
 
-
-# NEW VIEW: To handle the report message feature (AJAX endpoint)
+# Report message view (unchanged)
 @login_required
 @require_POST
 def report_message_view(request, message_id):
@@ -134,7 +135,7 @@ def report_message_view(request, message_id):
     
     return JsonResponse({'status': 'success', 'message': 'Message reported successfully. An admin will review it shortly.'})
 
-
+# Start conversation (unchanged)
 @login_required
 def start_conversation_view(request, recipient_id):
     recipient = get_object_or_404(CustomUser, id=recipient_id)

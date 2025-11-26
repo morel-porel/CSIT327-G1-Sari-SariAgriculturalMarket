@@ -224,3 +224,174 @@
     outline: none;
     border-color: var(--accent-primary);
 }
+
+/* =================================== */
+/* LOYALTY REWARDS PAGE STYLES        */
+/* UPDATED LIGHT GREEN THEME           */
+/* =================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Song Myung', serif;
+}
+
+.loyalty-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* ===== HEADER ===== */
+.loyalty-header {
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.loyalty-header h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.loyalty-header p {
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+/* ===== POINTS & RANK CARD ===== */
+.loyalty-card {
+    background-color: #e0f7e9; /* light green */
+    border-radius: 20px;
+    padding: 60px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #000000;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.loyalty-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
+
+.loyalty-points {
+    font-size: 60px;
+    font-weight: bold;
+    color: #2e7d32; /* darker green */
+    margin-bottom: 15px;
+}
+
+.loyalty-rank {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #ffffff;
+    background-color: #4caf50; /* green */
+    margin-bottom: 30px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-wrapper {
+    width: 100%;
+    max-width: 500px;
+    background-color: #e6e6e6; /* pale green */
+    border-radius: 30px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    height: 28px;
+    border: 1px solid #a5d6a7;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 50%; /* Update dynamically */
+    background-color: #69e900; /* medium green */
+    border-radius: 30px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* ===== EARN POINTS BOX ===== */
+.reward-item {
+    background-color: #e0f7e9; /* very light green */
+    padding: 30px 20px;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    color: #000000;
+    flex: 1;
+    min-width: 250px;
+}
+
+/* ===== REDEEM SECTION ===== */
+#redeem-section {
+    text-align: center;
+}
+
+#redeem-section h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #2e7d32;
+}
+
+.btn-redeem {
+    padding: 16px 50px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #154616;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    display: inline-block;
+}
+
+.btn-redeem:hover {
+    background-color: #43a047;
+    transform: scale(1.05);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .loyalty-card {
+        padding: 40px 20px;
+    }
+
+    .loyalty-points {
+        font-size: 44px;
+    }
+
+    .loyalty-header h1 {
+        font-size: 28px;
+    }
+
+    .btn-redeem {
+        width: 100%;
+        padding: 16px 0;
+    }
+}
+.soft-corners {
+    border-radius: 18px;   /* smooth, not too round */
+    object-fit: cover;
+}
+.perks-box {
+    background: #e9f7e6;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #d2eacb;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.progress-extra {
+    font-size: 13px;
+    margin: 5px 0 10px;
+    color: #2d2d2d;
+}
+
