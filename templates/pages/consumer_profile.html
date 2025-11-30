@@ -71,14 +71,6 @@
             <span>Loyalty Rewards</span>
         </a>
 
-        <a href="#" class="sidebar-btn" style="text-decoration: none;">
-            <span>Addresses</span>
-        </a>
-
-        <a href="#" class="sidebar-btn" style="text-decoration: none;">
-            <span>Password</span>
-        </a>
-
         <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
             <span>Messages</span>
         </a>
@@ -87,17 +79,18 @@
             <span>Notifications</span>
         </a>
 
-        {% if user.role == 'VENDOR' %}
-            <a href="{% url 'vendor_profile' %}" class="sidebar-btn" style="background-color: #fff3cd; border-color: #ffeeba; color: #856404; text-decoration: none;">
-                <span>Manage Shop</span>
-            </a>
-        {% else %}
-            <a href="{% url 'become_vendor' %}" class="sidebar-btn" style="background-color: #faa625; border-color: #faa625; color: #000; text-decoration: none;">
-                <span>Be a Vendor!</span>
-            </a>
-        {% endif %}
-
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
+            {% if user.role == 'VENDOR' %}
+                <a href="{% url 'vendor_profile' %}" class="sidebar-btn" style="background-color: #fff3cd; border-color: #ffeeba; color: #856404; text-decoration: none;">
+                    <span>Manage Shop</span>
+                </a>
+            {% else %}
+                <a href="{% url 'become_vendor' %}" class="sidebar-btn" style="background-color: #faa625; border-color: #faa625; color: #000; text-decoration: none;">
+                    <span>Be a Vendor!</span>
+                </a>
+            {% endif %}
+
+        
             <a href="{% url 'logout' %}" class="sidebar-btn" style="text-decoration: none; background-color: #c82333; border-color: #bd2130; color: #fff;">
                 <span>Logout</span>
             </a>
@@ -134,11 +127,10 @@
                             </div>
                         </div>
 
-                        <div class="profile-inputs">
+                        <div class="profile-inputs" id="profile-inputs-container">
                             <div class="form-group">
                                 <label>Username</label>
-                                {{ form.username }}
-                                {{ form.username.errors }}
+                                <input type="text" value="{{ user.username }}" disabled class="readonly-field">
                             </div>
 
                             <div class="form-group">
@@ -175,7 +167,7 @@
                         </div>
                         
                         <div class="form-actions">
-                            <button type="button" class="btn-save" id="edit-save-btn" name="update_profile" value="update_profile">Edit Profile</button>
+                            <button type="button" class="btn-save" id="edit-profile-btn" name="update_profile" value="update_profile">Edit Profile</button>
                         </div>
                     </div>
 
@@ -234,13 +226,14 @@
 
                         <div class="dashboard-card address-card">
                             <h2 class="card-title">Address Book</h2>
-                            <div class="profile-inputs">
+                            
+                            <div class="profile-inputs" id="address-inputs-container">
                                 <div class="form-group">
                                     <label>Street Address</label>
                                     {{ form.address }}
                                     {{ form.address.errors }}
                                 </div>
-                                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div class="form-group address-row">
                                     <div>
                                         <label>City</label>
                                         {{ form.city }}
@@ -252,6 +245,10 @@
                                         {{ form.zip_code.errors }}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-save" id="edit-address-btn" name="update_profile" value="update_profile">Edit Address</button>
                             </div>
                         </div>
 
@@ -294,39 +291,50 @@
             document.body.appendChild(modal);
         }
 
-        const form = document.getElementById('profile-form');
-        const inputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
-        const btn = document.getElementById('edit-save-btn');
+        const profileBtn = document.getElementById('edit-profile-btn');
+        const addressBtn = document.getElementById('edit-address-btn');
         const photoBtn = document.getElementById('photo-upload-btn');
 
-        inputs.forEach(input => {
-            input.disabled = true;
-        });
-        
-        if(photoBtn) {
-            photoBtn.style.display = 'none';
+        const profileContainer = document.getElementById('profile-inputs-container');
+        const addressContainer = document.getElementById('address-inputs-container');
+
+        function setInputsDisabled(container, disabled) {
+            const inputs = container.querySelectorAll('input:not([type="hidden"]), select, textarea');
+            inputs.forEach(input => {
+                // Ensure read-only fields stay disabled
+                if (!input.classList.contains('readonly-field')) {
+                    input.disabled = disabled;
+                }
+            });
         }
 
-        btn.addEventListener('click', function(e) {
-            if (btn.innerText === 'Edit Profile') {
+        setInputsDisabled(profileContainer, true);
+        setInputsDisabled(addressContainer, true);
+        
+        if(photoBtn) photoBtn.style.display = 'none';
+
+        profileBtn.addEventListener('click', function(e) {
+            if (profileBtn.innerText === 'Edit Profile') {
                 e.preventDefault();
+                setInputsDisabled(profileContainer, false);
+                if(photoBtn) photoBtn.style.display = 'inline-block';
+                profileBtn.innerText = 'Save Changes';
+                profileBtn.type = 'submit';
                 
-                inputs.forEach(input => {
-                    if (!input.classList.contains('readonly-field')) {
-                        input.disabled = false;
-                    }
-                });
+                const firstInput = profileContainer.querySelector('input');
+                if(firstInput) firstInput.focus();
+            }
+        });
 
-                if(photoBtn) {
-                    photoBtn.style.display = 'inline-block';
-                }
-
-                btn.innerText = 'Save Changes';
-                btn.type = 'submit'; 
+        addressBtn.addEventListener('click', function(e) {
+            if (addressBtn.innerText === 'Edit Address') {
+                e.preventDefault();
+                setInputsDisabled(addressContainer, false);
+                addressBtn.innerText = 'Save Address';
+                addressBtn.type = 'submit';
                 
-                if(inputs.length > 0) {
-                    inputs[0].focus();
-                }
+                const firstInput = addressContainer.querySelector('input');
+                if(firstInput) firstInput.focus();
             }
         });
     });

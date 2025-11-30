@@ -3,8 +3,9 @@
     grid-template-columns: 0.5fr 1.5fr;
     gap: 20px;
     width: 100%;
-    height: 100%;
+    min-height: 100%; 
     padding: 20px 20px; 
+    align-items: stretch;
 }
 
 .dashboard-card {
@@ -27,9 +28,15 @@
 }
 
 .profile-card {
-    grid-row: span 2;
-    height: fit-content; 
-    min-height: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-form {
+    display: flex; 
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .profile-avatar-section {
@@ -87,7 +94,6 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    flex-grow: 1;
 }
 
 .form-group {
@@ -128,7 +134,8 @@
 }
 
 .form-actions {
-    margin-top: 15px; 
+    margin-top: auto; 
+    padding-top: 20px;
 }
 
 .btn-save {
@@ -154,6 +161,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    height: 100%;
 }
 
 .loyalty-card-link {
@@ -164,6 +172,7 @@
     transition: transform 0.2s;
     justify-content: space-between;
     min-height: 250px; 
+    flex-shrink: 0;
 }
 
 .loyalty-card-link:hover {
@@ -236,6 +245,14 @@
 
 .settings-card {
     justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+.address-card {
+    justify-content: flex-start;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
 }
 
 .settings-list {
@@ -316,7 +333,16 @@
     color: white;
 }
 
-/* Updated settings modal to avoid conflicts */
+.address-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px; 
+}
+
+#address-inputs-container {
+    gap: 20px; 
+}
+
 .settings-modal {
     display: none; 
     position: fixed; 
@@ -369,6 +395,9 @@
         grid-template-columns: 1fr;
     }
     .profile-card {
-        grid-row: auto;
+        height: auto;
+    }
+    .right-column {
+        height: auto;
     }
 }
