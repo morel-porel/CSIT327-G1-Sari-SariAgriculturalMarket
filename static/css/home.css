@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Song Myung', serif;
+    font-family: var(--font-main);
 }
 
 body, html {
@@ -123,12 +123,11 @@ body, html {
 }
 
 .sidebar {
-    width: 300px;
+    width: 350px; /* Wider Sidebar */
     padding: 10px 20px;
     background: var(--bg-primary);
     display: flex;
     flex-direction: column;
-    /* Optional: Set a lower Z-index just in case */
     z-index: 1;
 }
 
@@ -157,6 +156,7 @@ body, html {
     color: var(--text-primary);
 }
 
+/* --- UPDATED SIDEBAR BUTTONS (UNIFIED STYLE) --- */
 .sidebar-btn {
     display: flex;
     align-items: center;
@@ -165,62 +165,53 @@ body, html {
     height: 75px;
     padding: 18px;
     margin-bottom: 12px;
-    border: none;
-    border-radius: 10px;
+    
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
-    color: #ffffff;
-    background-size: cover;
-    background-position: center;
+    
+    /* Base State: Clean White */
+    background-color: #ffffff;
+    color: #333;
+    
+    background-image: none !important;
     position: relative;
     overflow: hidden;
+    transition: all 0.2s ease-in-out;
 }
 
-.sidebar-btn::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 0;
-}
-
-.sidebar-btn:hover::before {
-    background: rgba(0, 0, 0, 0.65);
-}
+.sidebar-btn::before { display: none; }
 
 .sidebar-btn img.icon {
     width: 24px;
     height: 24px;
-    transition: filter 0.3s ease;
+    position: relative;
+    z-index: 1;
+    object-fit: contain; /* Ensure icons fit nicely */
+    
+    /* REMOVED: filter property so original colors show */
 }
 
-.sidebar-btn:hover img.icon {
-    filter: brightness(2) drop-shadow(0 0 7px #fff);
-}
-
-.sidebar-btn img.icon,
 .sidebar-btn span {
     position: relative;
     z-index: 1;
+    font-weight: 600;
 }
 
-.sidebar-btn:hover {
-    transform: scale(1.05);
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
+/* --- UNIFIED HOVER & ACTIVE STATE (Green Tint) --- */
+.sidebar-btn:hover, .sidebar-btn.active {
+    background-color: #ffffff; /* Light Green background */
+    border-color: #285429;     /* Slightly darker green border */
+    color: #000;               /* Keep text black as requested */
+    box-shadow: 0 4px 12px rgba(23, 94, 82, 0.15);
+    transform: scale(1.02);
 }
 
-.home-btn { background-image: url("../backgrounds/bg-home.jpg"); }
-.fresh-btn { background-image: url("../backgrounds/bg-fresh.jpg"); }
-.grains-btn { background-image: url("../backgrounds/bg-grains.jpg"); }
-.meat-btn { background-image: url("../backgrounds/bg-meat.jpg"); }
-.dairy-btn { background-image: url("../backgrounds/bg-dairy.jpg"); }
-.packaged-btn { background-image: url("../backgrounds/bg-packaged.jpg"); }
-.local-btn { background-image: url("../backgrounds/bg-local.jpg"); }
-.service-btn { background-image: url("../backgrounds/bg-service.jpg"); }
+/* REMOVED: The rule that changed icon filter on hover */
 
-/* The .content box is inside .main (which is now scroll-enabled) and manages the scrollbar */
+/* --- END SIDEBAR BUTTONS --- */
+
 .content {
     flex: 1;
     padding: 20px;
@@ -304,7 +295,8 @@ body, html {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(6, 230px);
+    /* Use auto-fill to allow grid to adapt to wider sidebar without breaking */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 37px;
     width: 100%;
 }
@@ -403,7 +395,7 @@ body, html {
 }
 
 /* ======================================= */
-/* MODAL/POP-UP STYLES (Moved from <style> block) */
+/* MODAL/POP-UP STYLES */
 /* ======================================= */
 
 .modal-backdrop {
@@ -416,7 +408,6 @@ body, html {
     z-index: 1000;
 }
 .modal {
-    /* Keep existing positioning and sizing */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -426,10 +417,8 @@ body, html {
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     z-index: 1001;
-    /* REDUCED MAX-WIDTH to favor a portrait shape */
     max-width: 350px;
     width: 90%;
-    /* CHANGED from flex-direction: column to a simple block model */
     display: block;
 }
 .modal-close {
@@ -443,24 +432,20 @@ body, html {
     color: var(--text-primary);
 }
 .modal-content {
-    /* REMOVED: display: flex; and gap: 20px; to enforce stacking */
     display: block;
     padding-top: 10px;
 }
 .modal-image {
-    /* Ensure image container uses full width */
-    max-width: 100%; /* Now uses the full width of the parent modal */
-    margin-bottom: 20px; /* Spacing between image and text details */
+    max-width: 100%; 
+    margin-bottom: 20px;
 }
 .modal-image img {
-    /* Keep image rules */
     width: 100%;
-    height: 300px; /* NEW: Fixed height for a uniform look */
-    object-fit: cover; /* Ensures the image fills the area */
+    height: 300px; 
+    object-fit: cover;
     border-radius: 8px;
 }
 .modal-details {
-    /* No flex property needed here */
     display: block;
 }
 .modal-details h2 {
@@ -496,32 +481,29 @@ body, html {
 }
 @media (max-width: 768px) {
     .modal-content {
-        /* This rule is now redundant as we use block/stack by default */
         display: block;
     }
 }
 .modal-backdrop[style*="display: none"] {
-    pointer-events: none !important; /* Prevents the invisible backdrop from catching clicks */
+    pointer-events: none !important; 
 }
 .vendor-header-image {
     width: 100%;
     height: 250px;
     overflow: hidden;
     border-radius: 8px;
-    margin-bottom: 20px; /* Increased space below the image */
+    margin-bottom: 20px; 
     position: relative;
     background-color: var(--bg-accent);
 }
 
-/* 2. Style the image element itself */
 .vendor-profile-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* CRITICAL: Ensures the image fills the container without distortion (cropping necessary parts) */
-    display: block; /* Removes any extra space below the image */
+    object-fit: cover; 
+    display: block; 
 }
 
-/* 3. Style for the verification badge (optional, for visual polish) */
 .verification-status {
     position: absolute;
     bottom: 10px;
@@ -534,44 +516,40 @@ body, html {
 }
 
 .verification-status.verified {
-    background-color: var(--accent-secondary); /* Green */
+    background-color: var(--accent-secondary); 
 }
 .verification-status.unverified {
-    background-color: var(--warning-color); /* Yellow/Orange */
+    background-color: var(--warning-color); 
 }
 .vendor-details-section {
-    padding: 0 10px; /* Slight horizontal padding for inner content */
+    padding: 0 10px; 
 }
 
-/* 2. Spacing for the Section Headers (h3) */
 .vendor-details-section h3 {
     font-size: 1.2em;
-    color: var(--accent-primary); /* Assuming this is your primary color */
-    margin-top: 15px;    /* Space above the header */
-    margin-bottom: 5px; /* Space between header and content paragraph */
-    border-bottom: 1px solid var(--border-color); /* Optional: Adds a subtle separator */
+    color: var(--accent-primary);
+    margin-top: 15px;    
+    margin-bottom: 5px; 
+    border-bottom: 1px solid var(--border-color); 
     padding-bottom: 3px;
 }
 
-/* 3. Spacing for descriptive paragraphs */
 .vendor-details-section p {
-    margin-bottom: 15px; /* Space after descriptive paragraphs */
+    margin-bottom: 15px; 
     line-height: 1.5;
     color: var(--text-primary);
 }
 
-/* 4. Spacing for the meta-grid (Experience, Permit, Contact) */
 .meta-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Stack items vertically on a small modal */
-    gap: 10px; /* Space between the rows */
+    grid-template-columns: 1fr; 
+    gap: 10px; 
     margin-top: 15px;
     padding: 10px 0;
-    border-top: 1px dashed var(--border-color); /* Separator line */
+    border-top: 1px dashed var(--border-color); 
     border-bottom: 1px dashed var(--border-color); 
 }
 
-/* 5. Spacing for the Seller Email (small text footer) */
 .small-text {
     margin-top: 10px;
     font-size: 0.9em;
@@ -641,7 +619,6 @@ body, html {
   transform: scale(1.05);
 }
 
-/* ✅ Right-side icons aligned properly */
 .nav-icons {
   display: flex;
   align-items: center;
@@ -654,7 +631,6 @@ body, html {
   cursor: pointer;
 }
 
-/* Theme Selector Styles */
 .theme-selector {
   display: flex;
   align-items: center;
@@ -748,9 +724,6 @@ body, html {
     border-radius: 4px;
 }
 
-/* ==========================================================================
-   NEW BADGE STYLES FOR HOMEPAGE - UPDATED FOR IMAGE ICON
-   ========================================================================== */
 .vendor-name-container {
     display: inline-flex;
     align-items: center;
@@ -758,7 +731,7 @@ body, html {
 }
 
 .vendor-badge {
-    width: 20px; /* Adjust size as needed */
+    width: 20px; 
     height: 20px;
     object-fit: contain;
     vertical-align: middle;
