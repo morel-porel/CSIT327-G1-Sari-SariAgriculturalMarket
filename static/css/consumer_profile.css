@@ -5,7 +5,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Song Myung', serif;
+    /* CHANGED: Use variable */
+    font-family: var(--font-main);
 }
 .navbar {
     display: flex;
@@ -235,7 +236,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Song Myung', serif;
+    /* CHANGED: Use variable */
+    font-family: var(--font-main);
 }
 
 .loyalty-container {

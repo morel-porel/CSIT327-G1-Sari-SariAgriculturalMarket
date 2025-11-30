@@ -5,7 +5,7 @@
     --bg-primary: #ffffff;
     --bg-secondary: #f9fafb;
     --bg-tertiary: #f5f5f5;
-    --bg-accent: #f0f0f0;
+    --bg-accent: #ffffff;
     --bg-form: #d8e4a9;
     --bg-success-light: #e8f5e9;
 
@@ -13,20 +13,23 @@
     --text-secondary: #555555;
     --text-on-accent: #ffffff;
 
-    --accent-primary: #175e52; /* Main dark green */
+    --accent-primary: #285429; /* Main dark green */
     --accent-secondary: #2e7d32; /* Lighter action green */
     --accent-highlight: #6cdf6e; /* Brightest green */
 
-    --border-color: #e0e0e0;
+    --border-color: #ebebeb;
     --border-input: #cccccc;
 
     --danger-color: #dc3545;
-    --warning-color: #ffc107;
+    --warning-color: #faa625;
     --info-color: #17a2b8;
-    --link-color: #175e52;
+    --link-color: #285429;
 
     /* NEW: Verified Badge Color (Twitter-like Blue) */
     --verified-color: #1da1f2; 
+
+    /* ADDED: Font Variable Definition */
+    --font-main: 'Noto Sans', sans-serif;
 }
 
 /* --- 2. DARK THEME OVERRIDES --- */
@@ -95,13 +98,12 @@
     }
 }
 
-/* --- GLOBAL ELEMENT STYLES --- */
 body {
     background-color: var(--bg-primary); 
     color: var(--text-primary);
+    font-family: var(--font-main); 
 }
 
-/* --- NOTIFICATION BADGE --- */
 .nav-icons a {
     position: relative;
     display: inline-block;
@@ -112,7 +114,7 @@ body {
     position: absolute;
     top: -6px;
     right: -6px;
-    background-color: #ff0000; /* Red Circle */
+    background-color: #ff0000;
     color: white;
     border-radius: 50%;
     padding: 2px 4px;
@@ -124,4 +126,185 @@ body {
     border: 2px solid var(--bg-primary);
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     z-index: 10;
+}
+
+/* ========================================= */
+/* UNIFORM SEARCH BAR STYLES (GLOBAL)       */
+/* ========================================= */
+
+.navbar, header {
+    background-color: #FFFFFF !important;
+    border-bottom: 1px solid #dddddd !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 30px !important;
+    height: 70px !important; /* Fixed Header Height */
+}
+
+.logo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    min-width: 180px; /* Ensure logo area is consistent */
+}
+
+.brand-green { color: #285429 !important; font-weight: 800 !important; }
+.brand-orange { color: #FAA625 !important; font-weight: 800 !important; }
+
+/* 1. Main Search Container - ENFORCED UNIFORMITY */
+.search-bar {
+    display: flex !important;
+    flex: 1 !important; /* Grow to fill space between logo and icons */
+    justify-content: center !important; /* Center the form */
+    margin: 0 20px !important; /* Consistent spacing */
+    height: 46px !important; /* Fixed Height for ALL pages */
+    width: auto !important;
+    max-width: none !important; /* Remove individual page limits */
+}
+
+/* 2. The Form (The actual visual box) */
+.search-bar form {
+    height: 100% !important;
+    width: 100% !important;
+    max-width: 1100px !important; /* WIDER WIDTH (1100px) */
+    background-color: #ffffff !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 3px !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+}
+
+/* 3. Wrapper for Input + Dropdown */
+.search-container-wrapper {
+    flex: 1 !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+/* 4. Input Field */
+.search-bar input, 
+.search-bar input[type="text"] {
+    height: 100% !important;
+    width: 100% !important;
+    background-color: transparent !important;
+    border: none !important; 
+    outline: none !important;
+    color: #333 !important;
+    padding: 0 15px !important;
+    font-size: 15px !important;
+    border-radius: 0 !important;
+}
+
+/* 5. Search Button */
+.search-bar button {
+    height: 100% !important;
+    width: 60px !important; /* Wider button */
+    background-color: #285429 !important;
+    border: none !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border-radius: 3px !important;
+    cursor: pointer;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.search-bar button .search-icon {
+    filter: brightness(0) invert(1) !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* 6. Dropdown Styles */
+.search-dropdown-panel {
+    display: none; 
+    position: absolute; 
+    top: 125%; 
+    left: 0; 
+    width: 100%; 
+    background: #fff; 
+    border-radius: 12px; 
+    padding: 15px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    border: 1px solid #eee; 
+    z-index: 2000; 
+    text-align: left;
+}
+
+.search-suggestions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.search-card {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f2f5;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.search-card:hover {
+    background-color: #e4e6eb;
+}
+
+.history-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    opacity: 0.5;
+}
+
+.search-card .delete-item-btn {
+    margin-left: 8px;
+    font-size: 16px;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+}
+.search-card .delete-item-btn:hover { color: #dc3545; }
+
+.dropdown-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+    text-align: right;
+}
+
+.btn-clear-history {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* 7. Nav Icons Container */
+.nav-icons {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 25px !important;
+    flex-shrink: 0 !important;
+    min-width: 150px !important;
 }
