@@ -2,7 +2,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -18,6 +17,16 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
     
 class VendorProfile(models.Model):
+    # --- NEW: Region Choices for Filtering ---
+    class Region(models.TextChoices):
+        DOMESTIC = "Domestic", "Domestic"
+        OVERSEAS = "Overseas", "Overseas"
+        METRO_MANILA = "Metro Manila", "Metro Manila"
+        NORTH_LUZON = "North Luzon", "North Luzon"
+        SOUTH_LUZON = "South Luzon", "South Luzon"
+        VISAYAS = "Visayas", "Visayas"
+        MINDANAO = "Mindanao", "Mindanao"
+
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     shop_name = models.CharField(max_length=255)
     business_permit_number = models.CharField(max_length=100, blank=True, null=True)
@@ -30,11 +39,14 @@ class VendorProfile(models.Model):
     farming_practices = models.TextField(blank=True, null=True) 
     experience_years = models.IntegerField(blank=True, null=True) 
 
-    # --- NEW FIELDS FOR STEP 1 (ADDRESS) ---
+    # Address Fields
     pickup_address = models.TextField(blank=True, null=True, help_text="Street Address / Landmark")
     barangay = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     zip_code = models.CharField(max_length=20, blank=True, null=True)
+    
+    # --- NEW: Region Field ---
+    region = models.CharField(max_length=50, choices=Region.choices, default=Region.VISAYAS, blank=True, null=True)
     
     def __str__(self):
         return self.shop_name
@@ -59,7 +71,6 @@ class LoyaltyProfile(models.Model):
     rank = models.CharField(max_length=10, choices=RANK_CHOICES, default='Bronze')
 
     def update_rank(self):
-        """Automatically update rank based on points."""
         if self.points >= 100:
             self.rank = 'Gold'
         elif self.points >= 50:

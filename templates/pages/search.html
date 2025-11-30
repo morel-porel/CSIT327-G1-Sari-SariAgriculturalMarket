@@ -9,64 +9,104 @@
 
 <main class="container">
     <aside class="sidebar">
-        <h2>Filters</h2>
-        <button class="sidebar-btn home-btn active">
-            <div class="circle">
-                <img src="{% static 'icons/home.png' %}" alt="All Icon" class="icon">
+        
+        <div class="filter-box">
+            <h3 class="filter-title">Type</h3>
+            <div class="filter-options">
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Fresh Produce">
+                    <span>Fresh Produce</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Grains and Staples">
+                    <span>Grains & Staples</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Meat, Poultry and Seafood">
+                    <span>Meat & Poultry</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Dairy & Eggs">
+                    <span>Dairy & Eggs</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Packaged Goods">
+                    <span>Packaged Goods</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Local & Specialty Products">
+                    <span>Local & Specialty</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="category" value="Services">
+                    <span>Services</span>
+                </label>
             </div>
-            <span>All Results</span>
-        </button>
+        </div>
 
-        <h2>Categories</h2>
-        <button class="sidebar-btn fresh-btn">
-            <div class="circle"><img src="{% static 'icons/fresh.png' %}" alt="Fresh Icon" class="icon"></div>
-            <span>Fresh Produce</span>
-        </button>
-        <button class="sidebar-btn grains-btn">
-            <div class="circle"><img src="{% static 'icons/grains.png' %}" alt="Grains Icon" class="icon"></div>
-            <span>Grains and Staples</span>
-        </button>
-        <button class="sidebar-btn meat-btn">
-            <div class="circle"><img src="{% static 'icons/meat.png' %}" alt="Meat Icon" class="icon"></div>
-            <span>Meat, Poultry and Seafood</span>
-        </button>
-        <button class="sidebar-btn dairy-btn">
-            <div class="circle"><img src="{% static 'icons/dairy.png' %}" alt="Dairy Icon" class="icon"></div>
-            <span>Dairy & Eggs</span>
-        </button>
-        <button class="sidebar-btn packaged-btn">
-            <div class="circle"><img src="{% static 'icons/packaged.png' %}" alt="Packaged Icon" class="icon"></div>
-            <span>Packaged Goods</span>
-        </button>
-        <button class="sidebar-btn local-btn">
-            <div class="circle"><img src="{% static 'icons/local.png' %}" alt="Local Icon" class="icon"></div>
-            <span>Local & Specialty Products</span>
-        </button>
-        <button class="sidebar-btn service-btn">
-            <div class="circle"><img src="{% static 'icons/service.png' %}" alt="Service Icon" class="icon"></div>
-            <span>Services</span>
-        </button>
+        <div class="filter-box">
+            <h3 class="filter-title">Price Range</h3>
+            <div class="price-inputs">
+                <input type="number" id="min-price" placeholder="₱ MIN">
+                <span>-</span>
+                <input type="number" id="max-price" placeholder="₱ MAX">
+            </div>
+            <button id="apply-price-btn" class="btn-apply">APPLY</button>
+        </div>
+
+        <div class="filter-box">
+            <h3 class="filter-title">Location (Shipped From)</h3>
+            <div class="filter-options">
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="Domestic">
+                    <span>Domestic</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="Overseas">
+                    <span>Overseas</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="Metro Manila">
+                    <span>Metro Manila</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="North Luzon">
+                    <span>North Luzon</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="South Luzon">
+                    <span>South Luzon</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="Visayas">
+                    <span>Visayas</span>
+                </label>
+                <label class="filter-btn-label">
+                    <input type="checkbox" class="filter-checkbox" name="region" value="Mindanao">
+                    <span>Mindanao</span>
+                </label>
+            </div>
+        </div>
+
     </aside>
 
     <div class="main">
         <section class="content">
             
-            <div style="margin-bottom: 20px;">
-                {% if query %}
-                    {% if results %}
-                        <h2 style="color: var(--accent-primary); margin: 0;">Search results for "{{ query }}"</h2>
+            <div class="results-header">
+                <h2 id="results-title">
+                    {% if query %}
+                        Search results for "{{ query }}"
                     {% else %}
-                        <h2 style="color: var(--text-primary); margin: 0;">No results for "{{ query }}"</h2>
+                        Search Products
                     {% endif %}
-                {% else %}
-                    <h2 style="margin: 0;">Search Products</h2>
-                {% endif %}
+                </h2>
             </div>
 
             <div class="grid" id="search-grid-container">
                 {% if results %}
                     {% for product in results %}
-                        <div class="grid-item" data-product-id="{{ product.id }}" style="cursor: pointer;">
+                        <div class="grid-item" data-product-id="{{ product.id }}">
                             
                             {% if product.image %}
                                 <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
@@ -94,13 +134,7 @@
                     {% endfor %}
                 {% else %}
                     <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: #666; background: #fff; border-radius: 8px;">
-                        {% if query %}
-                            <img src="{% static 'icons/search.png' %}" style="width: 50px; opacity: 0.3; margin-bottom: 15px; filter: grayscale(1);">
-                            <p style="font-size: 1.1rem; margin-bottom: 5px;">We couldn't find any matches for "<strong>{{ query }}</strong>".</p>
-                            <p style="font-size: 0.9rem;">Try checking your spelling or using different keywords.</p>
-                        {% else %}
-                            <p>Enter a keyword in the header search bar to find products.</p>
-                        {% endif %}
+                        <p>No results found for your criteria.</p>
                     </div>
                 {% endif %}
             </div>
@@ -164,10 +198,82 @@
 </div>
 
 <script>
-    // ==============================================
-    // MODAL LOGIC (Copied from Home Page)
-    // ==============================================
     document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.filter-checkbox');
+        const priceBtn = document.getElementById('apply-price-btn');
+        const productGrid = document.getElementById('search-grid-container');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentQuery = urlParams.get('q') || '';
+
+        function applyFilters() {
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
+                                            .map(cb => cb.value).join(',');
+            const selectedRegions = Array.from(document.querySelectorAll('input[name="region"]:checked'))
+                                         .map(cb => cb.value).join(',');
+            const minPrice = document.getElementById('min-price').value;
+            const maxPrice = document.getElementById('max-price').value;
+
+            let apiUrl = `/my-products/api/list/?q=${encodeURIComponent(currentQuery)}`;
+            if (selectedCategories) apiUrl += `&categories=${encodeURIComponent(selectedCategories)}`;
+            if (selectedRegions) apiUrl += `&regions=${encodeURIComponent(selectedRegions)}`;
+            if (minPrice) apiUrl += `&min_price=${minPrice}`;
+            if (maxPrice) apiUrl += `&max_price=${maxPrice}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    productGrid.innerHTML = ''; 
+
+                    if (data.products.length > 0) {
+                        data.products.forEach(product => {
+                            const productCard = document.createElement('div');
+                            productCard.className = 'grid-item';
+                            productCard.setAttribute('data-product-id', product.id);
+                            
+                            productCard.addEventListener('click', (e) => {
+                                if (e.target.closest('a') || e.target.closest('button')) return;
+                                loadProductDetails(product.id);
+                            });
+
+                            const verifiedBadge = product.is_verified 
+                                ? `<img src="{% static 'icons/verified.png' %}" class="vendor-badge" alt="Verified" title="Verified Vendor">` 
+                                : '';
+
+                            productCard.innerHTML = `
+                                <div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div>
+                                <div class="product-info">
+                                    <h3 class="product-name">${product.name}</h3>
+                                    <p class="product-price">${product.price}</p>
+                                    <p class="product-vendor">
+                                        Seller: 
+                                        <span class="vendor-name-container">
+                                            ${product.shop_name}
+                                            ${verifiedBadge}
+                                        </span>
+                                    </p>
+                                </div>
+                            `;
+                            productGrid.appendChild(productCard);
+                        });
+                    } else {
+                        productGrid.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: #666; background: #fff; border-radius: 8px;">
+                                <p>No results found for the selected filters.</p>
+                            </div>`;
+                    }
+                })
+                .catch(err => console.error("Error filtering products:", err));
+        }
+
+        checkboxes.forEach(box => {
+            box.addEventListener('change', applyFilters);
+        });
+
+        if(priceBtn) {
+            priceBtn.addEventListener('click', applyFilters);
+        }
+
         const productModal = document.getElementById('product-modal');
         const productBackdrop = document.getElementById('product-modal-backdrop');
         const productCloseBtn = document.getElementById('modal-close-btn');
@@ -196,7 +302,6 @@
         vendorCloseBtn.addEventListener('click', closeVendorModal);
         vendorBackdrop.addEventListener('click', closeVendorModal);
 
-        // Share Button Logic
         if(shareBtn){
             shareBtn.addEventListener('click', () => {
                 if (sharePanel.style.display === 'none') {
@@ -224,7 +329,6 @@
             navigator.clipboard.writeText(url).then(() => alert("Link copied!"));
         };
 
-        // Function to Fetch Product Details via API
         const loadProductDetails = (id) => {
             openProductModal();
             fetch(`/my-products/api/${id}/`) 
@@ -240,8 +344,6 @@
                     document.getElementById('modal-description').textContent = data.description;
                     
                     shopLink.textContent = data.shop_name;
-                    // Reset existing badges in shopLink
-                    // (Simple way: just set text content above, then append if verified)
                     if (data.is_verified) {
                         shopLink.innerHTML += ' <img src="{% static "icons/verified.png" %}" class="vendor-badge" alt="Verified">';
                     }
@@ -253,17 +355,13 @@
                 });
         };
 
-        // Attach Click Listener to Grid Items
         document.querySelectorAll('.grid-item').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Prevent clicking if the user clicked a link/button inside the card
                 if (e.target.closest('a') || e.target.closest('button')) return;
-                
                 loadProductDetails(card.dataset.productId);
             });
         });
 
-        // Fetch Vendor Details via API when Shop Name is clicked
         if(shopLink){
             shopLink.addEventListener('click', function(e) {
                 e.preventDefault(); 
@@ -293,5 +391,4 @@
         }
     });
 </script>
-
 {% endblock %}
