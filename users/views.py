@@ -1,7 +1,6 @@
-# users/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from .forms import (
     ConsumerSignUpForm, 
     VendorSignUpForm, 
@@ -17,7 +16,7 @@ from .models import VendorProfile, CustomUser, SearchHistory
 from django.http import JsonResponse
 from django.db.models import Q
 from django.db import transaction 
-from notifications.utils import create_notification  # <--- NEW IMPORT
+from notifications.utils import create_notification
 
 def consumer_signup_view(request):
     if request.method == 'POST':
@@ -82,18 +81,31 @@ def home_view(request):
 @login_required 
 def profile_view(request):
     user = request.user
+    
+    profile_form = ConsumerProfileForm(instance=user)
+    password_form = PasswordChangeForm(user)
 
     if request.method == 'POST':
-        form = ConsumerProfileForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('profile')
-    else:
-        form = ConsumerProfileForm(instance=user)
+        if 'update_profile' in request.POST:
+            profile_form = ConsumerProfileForm(request.POST, request.FILES, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Your profile has been updated successfully!')
+                return redirect('profile')
+        
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your password was successfully updated!')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Please correct the errors in the password form.')
 
     context = {
-        'form': form
+        'form': profile_form,
+        'password_form': password_form
     }
     return render(request, 'pages/consumer_profile.html', context)
 
@@ -115,8 +127,6 @@ def vendor_profile_view(request):
         form = VendorProfileForm(instance=profile)
 
     return render(request, 'pages/vendor_profile.html', {'form': form})
-
-# --- VENDOR ONBOARDING LOGIC ---
 
 @login_required
 def become_vendor_view(request):
@@ -192,11 +202,10 @@ def vendor_onboarding_step3(request):
         return redirect('vendor_onboarding_step1')
     
     if request.method == 'POST':
-        # --- CREATE NOTIFICATION FOR USER ---
         create_notification(
             recipient=request.user,
             message="Your vendor application has been submitted and is pending review.",
-            link="#" # Or link to a status page
+            link="#" 
         )
 
         messages.success(request, "Application Submitted Successfully!")

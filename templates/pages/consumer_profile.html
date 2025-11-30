@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
 {% endblock %}
@@ -16,127 +17,343 @@
             </span>
         </div>
     </a>
+
     <div class="search-bar">
-        <form method="get" action="{% url 'search' %}" style="width: 100%; display: flex;">
-            <input type="text" name="q" placeholder="Search products..." style="width: 100%;">
+        <form method="get" action="{% url 'search' %}" autocomplete="off">
+            <div class="search-container-wrapper">
+                <input type="text" name="q" placeholder="Search products..." style="width: 100%;">
+            </div>
             <button type="submit">
-                <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+                <img src="{% static 'icons/search.png' %}" alt="Search" class="search-icon">
             </button>
         </form>
     </div>
+
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
             <a href="{% url 'product_list' %}">
-                <img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon">
+                <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
             </a>
         {% else %}
             <a href="#">
-                <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
+                <img src="{% static 'icons/cart.png' %}" alt="Cart" class="nav-icon">
             </a>
         {% endif %}
         
         <a href="{% url 'notification_list' %}">
-            <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
-             {% if unread_notifications %}
+            <img src="{% static 'icons/notification.png' %}" alt="Notifications" class="nav-icon">
+            {% if unread_notifications %}
                 <span class="notification-count">{{ unread_notifications.count }}</span>
             {% endif %}
         </a>
 
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile" class="nav-icon">
             </a>
         {% else %}
             <a href="{% url 'login' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+                <img src="{% static 'icons/profile.png' %}" alt="Profile" class="nav-icon">
             </a>
         {% endif %}
     </div>
 </header>
 
-<div class="profile-container">
+<main class="container">
     <aside class="sidebar">
-        <nav>
-            <ul>
-                <li class="active"><a href="#">My Account</a></li>
-                <li><a href="{% url 'loyalty_rewards' %}">Loyalty Rewards</a></li>
-                <li><a href="#">Addresses</a></li>
-                <li><a href="#">Password</a></li>
-                <li><a href="{% url 'inbox' %}">Messages</a></li>
-                <li class="theme-switcher-item">
-                    <label for="theme-switcher">Theme</label>
-                    <select id="theme-switcher">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="contrast">High Contrast</option>
-                    </select>
-                </li>
-                <li><a href="#">Delete Account</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                
-                {% if user.role == 'VENDOR' %}
-                    <li><a href="{% url 'vendor_profile' %}" class="vendor-link">Manage Vendor Profile</a></li>
-                {% else %}
-                    <li><a href="{% url 'become_vendor' %}" class="vendor-link">Be a Vendor!</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+        <h2>Account Menu</h2>
+        
+        <a href="{% url 'profile' %}" class="sidebar-btn active" style="text-decoration: none;">
+            <span>My Account</span>
+        </a>
+
+        <a href="{% url 'loyalty_rewards' %}" class="sidebar-btn" style="text-decoration: none;">
+            <span>Loyalty Rewards</span>
+        </a>
+
+        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
+            <span>Messages</span>
+        </a>
+
+        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none;">
+            <span>Notifications</span>
+        </a>
+
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
+            {% if user.role == 'VENDOR' %}
+                <a href="{% url 'vendor_profile' %}" class="sidebar-btn" style="background-color: #fff3cd; border-color: #ffeeba; color: #856404; text-decoration: none;">
+                    <span>Manage Shop</span>
+                </a>
+            {% else %}
+                <a href="{% url 'become_vendor' %}" class="sidebar-btn" style="background-color: #faa625; border-color: #faa625; color: #000; text-decoration: none;">
+                    <span>Be a Vendor!</span>
+                </a>
+            {% endif %}
+
+        
+            <a href="{% url 'logout' %}" class="sidebar-btn" style="text-decoration: none; background-color: #c82333; border-color: #bd2130; color: #fff;">
+                <span>Logout</span>
+            </a>
+        </div>
     </aside>
 
-    <main class="main-content">
-        <h1>Manage your account</h1>
-        <p>View and manage your account details.</p>
+    <div class="main">
+        <section class="content" style="height: 100%; overflow-y: auto; background-color: var(--bg-secondary); padding: 0;">
+            
+            <form method="post" enctype="multipart/form-data" class="profile-form" id="profile-form" style="height: 100%;">
+                {% csrf_token %}
+                <div class="dashboard-grid">
+                    
+                    <div class="dashboard-card profile-card">
+                        <h2 class="card-title">My Profile</h2>
+                        
+                        <div class="profile-avatar-section">
+                            <div class="profile-avatar-wrapper">
+                                {% if form.instance.avatar %}
+                                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
+                                {% else %}
+                                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
+                                {% endif %}
+
+                                {% if user.role == 'VENDOR' %}
+                                    <img src="{% static 'icons/verified.png' %}" class="profile-verified-badge" alt="Verified Vendor" title="Verified Vendor">
+                                {% endif %}
+                            </div>
+
+                            <div class="avatar-controls">
+                                <label for="{{ form.avatar.id_for_label }}" class="btn-upload" id="photo-upload-btn">Change Photo</label>
+                                <div style="display:none;">{{ form.avatar }}</div>
+                                {{ form.avatar.errors }}
+                            </div>
+                        </div>
+
+                        <div class="profile-inputs" id="profile-inputs-container">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" value="{{ user.username }}" disabled class="readonly-field">
+                            </div>
+
+                            <div class="form-group">
+                                <label>First Name</label>
+                                {{ form.first_name }}
+                                {{ form.first_name.errors }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                {{ form.last_name }}
+                                {{ form.last_name.errors }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                {{ form.phone_number }}
+                                {{ form.phone_number.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                {{ form.date_of_birth }}
+                                {{ form.date_of_birth.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label>Member Since</label>
+                                <input type="text" value="{{ user.date_joined|date:'F d, Y' }}" disabled class="readonly-field">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-save" id="edit-profile-btn" name="update_profile" value="update_profile">Edit Profile</button>
+                        </div>
+                    </div>
+
+                    <div class="right-column">
+                        
+                        <a href="{% url 'loyalty_rewards' %}" class="dashboard-card loyalty-card-link">
+                            <div class="card-header-row">
+                                <h2 class="card-title" style="margin:0;">Loyalty Rewards</h2>
+                                <img src="{% static 'icons/verified.png' %}" class="card-icon">
+                            </div>
+                            <div class="loyalty-summary">
+                                <div class="points-display">
+                                    <span class="points-value">{{ user.loyaltyprofile.points|default:"0" }}</span>
+                                    <span class="points-label">Total Points</span>
+                                </div>
+                                <div class="rank-badge">
+                                    {{ user.loyaltyprofile.rank|default:"Bronze" }} Member
+                                </div>
+                                <p class="click-hint">Click to view rewards & redeem</p>
+                            </div>
+                        </a>
+
+                        <div class="dashboard-card settings-card">
+                            <h2 class="card-title">Settings</h2>
+                            
+                            <div class="settings-list">
+                                <div class="setting-item">
+                                    <div class="setting-label">
+                                        <span class="setting-icon">🔒</span>
+                                        <span>Password</span>
+                                    </div>
+                                    <button type="button" class="btn-change-password" onclick="openPasswordModal()">Change</button>
+                                </div>
+
+                                <div class="setting-item">
+                                    <div class="setting-label">
+                                        <span class="setting-icon">◑</span>
+                                        <span>Appearance</span>
+                                    </div>
+                                    <select id="theme-switcher">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                        <option value="contrast">High Contrast</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <div class="setting-label">
+                                        <span class="setting-icon" style="color: #c82333;">✖</span>
+                                        <span style="color: #c82333;">Delete Account</span>
+                                    </div>
+                                    <button type="button" class="btn-delete-account">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card address-card">
+                            <h2 class="card-title">Address Book</h2>
+                            
+                            <div class="profile-inputs" id="address-inputs-container">
+                                <div class="form-group">
+                                    <label>Street Address</label>
+                                    {{ form.address }}
+                                    {{ form.address.errors }}
+                                </div>
+                                <div class="form-group address-row">
+                                    <div>
+                                        <label>City</label>
+                                        {{ form.city }}
+                                        {{ form.city.errors }}
+                                    </div>
+                                    <div>
+                                        <label>Zip Code</label>
+                                        {{ form.zip_code }}
+                                        {{ form.zip_code.errors }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-save" id="edit-address-btn" name="update_profile" value="update_profile">Edit Address</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        </section>
+    </div>
+</main>
+
+<div id="passwordModal" class="settings-modal">
+    <div class="settings-modal-content">
+        <span class="settings-close-modal" onclick="closePasswordModal()">&times;</span>
+        <h2 style="margin-top: 0; color: var(--text-primary); margin-bottom: 20px;">Change Password</h2>
         
-        <form method="post" enctype="multipart/form-data" class="profile-form">
+        <form method="post">
             {% csrf_token %}
-            
-            <div class="profile-picture-section">
-                <div class="profile-avatar-wrapper">
-                    {% if form.instance.avatar %}
-                        <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
-                    {% else %}
-                        <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
+            {% for field in password_form %}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="{{ field.id_for_label }}" style="font-size: 0.85rem;">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 5px;">{{ field.errors }}</div>
                     {% endif %}
-
-                    {% if user.role == 'VENDOR' %}
-                        <img src="{% static 'icons/verified.png' %}" class="profile-verified-badge" alt="Verified Vendor" title="Verified Vendor">
+                    {% if field.help_text %}
+                        <div style="color: #666; font-size: 0.75rem; margin-top: 3px;">{{ field.help_text|safe }}</div>
                     {% endif %}
                 </div>
-
-                <div class="avatar-controls">
-                    {{ form.avatar.label_tag }}
-                    {{ form.avatar }}
-                    {{ form.avatar.errors }}
-                </div>
-            </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    {{ form.username.label_tag }}
-                    {{ form.username }}
-                    {{ form.username.errors }}
-                </div>
-                <div class="form-group">
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                    {{ form.email.errors }}
-                </div>
-                <div class="form-group">
-                    {{ form.phone_number.label_tag }}
-                    {{ form.phone_number }}
-                    {{ form.phone_number.errors }}
-                </div>
-                <div class="form-group">
-                    {{ form.date_of_birth.label_tag }}
-                    {{ form.date_of_birth }}
-                    {{ form.date_of_birth.errors }}
-                </div>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn-save">Save</button>
-            </div>
+            {% endfor %}
+            <button type="submit" name="change_password" value="change_password" class="btn-save" style="margin-top: 10px;">Update Password</button>
         </form>
-    </main>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('passwordModal');
+        if (modal && modal.parentNode !== document.body) {
+            document.body.appendChild(modal);
+        }
+
+        const profileBtn = document.getElementById('edit-profile-btn');
+        const addressBtn = document.getElementById('edit-address-btn');
+        const photoBtn = document.getElementById('photo-upload-btn');
+
+        const profileContainer = document.getElementById('profile-inputs-container');
+        const addressContainer = document.getElementById('address-inputs-container');
+
+        function setInputsDisabled(container, disabled) {
+            const inputs = container.querySelectorAll('input:not([type="hidden"]), select, textarea');
+            inputs.forEach(input => {
+                // Ensure read-only fields stay disabled
+                if (!input.classList.contains('readonly-field')) {
+                    input.disabled = disabled;
+                }
+            });
+        }
+
+        setInputsDisabled(profileContainer, true);
+        setInputsDisabled(addressContainer, true);
+        
+        if(photoBtn) photoBtn.style.display = 'none';
+
+        profileBtn.addEventListener('click', function(e) {
+            if (profileBtn.innerText === 'Edit Profile') {
+                e.preventDefault();
+                setInputsDisabled(profileContainer, false);
+                if(photoBtn) photoBtn.style.display = 'inline-block';
+                profileBtn.innerText = 'Save Changes';
+                profileBtn.type = 'submit';
+                
+                const firstInput = profileContainer.querySelector('input');
+                if(firstInput) firstInput.focus();
+            }
+        });
+
+        addressBtn.addEventListener('click', function(e) {
+            if (addressBtn.innerText === 'Edit Address') {
+                e.preventDefault();
+                setInputsDisabled(addressContainer, false);
+                addressBtn.innerText = 'Save Address';
+                addressBtn.type = 'submit';
+                
+                const firstInput = addressContainer.querySelector('input');
+                if(firstInput) firstInput.focus();
+            }
+        });
+    });
+
+    function openPasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        modal.style.display = 'flex';
+    }
+
+    function closePasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('passwordModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

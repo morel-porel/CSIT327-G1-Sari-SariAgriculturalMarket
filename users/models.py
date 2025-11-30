@@ -13,6 +13,10 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+
+    address = models.CharField(max_length=255, blank=True, null=True, help_text="House No., Street Name")
+    city = models.CharField(max_length=100, blank=True, null=True)
+    zip_code = models.CharField(max_length=20, blank=True, null=True)
     
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
     

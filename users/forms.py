@@ -119,7 +119,11 @@ class VendorProfileForm(forms.ModelForm):
 class ConsumerProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone_number', 'date_of_birth', 'avatar']
+        fields = [
+            'first_name', 'last_name', 'email', 'phone_number', 
+            'date_of_birth', 'avatar',
+            'address', 'city', 'zip_code'
+        ]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }

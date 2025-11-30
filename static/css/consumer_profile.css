@@ -1,444 +1,403 @@
-/* =================================== */
-/* STYLES COPIED FROM home.css        */
-/* =================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    /* CHANGED: Use variable */
-    font-family: var(--font-main);
-}
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 30px;
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 0.5fr 1.5fr;
+    gap: 20px;
     width: 100%;
-    background: var(--bg-primary);
-    border-bottom: 2px solid var(--border-color);
-}
-.navbar .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: bold;
-    font-size: 25px;
-    color: var(--text-primary);
-    transition: transform 0.2s ease-in-out;
-}
-.navbar .logo-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    padding: 4px;
-    object-fit: contain;
-}
-.search-bar {
-    display: flex;
-    flex: 1;
-    margin: 0 0 0 150px;
-}
-.search-bar input {
-    width: 100%;
-    padding: 8px;
-    border: 2px solid var(--border-color);
-    border-right: none;
-    border-radius: 4px 0 0 4px;
-    background-color: var(--bg-primary); 
-    color: var(--text-primary);
-}
-.search-bar button {
-    background: var(--bg-primary);
-    border: 2px solid var(--border-color);
-    border-left: none;
-    cursor: pointer;
-    padding: 5px 12px 5px 5px;
-    border-radius: 0 4px 4px 0;
-}
-.search-bar .search-icon {
-    width: 20px; height: 20px;
-}
-.nav-icons a {
-    margin-left: 20px;
-}
-.nav-icons img.nav-icon {
-    width: 24px;
-    height: 24px;
-    vertical-align: middle;
-}
-.footer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 18px 30px;
-    font-size: 15px;
-    width: 100%;
-    background: var(--bg-primary);
-    border-top: 1px solid var(--border-color);
-    border-bottom: 5px solid var(--accent-highlight);
-}
-.footer a {
-    text-decoration: none;
-    color: var(--text-primary);
+    min-height: 100%; 
+    padding: 20px 20px; 
+    align-items: stretch;
 }
 
-/* =================================== */
-/* NEW STYLES FOR PROFILE PAGE        */
-/* =================================== */
-.profile-container {
-    display: flex;
-    max-width: 1200px;
-    margin: 40px auto;
-    gap: 30px;
-    background-color: var(--bg-secondary);
-    padding: 20px;
-    border-radius: 8px;
-}
-.sidebar {
-    flex: 0 0 300px;
-}
-.sidebar nav ul {
-    list-style-type: none;
-    padding: 0; margin: 0;
-}
-.sidebar nav li a {
-    display: block;
-    padding: 15px 20px;
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: bold;
-    border-radius: 6px;
-    margin-bottom: 5px;
-}
-.sidebar nav li a:hover {
-    background-color: var(--bg-accent);
-}
-.sidebar nav li.active a {
-    background-color: var(--accent-secondary);
-    color: var(--text-on-accent);
-}
-.sidebar .vendor-link {
-    margin-top: 20px;
-    background-color: var(--warning-color);
-    color: var(--text-primary);
-    text-align: center;
-}
-.main-content {
-    flex-grow: 1;
+.dashboard-card {
     background-color: var(--bg-primary);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-.main-content h1 {
-    margin-top: 0; font-size: 28px; color: var(--text-primary);
-}
-.main-content p {
-    color: var(--text-secondary); margin-bottom: 30px;
-}
-.profile-form {
-    display: flex; flex-direction: column;
-}
-.profile-picture-section {
-    display: flex; align-items: center; gap: 20px; margin-bottom: 30px;
-}
-.profile-avatar {
-    width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color);
-    display: block;
-}
-.btn-upload {
-    background-color: var(--bg-accent); color: var(--text-primary); padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: 1px solid var(--border-input);
-}
-.form-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;
-}
-.form-group {
-    display: flex; flex-direction: column;
-}
-.form-group label {
-    margin-bottom: 8px; font-weight: bold; color: var(--text-secondary);
-}
-.form-group input {
-    padding: 12px; border: 1px solid var(--border-input); border-radius: 5px; font-size: 16px;
-    background-color: var(--bg-primary);
-    color: var(--text-primary); 
-}
-.form-actions {
-    text-align: right;
-}
-.btn-save {
-    background-color: var(--accent-secondary); color: var(--text-on-accent); padding: 12px 30px; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;
-}
-.logo-link {
-    text-decoration: none;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: bold;
-    font-size: 25px;
-    transition: transform 0.2s ease-in-out;
-}
-
-.logo-link:hover {
-    transform: scale(1.05);
-}
-
-.logo-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: var(--accent-primary); /* Your primary theme color */
-    padding: 4px;
-    object-fit: contain;
-}
-
-.navbar a:hover .logo {
-    transform: scale(1.05);
-}
-/* --- STYLES FOR THEME SWITCHER IN SIDEBAR --- */
-.theme-switcher-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    color: var(--text-secondary);
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.theme-switcher-item label {
-    margin: 0;
-}
-
-#theme-switcher {
-    padding: 0.3rem 0.5rem;
+    border-radius: 16px;
+    padding: 20px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-#theme-switcher:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-}
-
-/* =================================== */
-/* LOYALTY REWARDS PAGE STYLES        */
-/* UPDATED LIGHT GREEN THEME           */
-/* =================================== */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    /* CHANGED: Use variable */
-    font-family: var(--font-main);
-}
-
-.loyalty-container {
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
 }
 
-/* ===== HEADER ===== */
-.loyalty-header {
-    text-align: center;
+.card-title {
+    margin-top: 0;
+    margin-bottom: 15px; 
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--text-primary);
+    font-family: var(--font-main);
 }
 
-.loyalty-header h1 {
-    font-size: 36px;
+.profile-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-form {
+    display: flex; 
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px; 
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 100px; 
+    height: 100px;
     margin-bottom: 10px;
 }
 
-.loyalty-header p {
-    font-size: 18px;
-    color: var(--text-secondary);
-}
-
-/* ===== POINTS & RANK CARD ===== */
-.loyalty-card {
-    background-color: #9ffda7; /* light green */
-    border-radius: 20px;
-    padding: 20px 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #000000;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.loyalty-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-}
-
-.loyalty-points {
-    font-size: 60px;
-    font-weight: bold;
-    color: #2e7d32; /* darker green */
-    margin-bottom: 15px;
-}
-
-.loyalty-rank {
-    display: inline-block;
-    padding: 14px 32px;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 20px;
-    color: #ffffff;
-    background-color: #4caf50; /* green */
-    margin-bottom: 30px;
-}
-
-/* ===== PROGRESS BAR ===== */
-.progress-wrapper {
-    width: 250%;
-    max-width: 450px;
-    background-color: #e6e6e6; /* pale green */
-    border-radius: 30px;
-    overflow: hidden;
-    margin-bottom: 40px;
-    height: 15px;
-    border: 1px solid #a5d6a7;
-}
-
-.progress-bar {
+.profile-avatar {
+    width: 100%;
     height: 100%;
-    width: 1%; /* Update dynamically */
-    background-color: #dae900; /* medium green */
-    transition: width 0.5s ease-in-out;
-}
-
-/* ===== EARN POINTS BOX ===== */
-.reward-item {
-    background-color: #6bda75; /* very light green */
-    padding: 30px 20px;
-    border-radius: 16px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    color: #000000;
-    flex: 1;
-    min-width: 250px;
-}
-
-/* ===== REDEEM SECTION ===== */
-#redeem-section {
-    text-align: center;
-}
-
-#redeem-section h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #2e7d32;
-}
-
-.btn-redeem {
-    padding: 16px 50px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    background-color: #154616;
-    color: #ffffff;
-    border: none;
-    font-size: 18px;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-    display: inline-block;
-}
-
-.btn-redeem:hover {
-    background-color: #43a047;
-    transform: scale(1.05);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .loyalty-card {
-        padding: 40px 20px;
-    }
-
-    .loyalty-points {
-        font-size: 44px;
-    }
-
-    .loyalty-header h1 {
-        font-size: 28px;
-    }
-
-    .btn-redeem {
-        width: 100%;
-        padding: 16px 0;
-    }
-}
-.soft-corners {
-    border-radius: 18px;   /* smooth, not too round */
+    border-radius: 50%;
     object-fit: cover;
-}
-.perks-box {
-    background: #d6ffd6;                 /* lighter green like the reference */
-    padding: 10px 10px;
-    border-radius: 10px;                 /* smoother, more modern */
-    border: 1px solid #cce8c8;
-    
-    width: 200px;                        /* bigger card */
-    height: 250px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);  /* heavier shadow like ref */
-
-    transition: transform 0.25s ease;
-}
-
-.perks-box:hover {
-    transform: translateY(-4px);
-}
-
-/* Text under the perks image */
-.perks-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 20px;
-    color: #1d331f;
-}
-.progress-extra {
-    font-size: 13px;
-    margin: 5px 0 10px;
-    color: #2d2d2d;
-}
-
-/* ==========================================================================
-   NEW BADGE STYLES - PROFILE PAGE
-   ========================================================================== */
-.profile-avatar-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 80px;  /* Match profile-avatar width */
-    height: 80px; /* Match profile-avatar height */
+    border: 4px solid var(--bg-secondary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .profile-verified-badge {
     position: absolute;
-    bottom: -2px; /* Position at the bottom right corner */
-    right: -2px;
-    width: 30px;  /* Size of the verified icon */
-    height: 30px;
-    background-color: white; /* White background to make it pop over image border */
+    bottom: 0;
+    right: 0;
+    width: 28px; 
+    height: 28px;
+    background-color: #fff;
     border-radius: 50%;
-    border: 2px solid white; /* Clean border around the icon */
-    object-fit: contain;
-    z-index: 2;
+    padding: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-upload {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 4px 12px; 
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.75rem; 
+    border: 1px solid var(--border-input);
+    transition: all 0.2s;
+}
+
+.btn-upload:hover {
+    background-color: #e0e0e0;
+}
+
+.profile-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-size: 0.7rem; 
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.form-group input {
+    padding: 6px 0; 
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    transition: border-color 0.2s;
+    border-radius: 0;
+}
+
+.form-group input:disabled {
+    color: var(--text-primary);
+    border-bottom: 1px solid transparent;
+    cursor: default;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.form-actions {
+    margin-top: auto; 
+    padding-top: 20px;
+}
+
+.btn-save {
+    width: 100%;
+    padding: 10px; 
+    border-radius: 30px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(90deg, #FF8C00 0%, #faa625 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(250, 166, 37, 0.3);
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(250, 166, 37, 0.4);
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.loyalty-card-link {
+    text-decoration: none;
+    background: linear-gradient(135deg, #f1f8e9 0%, #ffffff 100%);
+    border: 1px solid #c8e6c9;
+    cursor: pointer;
+    transition: transform 0.2s;
+    justify-content: space-between;
+    min-height: 250px; 
+    flex-shrink: 0;
+}
+
+.loyalty-card-link:hover {
+    transform: translateY(-5px);
+    border-color: #4caf50;
+}
+
+.loyalty-card-link .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-icon {
+    width: 40px;
+    height: 40px;
+    opacity: 0.9;
+}
+
+.loyalty-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 10px;
+}
+
+.points-display {
+    text-align: center;
+}
+
+.points-value {
+    font-size: 3.5rem; 
+    font-weight: 800;
+    color: #2e7d32;
+    display: block;
+    line-height: 1;
+}
+
+.points-label {
+    font-size: 1rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.rank-badge {
+    background-color: #4caf50;
+    color: white;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.click-hint {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+    font-style: italic;
+}
+
+.settings-card {
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+.address-card {
+    justify-content: flex-start;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.setting-icon {
+    font-size: 1rem;
+    width: 18px;
+    text-align: center;
+}
+
+#theme-switcher {
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-input);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-change-password {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-input);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-change-password:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--text-secondary);
+}
+
+.btn-delete-account {
+    background-color: transparent;
+    color: #c82333;
+    border: 1px solid #c82333;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete-account:hover {
+    background-color: #c82333;
+    color: white;
+}
+
+.address-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px; 
+}
+
+#address-inputs-container {
+    gap: 20px; 
+}
+
+.settings-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100000 !important; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5); 
+    align-items: center;
+    justify-content: center;
+    transform: none !important;
+}
+
+.settings-modal-content {
+    background-color: var(--bg-primary);
+    margin: 0;
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    width: 90%; 
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    color: var(--text-primary);
+    transform: none !important;
+    position: relative;
+    top: auto;
+    left: auto;
+}
+
+.settings-close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.settings-close-modal:hover,
+.settings-close-modal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-card {
+        height: auto;
+    }
+    .right-column {
+        height: auto;
+    }
 }
