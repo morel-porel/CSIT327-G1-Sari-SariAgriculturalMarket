@@ -23,7 +23,7 @@ def notification_list_view(request):
     Displays all notifications for the logged-in user and marks them as read.
     """
     notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
-    notifications.filter(is_read=False, link__isnull=True).update(is_read=True)
+    notifications.filter(is_read=False).update(is_read=True)
 
     context = {
         'notifications': notifications

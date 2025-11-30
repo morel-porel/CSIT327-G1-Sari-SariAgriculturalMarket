@@ -747,3 +747,21 @@ body, html {
     width: 120px;
     border-radius: 4px;
 }
+
+/* ==========================================================================
+   NEW BADGE STYLES FOR HOMEPAGE - UPDATED FOR IMAGE ICON
+   ========================================================================== */
+.vendor-name-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.vendor-badge {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-left: 4px;
+    display: inline-block;
+}
