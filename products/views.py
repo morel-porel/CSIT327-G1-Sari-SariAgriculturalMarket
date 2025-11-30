@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from .models import Product
 from .forms import ProductForm
 
@@ -49,12 +50,8 @@ def product_detail_api(request, pk):
     try:
         product = Product.objects.select_related('vendor__vendorprofile').get(pk=pk)
         
-        if product.image:
-            image_url = product.image.url
-        else:
-            image_url = '/static/icons/placeholder.png'
+        image_url = product.image.url if product.image else '/static/icons/placeholder.png'
 
-        # Check for verification
         is_verified = False
         if hasattr(product.vendor, 'vendorprofile'):
             is_verified = product.vendor.vendorprofile.is_verified
@@ -80,20 +77,51 @@ def product_detail_api(request, pk):
 
 def product_list_api(request):
     """
-    API endpoint to list products with optional filtering by category.
-    Accessed via /my-products/api/list/?category=Category Name
+    Advanced API endpoint for filtering products.
     """
-    category_filter = request.GET.get('category')
+    query = request.GET.get('q', '').strip()
+    categories = request.GET.get('categories', '')
+    regions = request.GET.get('regions', '')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
     
     products_qs = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at')
     
-    if category_filter and category_filter != 'all':
-        # Filter by the category field using the exact name
-        products_qs = products_qs.filter(category=category_filter)
-        
+    # 1. Text Search
+    if query:
+        products_qs = products_qs.filter(
+            Q(name__icontains=query) | 
+            Q(description__icontains=query)
+        )
+
+    # 2. Category Filter (List)
+    if categories:
+        category_list = categories.split(',')
+        if category_list:
+            products_qs = products_qs.filter(category__in=category_list)
+
+    # 3. Location/Region Filter (List)
+    if regions:
+        region_list = regions.split(',')
+        if region_list:
+            products_qs = products_qs.filter(vendor__vendorprofile__region__in=region_list)
+
+    # 4. Price Range Filter
+    if min_price:
+        try:
+            products_qs = products_qs.filter(price__gte=float(min_price))
+        except ValueError:
+            pass 
+            
+    if max_price:
+        try:
+            products_qs = products_qs.filter(price__lte=float(max_price))
+        except ValueError:
+            pass
+
+    # Build Response
     products_data = []
     for product in products_qs:
-        # Check if vendorprofile exists before accessing it
         vendor_profile = getattr(product.vendor, 'vendorprofile', None)
         shop_name = vendor_profile.shop_name if vendor_profile else 'Unknown Vendor'
         is_verified = vendor_profile.is_verified if vendor_profile else False 

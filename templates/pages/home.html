@@ -317,6 +317,63 @@
         
         let currentProductId = null;
         let currentVendorId = null;
+        
+        const categoryBtns = document.querySelectorAll('.category-filter-btn');
+        const productGrid = document.getElementById('product-grid-container');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 1. Remove 'active' class from all buttons and add to clicked one
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 2. Get category from data attribute
+                const category = this.getAttribute('data-category');
+
+                // 3. Fetch filtered products from your existing API
+                fetch(`/my-products/api/list/?category=${encodeURIComponent(category)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        productGrid.innerHTML = ''; // Clear current grid
+
+                        if (data.products.length > 0) {
+                            data.products.forEach(product => {
+                                // Re-create the HTML for each product card
+                                const productCard = document.createElement('div');
+                                productCard.className = 'grid-item';
+                                productCard.setAttribute('data-product-id', product.id);
+                                productCard.style.cursor = 'pointer';
+                                
+                                // Re-attach the click event for the modal
+                                productCard.addEventListener('click', () => loadProductDetails(product.id));
+
+                                const verifiedBadge = product.is_verified 
+                                    ? `<img src="/static/icons/verified.png" class="vendor-badge" alt="Verified" title="Verified Vendor">` 
+                                    : '';
+
+                                productCard.innerHTML = `
+                                    <div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">${product.name}</h3>
+                                        <p class="product-price">${product.price}</p>
+                                        <p class="product-vendor">
+                                            Seller: 
+                                            <span class="vendor-name-container">
+                                                ${product.shop_name}
+                                                ${verifiedBadge}
+                                            </span>
+                                        </p>
+                                    </div>
+                                `;
+                                productGrid.appendChild(productCard);
+                            });
+                        } else {
+                            productGrid.innerHTML = '<p id="no-products-message">No products found in this category.</p>';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching products:', error));
+            });
+        });
 
         const openProductModal = () => { productModal.style.display = 'block'; productBackdrop.style.display = 'block'; };
         const closeProductModal = () => { 
