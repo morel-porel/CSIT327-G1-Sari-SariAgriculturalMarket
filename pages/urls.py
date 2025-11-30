@@ -15,4 +15,8 @@ urlpatterns = [
     # loyalty rewards
     path('loyalty/', views.loyalty_rewards, name='loyalty_rewards'),
     path("loyalty/redeem/", redeem_points, name="redeem_points"),
+
+    path('api/recent-searches/', views.recent_searches_api, name='recent_searches_api'),
+    path('api/recent-searches/delete/', views.delete_search_item_api, name='delete_search_item_api'),
+    path('api/recent-searches/clear/', views.clear_search_history_api, name='clear_search_history_api'),
 ]

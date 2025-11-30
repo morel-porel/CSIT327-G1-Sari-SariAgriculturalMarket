@@ -1,3 +1,5 @@
+/* static/css/about.css */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -5,16 +7,7 @@ body {
   color: var(--text-primary);
 }
 
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8rem 1.5rem;
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color); 
-  gap: 1rem;
-}
-
+/* Header styles are now largely handled by theme.css */
 header .left-section {
   display: flex;
   align-items: center;
@@ -30,43 +23,8 @@ header button.back-btn {
   color: var(--text-primary);
 }
 
-header img.logo {
-  width: 32px;
-  height: 32px;
-  background-color: var(--bg-accent);
-  border-radius: 4px;
-}
-
-header h1 {
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-.search-bar {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  max-width: 500px;
-}
-
-.search-bar input[type="text"] {
-  width: 100%;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid var(--border-input);
-  border-radius: 4px 0 0 4px;
-  outline: none;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.search-bar button {
-  background-color: var(--accent-secondary);
-  border: none;
-  color: var(--text-on-accent);
-  padding: 0.55rem 0.8rem;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-}
+/* REMOVED: .search-bar styles that restricted width to 500px */
+/* The global theme.css will now handle the search bar layout */
 
 main {
   max-width: 1000px;
@@ -108,6 +66,7 @@ main {
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
+
 /* Theme Selector Styles */
 .theme-selector {
   display: flex;

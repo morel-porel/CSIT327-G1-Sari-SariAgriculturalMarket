@@ -1,79 +1,78 @@
-# pages/views.py
-
-from django.shortcuts import render, redirect
-from products.models import Product  # Import the Product model
+from django.shortcuts import render, redirect, get_object_or_404
+from products.models import Product
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from users.models import SearchHistory, LoyaltyProfile
+from django.http import JsonResponse
+import json
 
 def about_us_view(request):
-    # This view's only job is to render the 'about.html' template.
     return render(request, 'pages/about.html')
 
-
 def home_view(request):
-    products = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at')  # Get all products
+    products = Product.objects.all().select_related('vendor__vendorprofile').order_by('-created_at')
     context = {
         'products': products
     }
     return render(request, 'pages/home.html', context)
 
-
 @login_required
 def become_vendor_view(request):
-    """
-    A page that informs consumers how to become a vendor
-    before sending them to the vendor signup form.
-    """
     return render(request, 'pages/become_vendor.html')
-
 
 @login_required
 def search_view(request):
-    # Get search history from session
+    # Get search history from session for immediate UI feedback (legacy sidebar)
     search_history = request.session.get('search_history', [])
 
-    # ----- Clear all searches -----
+    # ----- Legacy Clear/Delete (Sidebar) -----
     if 'clear' in request.GET:
         request.session['search_history'] = []
+        SearchHistory.objects.filter(user=request.user).delete()
         return redirect('search')
 
-    # ----- Delete specific search -----
     if 'delete' in request.GET:
         term_to_delete = request.GET.get('delete')
         search_history = [t for t in search_history if t != term_to_delete]
         request.session['search_history'] = search_history
+        SearchHistory.objects.filter(user=request.user, query=term_to_delete).delete()
         return redirect('search')
 
     # ----- Actual search -----
-    query = request.GET.get('query', '').strip()
-
-    # DEFAULT: no results
+    query = request.GET.get('q', '').strip()
     results = []
 
     if query:
-        # Track in session history (UI only)
+        # 1. Track in session history
         if query not in search_history:
             search_history.insert(0, query)
         search_history = search_history[:5]
         request.session['search_history'] = search_history
 
-        # Award loyalty points for UNIQUE search
-        # FIX: Use get_or_create to prevent DoesNotExist error
+        # 2. Handle Loyalty & DB History
         loyalty, created = LoyaltyProfile.objects.get_or_create(user=request.user)
-
+        
+        # Check if user searched this before to prevent point spamming
         already_searched = SearchHistory.objects.filter(
             user=request.user,
             query=query
         ).exists()
 
         if not already_searched:
+            # Award points for unique search
             loyalty.points += 5
             loyalty.save()
+            
+            # Save to DB for the Dropdown API
+            SearchHistory.objects.create(user=request.user, query=query)
+        else:
+            # Update timestamp if it exists, so it shows up as "Recent"
+            # (Optional, but good for UX)
+            recent_entry = SearchHistory.objects.filter(user=request.user, query=query).first()
+            if recent_entry:
+                recent_entry.save() # Updates auto_now timestamp
 
-        # Permanent history (DB)
-        SearchHistory.objects.create(user=request.user, query=query)
-
-        # ----- PRODUCT SEARCH -----
+        # 3. Product Search Logic
         results = Product.objects.filter(
             name__icontains=query
         ) | Product.objects.filter(
@@ -86,38 +85,29 @@ def search_view(request):
         "search_history": search_history,
     })
 
-
-
 @login_required
 def delete_search_history(request, history_id):
-    """Deletes a single search entry by index."""
-    search_history = request.session.get('search_history', [])
-    if 0 <= history_id < len(search_history):
-        del search_history[history_id]
-        request.session['search_history'] = search_history
+    """Legacy view for sidebar deletion."""
+    # Keeps URL valid to prevent errors, redirects to main search
     return redirect('search')
-
 
 @login_required
 def clear_search_history(request):
-    """Clears all saved searches."""
+    """Legacy view for sidebar clearing."""
     request.session['search_history'] = []
+    SearchHistory.objects.filter(user=request.user).delete()
     return redirect('search')
 
 @login_required
 def loyalty_rewards(request):
     loyalty, created = LoyaltyProfile.objects.get_or_create(user=request.user)
-
-    # Define tier thresholds
     tiers = [
         ("Bronze", 0),
         ("Silver", 300),
         ("Gold", 1500),
         ("Platinum", 3000),
     ]
-
     current_points = loyalty.points
-
     next_tier = None
     points_needed = 0
 
@@ -132,9 +122,7 @@ def loyalty_rewards(request):
         "next_tier": next_tier,
         "points_needed": points_needed,
     }
-
     return render(request, "pages/loyalty_rewards.html", context)
-
 
 @login_required
 def redeem_points(request):
@@ -143,11 +131,45 @@ def redeem_points(request):
         if reward_raw:
             reward_name, cost = reward_raw.split("|")
             cost = int(cost)
-
             loyalty = LoyaltyProfile.objects.get(user=request.user)
-
             if loyalty.points >= cost:
                 loyalty.points -= cost
                 loyalty.save()
-
     return redirect('loyalty_rewards')
+
+# =========================================
+#  NEW API VIEWS FOR SEARCH DROPDOWN
+# =========================================
+
+@login_required
+def recent_searches_api(request):
+    """API to return the user's recent searches for the dropdown."""
+    # Get distinct recent searches, limited to 8
+    searches = SearchHistory.objects.filter(user=request.user).order_by('-searched_at').values_list('query', flat=True).distinct()[:8]
+    data = list(searches)
+    return JsonResponse({'searches': data})
+
+@login_required
+@require_POST
+def delete_search_item_api(request):
+    """API to delete a specific search term via AJAX."""
+    try:
+        data = json.loads(request.body)
+        term = data.get('term')
+        if term:
+            SearchHistory.objects.filter(user=request.user, query=term).delete()
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'error', 'message': 'No term provided'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+@require_POST
+def clear_search_history_api(request):
+    """API to clear all search history via AJAX."""
+    try:
+        SearchHistory.objects.filter(user=request.user).delete()
+        request.session['search_history'] = []
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

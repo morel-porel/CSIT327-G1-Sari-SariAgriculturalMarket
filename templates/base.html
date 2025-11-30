@@ -7,7 +7,9 @@
     <title>Sari-Sari Agricultural Market</title>
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     {% block css %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 </head>
@@ -20,18 +22,35 @@
             <a href="{% url 'home' %}" style="text-decoration: none;">
                 <div class="logo">
                     <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
-                    <span>Sari-Sari</span>
+                    <span style="font-weight: 800;">
+                        <span class="brand-green">Sari-</span><span class="brand-orange">Sari</span>
+                    </span>
                 </div>
             </a>
 
-            <div class="search-bar" style="flex: 1; margin-left: 20px; display: flex;">
-                 <form method="get" action="{% url 'search' %}" style="width: 100%; display: flex;">
-                    <input type="text" name="q" placeholder="Search products..." style="width: 100%;">
-                    <button type="submit">
-                        <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
-                    </button>
-                </form>
-            </div>
+            {% with url_name=request.resolver_match.url_name %}
+                {% if url_name != 'login' and url_name != 'signup' and url_name != 'vendor_signup' and url_name != 'password_reset_form' %}
+                    <div class="search-bar">
+                         <form method="get" action="{% url 'search' %}" autocomplete="off">
+                            <div class="search-container-wrapper">
+                                <input type="text" id="base-search-input" name="q" placeholder="Search products..." value="{{ query|default:'' }}">
+                                
+                                <div id="base-search-dropdown" class="search-dropdown-panel">
+                                    <h3 style="font-size:0.9rem; font-weight:700; color:#333; margin:0 0 10px 0;">Recent searches</h3>
+                                    <div class="search-suggestions-grid" id="base-recent-searches-container">
+                                        </div>
+                                    <div id="base-clear-container" class="dropdown-footer" style="display:none;">
+                                        <button type="button" class="btn-clear-history" id="base-btn-clear">Clear All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit">
+                                <img src="{% static 'icons/search.png' %}" alt="Search Icon" class="search-icon">
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endwith %}
 
             <div class="nav-icons">
                 {% if user.is_authenticated and user.role == 'VENDOR' %}
@@ -43,14 +62,12 @@
                         <img src="{% static 'icons/cart.png' %}" alt="Cart Icon" class="nav-icon">
                     </a>
                 {% endif %}
-                
                 <a href="{% url 'notification_list' %}">
                     <img src="{% static 'icons/notification.png' %}" alt="Notification Icon" class="nav-icon">
                     {% if unread_notifications %}
                         <span class="notification-count">{{ unread_notifications.count }}</span>
                     {% endif %}
                 </a>
-        
                 {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}">
                         <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
@@ -87,5 +104,114 @@
         </div>
     </footer>
     <script src="{% static 'js/theme.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('base-search-input');
+            const dropdown = document.getElementById('base-search-dropdown');
+            const container = document.getElementById('base-recent-searches-container');
+            const clearContainer = document.getElementById('base-clear-container');
+            const clearBtn = document.getElementById('base-btn-clear');
+            
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        let cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            if (searchInput && dropdown) {
+                searchInput.addEventListener('focus', function() {
+                    fetchRecentSearches();
+                    dropdown.style.display = 'block';
+                });
+
+                document.addEventListener('click', function(event) {
+                    // Prevent closing if clicking inside the dropdown or input
+                    if (!searchInput.contains(event.target) && !dropdown.contains(event.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+
+                if(clearBtn) {
+                    clearBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Removed confirmation prompt for smoother UX
+                        fetch("/api/recent-searches/clear/", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie('csrftoken'),
+                                "Content-Type": "application/json"
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.status === 'success') {
+                                fetchRecentSearches(); 
+                            }
+                        });
+                    });
+                }
+
+                window.deleteSearchItem = function(term, event) {
+                    event.preventDefault(); 
+                    event.stopPropagation(); 
+
+                    fetch("/api/recent-searches/delete/", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie('csrftoken'),
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ term: term })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            fetchRecentSearches(); 
+                        }
+                    });
+                };
+
+                function fetchRecentSearches() {
+                    fetch("/api/recent-searches/") 
+                        .then(response => {
+                            if (response.status === 403 || response.status === 404) return { searches: [] };
+                            return response.json();
+                        })
+                        .then(data => {
+                            container.innerHTML = ''; 
+                            
+                            if (data.searches && data.searches.length > 0) {
+                                clearContainer.style.display = 'block';
+                                data.searches.forEach(term => {
+                                    const card = document.createElement('a');
+                                    card.href = `/search/?q=${encodeURIComponent(term)}`;
+                                    card.className = 'search-card'; 
+                                    card.innerHTML = `
+                                        <img src="{% static 'icons/search.png' %}" class="history-icon" style="filter: brightness(0); opacity: 0.5;"> 
+                                        <span>${term}</span>
+                                        <span class="delete-item-btn" onclick="deleteSearchItem('${term}', event)">✕</span>
+                                    `;
+                                    container.appendChild(card);
+                                });
+                            } else {
+                                clearContainer.style.display = 'none';
+                                container.innerHTML = '<p style="color:#777; font-style:italic; font-size:0.9rem; padding: 5px;">No recent searches yet.</p>';
+                            }
+                        })
+                        .catch(err => console.log('Fetch error', err));
+                }
+            }
+        });
+    </script>
 </body>
 </html>
