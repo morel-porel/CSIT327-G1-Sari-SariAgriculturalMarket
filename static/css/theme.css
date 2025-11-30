@@ -24,6 +24,9 @@
     --warning-color: #ffc107;
     --info-color: #17a2b8;
     --link-color: #175e52;
+
+    /* NEW: Verified Badge Color (Twitter-like Blue) */
+    --verified-color: #1da1f2; 
 }
 
 /* --- 2. DARK THEME OVERRIDES --- */
@@ -50,6 +53,9 @@
     --warning-color: #ffd966;
     --info-color: #33c6de;
     --link-color: #6cdf6e;
+
+    /* NEW: Lighter Blue for Dark Mode */
+    --verified-color: #64b5f6;
 
     .nav-icon, .search-icon, .alert-icon {
         filter: invert(1) brightness(1.5);
@@ -81,6 +87,9 @@
     --info-color: #00ffff;
     --link-color: #ffff00;
 
+    /* NEW: Cyan for High Contrast */
+    --verified-color: #00ffff;
+
     .nav-icon, .search-icon, .alert-icon {
         filter: invert(1);
     }
@@ -92,7 +101,7 @@ body {
     color: var(--text-primary);
 }
 
-/* --- NOTIFICATION BADGE (Added Here to be Safe) --- */
+/* --- NOTIFICATION BADGE --- */
 .nav-icons a {
     position: relative;
     display: inline-block;
@@ -112,7 +121,7 @@ body {
     min-width: 16px;
     text-align: center;
     line-height: 1.2;
-    border: 2px solid var(--bg-primary); /* Matches background to create 'cutout' effect */
+    border: 2px solid var(--bg-primary);
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     z-index: 10;
 }

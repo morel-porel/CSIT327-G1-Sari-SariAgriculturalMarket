@@ -54,6 +54,11 @@ def product_detail_api(request, pk):
         else:
             image_url = '/static/icons/placeholder.png'
 
+        # Check for verification
+        is_verified = False
+        if hasattr(product.vendor, 'vendorprofile'):
+            is_verified = product.vendor.vendorprofile.is_verified
+
         data = {
             'id': product.pk,
             'name': product.name,
@@ -65,6 +70,7 @@ def product_detail_api(request, pk):
             'shop_name': product.vendor.vendorprofile.shop_name,
             'seller_name': product.vendor.username,
             'vendor_user_id': product.vendor.pk,
+            'is_verified': is_verified,  
         }
         return JsonResponse(data)
     except Product.DoesNotExist:
@@ -90,6 +96,7 @@ def product_list_api(request):
         # Check if vendorprofile exists before accessing it
         vendor_profile = getattr(product.vendor, 'vendorprofile', None)
         shop_name = vendor_profile.shop_name if vendor_profile else 'Unknown Vendor'
+        is_verified = vendor_profile.is_verified if vendor_profile else False 
         
         image_url = product.image.url if product.image else '/static/icons/placeholder.png'
         
@@ -100,6 +107,7 @@ def product_list_api(request):
             'image_url': image_url,
             'shop_name': shop_name,
             'vendor_id': product.vendor.pk,
+            'is_verified': is_verified, 
         })
         
     return JsonResponse({'products': products_data})

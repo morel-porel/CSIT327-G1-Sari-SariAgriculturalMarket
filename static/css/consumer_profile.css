@@ -144,6 +144,7 @@
 }
 .profile-avatar {
     width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color);
+    display: block;
 }
 .btn-upload {
     background-color: var(--bg-accent); color: var(--text-primary); padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: 1px solid var(--border-input);
@@ -417,3 +418,25 @@
     color: #2d2d2d;
 }
 
+/* ==========================================================================
+   NEW BADGE STYLES - PROFILE PAGE
+   ========================================================================== */
+.profile-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 80px;  /* Match profile-avatar width */
+    height: 80px; /* Match profile-avatar height */
+}
+
+.profile-verified-badge {
+    position: absolute;
+    bottom: -2px; /* Position at the bottom right corner */
+    right: -2px;
+    width: 30px;  /* Size of the verified icon */
+    height: 30px;
+    background-color: white; /* White background to make it pop over image border */
+    border-radius: 50%;
+    border: 2px solid white; /* Clean border around the icon */
+    object-fit: contain;
+    z-index: 2;
+}

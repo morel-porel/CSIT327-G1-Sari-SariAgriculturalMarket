@@ -87,14 +87,21 @@
         
         <form method="post" enctype="multipart/form-data" class="profile-form">
             {% csrf_token %}
+            
             <div class="profile-picture-section">
-                {% if form.instance.avatar %}
-                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
-                {% else %}
-                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
-                {% endif %}
+                <div class="profile-avatar-wrapper">
+                    {% if form.instance.avatar %}
+                        <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
+                    {% else %}
+                        <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
+                    {% endif %}
 
-                <div>
+                    {% if user.role == 'VENDOR' %}
+                        <img src="{% static 'icons/verified.png' %}" class="profile-verified-badge" alt="Verified Vendor" title="Verified Vendor">
+                    {% endif %}
+                </div>
+
+                <div class="avatar-controls">
                     {{ form.avatar.label_tag }}
                     {{ form.avatar }}
                     {{ form.avatar.errors }}

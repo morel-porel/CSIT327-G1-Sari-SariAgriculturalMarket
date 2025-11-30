@@ -129,7 +129,15 @@
                             <h3 class="product-name">{{ product.name }}</h3>
                             <p class="product-price">₱{{ product.price }}</p>
                             {% if product.vendor.vendorprofile %}
-                            <p class="product-vendor">Seller: {{ product.vendor.vendorprofile.shop_name }}</p>
+                            <p class="product-vendor">
+                                Seller: 
+                                <span class="vendor-name-container">
+                                    {{ product.vendor.vendorprofile.shop_name }}
+                                    {% if product.vendor.vendorprofile.is_verified %}
+                                        <img src="{% static 'icons/verified.png' %}" class="vendor-badge" alt="Verified" title="Verified Vendor">
+                                    {% endif %}
+                                </span>
+                            </p>
                             {% endif %}
                         </div>
                     </div>
@@ -307,7 +315,14 @@
                     document.getElementById('modal-name').textContent = data.name;
                     document.getElementById('modal-price').textContent = data.price; 
                     document.getElementById('modal-description').textContent = data.description;
+                    
+                    // --- MODIFIED: Added Badge Logic (Image Version) ---
                     shopLink.textContent = data.shop_name;
+                    if (data.is_verified) {
+                        shopLink.innerHTML += ' <img src="{% static "icons/verified.png" %}" class="vendor-badge" alt="Verified" title="Verified Vendor">';
+                    }
+                    // -----------------------------------
+
                     const sellerName = data.seller_name || data.shop_name;
                     document.getElementById('modal-seller-name').textContent = sellerName;
                     document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
@@ -328,13 +343,25 @@
             }
             products.forEach(product => {
                 const imageStyle = `background-image: url('${product.image_url}'); background-size: cover;`;
+                
+                // --- MODIFIED: Added Badge Logic (Image Version) ---
+                let shopHtml = product.shop_name;
+                if (product.is_verified) {
+                    shopHtml += ' <img src="{% static "icons/verified.png" %}" class="vendor-badge" alt="Verified" title="Verified Vendor">';
+                }
+                // -----------------------------------
+
                 html += `
                     <div class="grid-item" data-product-id="${product.id}" style="cursor: pointer;">
                         <div class="product-image" style="${imageStyle}"></div>
                         <div class="product-info">
                             <h3 class="product-name">${product.name}</h3>
                             <p class="product-price">${product.price}</p>
-                            <p class="product-vendor">Seller: ${product.shop_name}</p>
+                            <p class="product-vendor">Seller: 
+                                <span class="vendor-name-container">
+                                    ${shopHtml}
+                                </span>
+                            </p>
                         </div>
                     </div>`;
             });

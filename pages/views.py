@@ -5,10 +5,6 @@ from products.models import Product  # Import the Product model
 from django.contrib.auth.decorators import login_required
 from users.models import SearchHistory, LoyaltyProfile
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from users.models import LoyaltyProfile
-
 def about_us_view(request):
     # This view's only job is to render the 'about.html' template.
     return render(request, 'pages/about.html')
@@ -62,7 +58,8 @@ def search_view(request):
         request.session['search_history'] = search_history
 
         # Award loyalty points for UNIQUE search
-        loyalty = LoyaltyProfile.objects.get(user=request.user)
+        # FIX: Use get_or_create to prevent DoesNotExist error
+        loyalty, created = LoyaltyProfile.objects.get_or_create(user=request.user)
 
         already_searched = SearchHistory.objects.filter(
             user=request.user,
@@ -143,13 +140,14 @@ def loyalty_rewards(request):
 def redeem_points(request):
     if request.method == "POST":
         reward_raw = request.POST.get("reward")
-        reward_name, cost = reward_raw.split("|")
-        cost = int(cost)
+        if reward_raw:
+            reward_name, cost = reward_raw.split("|")
+            cost = int(cost)
 
-        loyalty = LoyaltyProfile.objects.get(user=request.user)
+            loyalty = LoyaltyProfile.objects.get(user=request.user)
 
-        if loyalty.points >= cost:
-            loyalty.points -= cost
-            loyalty.save()
+            if loyalty.points >= cost:
+                loyalty.points -= cost
+                loyalty.save()
 
-        return redirect('loyalty_rewards')
+    return redirect('loyalty_rewards')
