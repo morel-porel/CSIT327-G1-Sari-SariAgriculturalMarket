@@ -26,7 +26,7 @@ html, body {
 .panel-user-info { display: flex; align-items: center; gap: 0.75rem; font-size: 1rem; }
 .panel-container { display: flex; }
 .panel-sidebar {
-    flex: 0 0 260px; /* Fixed width for the sidebar */
+    flex: 0 0 300px; /* Fixed width for the sidebar */
     background: var(--panel-secondary-bg);
     padding: 1.5rem;
     min-height: calc(100vh - 70px); /* Full height minus header */
