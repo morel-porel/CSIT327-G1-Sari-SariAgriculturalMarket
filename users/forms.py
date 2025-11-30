@@ -67,7 +67,6 @@ class VendorSignUpForm(CustomUserCreationForm):
             )
         return user
 
-# --- STEP 1 FORM: Shop Details ---
 class VendorStep1Form(forms.ModelForm):
     class Meta:
         model = VendorProfile
@@ -90,7 +89,6 @@ class VendorStep1Form(forms.ModelForm):
             'shop_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tell customers about your shop...'}),
         }
 
-# --- STEP 2 FORMS: Vendor Personal Details & ID ---
 class VendorStep2UserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
@@ -104,7 +102,6 @@ class VendorStep2UserForm(forms.ModelForm):
 class VendorStep2ProfileForm(forms.ModelForm):
     class Meta:
         model = VendorProfile
-        # Re-using profile_image as the "Valid ID" upload for now
         fields = ['profile_image'] 
         widgets = {
             'profile_image': forms.FileInput(attrs={'class': 'form-control-file', 'accept': 'image/*'}),
@@ -119,7 +116,7 @@ class VendorProfileForm(forms.ModelForm):
 class ConsumerProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone_number', 'date_of_birth', 'avatar']
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'date_of_birth', 'avatar', 'address', 'city', 'zip_code']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
