@@ -2,24 +2,9 @@
    GLOBAL FIXES
    ========================================================================== */
 
-/*
- * FIX: Re-enable vertical scrolling across the entire site.
- * This overrides the 'overflow: hidden' rule from home.css.
- * The '!important' is necessary to ensure this rule wins.
-*/
 body, html {
     overflow-y: auto !important;
     height: auto !important;
-}
-
-/*
- * FIX: Prevent the fixed footer from overlapping content.
- * This adds a margin to the bottom of the main body of the page
- * that is equal to the height of the footer.
-*/
-body {
-    /* You may need to adjust this value to match your footer's exact height */
-    margin-bottom: 70px !important; 
 }
 
 /* ==========================================================================
@@ -27,18 +12,16 @@ body {
    ========================================================================== */
 @media (max-width: 992px) {
     
-    /* --- Main Layouts (Homepage, Profile Pages) --- */
-    /* Stack the sidebar and main content vertically instead of side-by-side */
     .container,
     .profile-container {
         flex-direction: column;
-        margin: 20px auto; /* Reduce top margin */
+        margin: 20px auto; 
         padding: 10px;
     }
 
     .sidebar {
-        flex: 0 0 auto; /* Allow sidebar to shrink */
-        width: 100%;    /* Make sidebar take full width */
+        flex: 0 0 auto; 
+        width: 100%;    
         margin-bottom: 20px;
     }
 
@@ -47,14 +30,10 @@ body {
         width: 100%;
     }
 
-    /* --- Homepage Product Grid --- */
-    /* Adjust grid to show fewer items per row */
     .grid {
-        /* Use auto-fit to automatically adjust columns based on available space */
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 
-    /* --- About Us Page --- */
     main {
         margin: 1rem auto;
         padding: 0.5rem;
@@ -67,7 +46,6 @@ body {
    ========================================================================== */
 @media (max-width: 768px) {
 
-    /* --- NAVBAR: COMPLETE MOBILE RESTRUCTURE --- */
     .navbar {
         position: fixed !important;
         top: 0 !important;
@@ -78,7 +56,6 @@ body {
         background: #ffffff !important;
         border-bottom: 2px solid #e4e4e4 !important;
         
-        /* Vertical stacking */
         display: flex !important;
         flex-direction: column !important;
         align-items: stretch !important;
@@ -87,7 +64,6 @@ body {
         height: auto !important;
     }
     
-    /* Row 1: Logo (Sari-Sari) */
     .navbar .logo {
         order: 1 !important;
         display: flex !important;
@@ -106,7 +82,6 @@ body {
         height: 38px !important;
     }
     
-    /* Row 2: Search Section (includes search bar + recent searches link) */
     .navbar .search-section {
         order: 2 !important;
         position: static !important;
@@ -143,7 +118,6 @@ body {
         flex-shrink: 0 !important;
     }
     
-    /* Recent Searches Link - Full width below search */
     .navbar .recent-search-link {
         order: 3 !important;
         width: 100% !important;
@@ -154,13 +128,12 @@ body {
         margin: 0 !important;
     }
     
-    /* Row 3: Nav Icons (centered, evenly spaced) */
     .navbar .nav-icons {
         order: 4 !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        gap: 35px !important; /* Even spacing between icons */
+        gap: 35px !important; 
         width: 100% !important;
         padding: 8px 0 !important;
         margin: 0 !important;
@@ -178,13 +151,11 @@ body {
         display: block !important;
     }
     
-    /* Hide text login/signup links on mobile */
     .nav-text-link,
     .navbar .nav-icons span {
         display: none !important;
     }
     
-    /* Notification Badge */
     .notification-count {
         position: absolute !important;
         top: -8px !important;
@@ -200,9 +171,7 @@ body {
         line-height: 1 !important;
     }
     
-    /* --- PUSH CONTENT DOWN BELOW NAVBAR --- */
     .container {
-        /* margin-top: 185px !important; Adjust based on navbar height */
         padding-top: 20px !important;
         overflow-y: auto !important;
         height: auto !important;
@@ -219,32 +188,28 @@ body {
         padding: 40px 15px !important;
     }
 
-    /* --- Login / Signup Pages --- */
     .main-container {
-        flex-direction: column; /* Stack info section and form vertically */
+        flex-direction: column; 
         padding: 1rem;
         gap: 2rem;
-        align-items: center; /* Re-center content */
+        align-items: center; 
     }
 
     .form-box {
         width: 100%;
-        max-width: 400px; /* Give it a max-width on mobile */
+        max-width: 400px; 
     }
 
-    /* --- Profile Page Form Grid --- */
     .form-grid {
-        grid-template-columns: 1fr; /* Stack form fields in a single column */
+        grid-template-columns: 1fr; 
     }
     .profile-picture-section {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    /* --- Product List Table --- */
-    /* This is a special technique to make tables responsive */
     .product-table thead {
-        display: none; /* Hide the table headers */
+        display: none; 
     }
 
     .product-table, .product-table tbody, .product-table tr, .product-table td {
@@ -260,14 +225,14 @@ body {
     }
 
     .product-table td {
-        text-align: right; /* Align content to the right */
-        padding-left: 50%; /* Create space for the label */
+        text-align: right; 
+        padding-left: 50%; 
         position: relative;
         border-bottom: none;
     }
 
     .product-table td::before {
-        content: attr(data-label); /* Use the data-label attribute as a label */
+        content: attr(data-label); 
         position: absolute;
         left: 10px;
         width: 45%;
@@ -281,83 +246,68 @@ body {
         text-align: left;
     }
     
-    /* --- Banner and Modal Text --- */
     .banner-text h1 { font-size: 3rem; }
     .banner-text h3 { font-size: 1.2rem; }
     .banner-text p { font-size: 1rem; }
     
     .modal-content { flex-direction: column; }
 
-    /*
-     * FIX: Allow the main container on the homepage to scroll vertically on mobile.
-     * This overrides the 'overflow: hidden' from home.css.
-    */
     .sidebar {
-        /* We can remove fixed width and height on mobile */
         width: 100%;
         height: auto;
     }
 
 }
+
 /* ==========================================================================
    MESSENGER PAGE RESPONSIVENESS
    ========================================================================== */
 
-/* --- TABLET STYLES (992px and smaller) --- */
 @media (max-width: 992px) {
-    /* Make the main messenger container full-width */
     .my-centered-rectangle {
         width: 100%;
-        height: calc(100vh - 100px); /* Adjust height for nav/footer */
+        height: calc(100vh - 100px); 
         margin: 0;
         border-radius: 0;
     }
     
-    /* Give more space to the chat window */
     .chat-left-panel {
         flex-basis: 320px;
     }
 
-    /* Reduce padding on the main container for the messenger page */
     main.main-container {
         padding: 0;
     }
 }
 
 
-/* --- MOBILE STYLES (768px and smaller) --- */
 @media (max-width: 768px) {
-    /* Stack the chat panels vertically */
     .my-centered-rectangle {
         flex-direction: column;
-        height: calc(100vh - 120px); /* Adjust for taller mobile navbar */
+        height: calc(100vh - 120px); 
     }
 
-    /* Make both panels full width */
     .chat-left-panel,
     .chat-right-panel {
         width: 100%;
         min-width: 100%;
     }
 
-    /* Hide the vertical divider */
     .chat-divider {
         display: none;
     }
 
-    /* On mobile, the conversation list should not take up the whole screen height */
     .chat-left-panel {
-        flex-basis: auto; /* Let it shrink */
-        height: 40%; /* Take up top 40% of the container */
+        flex-basis: auto; 
+        height: 40%; 
         border-right: none;
         border-bottom: 1px solid #e0e0e0;
     }
 
     .chat-right-panel {
-        height: 60%; /* Take up bottom 60% of the container */
+        height: 60%; 
     }
 
-    /* Adjust font sizes and padding for smaller screens */
     .chat-panel-header h2 {
         font-size: 1.2em;
     }
@@ -376,10 +326,9 @@ body {
    NAVBAR & SEARCH BAR RESPONSIVENESS
    ========================================================================== */
 
-/* --- TABLET STYLES (992px and smaller) --- */
 @media (max-width: 992px) {
     .navbar .search-section {
-        flex-grow: 1; /* Allow the search section to take up available space */
-        min-width: 200px; /* Prevent it from getting too small */
+        flex-grow: 1; 
+        min-width: 200px; 
     }
 }
