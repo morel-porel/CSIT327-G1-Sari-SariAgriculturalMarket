@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block css %}
@@ -7,33 +6,60 @@
 {% endblock %}
 
 {% block content %}
-<div class="info-section">
-    <div class="logo-large">Sari-Sari</div>
-    <p class="tagline">We connect farmers, vendors, and families <br> — locally and affordably</p>
-</div>
+<div class="auth-overlay-wrapper">
+    <div class="auth-left-panel">
+        <div class="deco-circle-small"></div>
+        <div class="brand-hero">
+            <h1>Sari-Sari</h1>
+            <p>We connect farmers, vendors, and families — locally and affordably.</p>
+        </div>
+        <div class="auth-footer-links">
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="#">Follow Us</a>
+            <a href="#">Feedback</a>
+        </div>
+    </div>
 
-<div class="form-section">
-    <div class="form-box">
-        <h2>Log in</h2>
-        <form method="post">
-            {% csrf_token %}
-            
-            <!-- Django's form will render the username and password fields -->
-            <div class="form-field">{{ form.username }}</div>
-            
-            <div class="form-field">{{ form.password }}</div>
-            
-            <button type="submit" class="btn-submit">Log in</button>
-        </form>
+    <div class="auth-right-panel">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1 class="auth-welcome-text">Welcome Back!</h1>
+                <h2>Sign In</h2>
+                <p>Enter your details to access your account.</p>
+            </div>
 
-        <a href="{% url 'password_reset_form' %}" class="forgot-password">Forgot password?</a>
-        
-        <div class="or-divider">OR</div>
-        <p>
-            Don't have an account? <br>
-            <a href="{% url 'signup' %}">Sign up as a Consumer</a><br> or <br>
-            <a href="{% url 'vendor_signup' %}">Sign up as a Vendor</a>
-        </p>
+            <form method="post" class="modern-form">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="input-group">
+                    {{ form.username }}
+                </div>
+
+                <div class="input-group">
+                    {{ form.password }}
+                </div>
+
+                <div class="auth-actions">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="{% url 'password_reset_form' %}">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary-auth">Sign In</button>
+            </form>
+
+            <div class="auth-switch">
+                <p>Don't have an account? <a href="{% url 'signup' %}">Create Account</a></p>
+                <p style="margin-top: 5px;">Are you a seller? <a href="{% url 'vendor_signup' %}">Join as Vendor</a></p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,4 +1,3 @@
-# users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, VendorProfile
@@ -10,6 +9,8 @@ class CustomUserCreationForm(UserCreationForm):
         placeholders = {
             'username': 'Username',
             'email': 'Email Address',
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
             'password1': 'Password',
             'password2': 'Confirm Password',
             'shop_name': 'Shop Name',
@@ -22,11 +23,10 @@ class CustomUserCreationForm(UserCreationForm):
                 field.widget.attrs['placeholder'] = placeholders[field_name]
                 field.label = '' 
 
-
 class ConsumerSignUpForm(CustomUserCreationForm): 
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ('username', 'email')
+        fields = ('first_name', 'last_name', 'username', 'email')
     
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -53,7 +53,6 @@ class VendorSignUpForm(CustomUserCreationForm):
             'password1', 
             'password2'
         ]
-        
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -67,7 +66,6 @@ class VendorSignUpForm(CustomUserCreationForm):
             )
         return user
 
-# --- STEP 1 FORM: Shop Details ---
 class VendorStep1Form(forms.ModelForm):
     class Meta:
         model = VendorProfile
@@ -90,7 +88,6 @@ class VendorStep1Form(forms.ModelForm):
             'shop_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tell customers about your shop...'}),
         }
 
-# --- STEP 2 FORMS: Vendor Personal Details & ID ---
 class VendorStep2UserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
@@ -104,7 +101,6 @@ class VendorStep2UserForm(forms.ModelForm):
 class VendorStep2ProfileForm(forms.ModelForm):
     class Meta:
         model = VendorProfile
-        # Re-using profile_image as the "Valid ID" upload for now
         fields = ['profile_image'] 
         widgets = {
             'profile_image': forms.FileInput(attrs={'class': 'form-control-file', 'accept': 'image/*'}),
