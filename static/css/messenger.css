@@ -1,476 +1,365 @@
-/*
- * This is a NEW file for the messenger.
- * It does NOT conflict with home.css or style.css.
- */
-
-/* * STEP 1: We override the home page styles for main.main-container
- * This is necessary to fix the centering.
- */
-main.main-container {
-    flex-grow: 1; /* Makes it fill the space between header and footer */
-    display: flex; /* Makes it a flex container to center its child */
-    
-    /* --- These rules OVERRIDE home.css --- */
-    justify-content: normal;  /* Resets the 'center' from home.css */
-    align-items: normal;     /* Resets the 'center' from home.css */
-    gap: 0;                  /* Resets the '5rem' from home.css */
-    padding: 20px;           /* Adds some simple padding */
-    box-sizing: border-box;
-}
-
-/* * STEP 2: Your main rectangle container
- */
-.my-centered-rectangle {
-    width: 1700px;
-    height: 750px;
-    
-    margin-top: 70px;
-    margin-left: 80px;
-    
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-secondary);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-
-    display: flex;       /* This makes the panels line up side-by-side */
-    overflow: hidden;    /* Hides anything that spills out */
-}
-
-
-/* * STEP 3: Panel and Divider styles
- */
-.chat-left-panel {
-    flex-basis: 400px; /* Starting width */
-    width: 400px;
-    min-width: 250px; 
-    height: 100%;
-    background: var(--bg-primary);
-    border-right: 1px solid var(--border-color);
+.messenger-sidebar {
     display: flex;
-    flex-direction: column; /* To stack header and list */
+    flex-direction: column;
+    overflow: hidden;
+    font-family: var(--font-main);
 }
 
-.chat-divider {
-    flex-basis: 2px;
-    height: 100%;
-    background-color: var(--border-color);
-    cursor: col-resize;
-    transition: background-color 0.2s;
-}
-.chat-divider:hover {
-    background-color: var(--border-input);
+.messenger-sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.chat-right-panel {
-    flex-grow: 1;
-    height: 100%;
-    background: var(--bg-primary);
-    display: flex;
-    flex-direction: column; /* To stack header, window, and form */
+.messenger-sidebar-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--accent-primary);
+    font-weight: 800;
+    font-family: var(--font-main);
 }
 
-/* * STEP 4: Left Panel Header & Search
- */
-.chat-panel-header {
-    padding: 15px;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0; /* Prevents header from shrinking */
-}
-
-.chat-panel-header h2 {
-    margin: 0 0 15px 0;
-    font-size: 1.6em;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.chat-search-container {
+.search-wrapper {
     position: relative;
-    width: 100%;
 }
 
-.chat-search-icon {
+.search-icon-small {
     position: absolute;
-    left: 12px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    opacity: 0.4;
+    width: 14px;
+    opacity: 0.5;
 }
 
-.chat-search-input {
+#convo-search {
     width: 100%;
-    padding: 10px 10px 10px 38px;
-    font-size: 0.9em;
-    border: none;
+    padding: 10px 10px 10px 32px;
     border-radius: 20px;
-    background-color: var(--bg-accent);
-    box-sizing: border-box;
+    border: 1px solid #eee;
+    background: #f9fafb;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    font-family: var(--font-main);
+}
+
+#convo-search:focus {
+    background: #fff;
+    border-color: var(--accent-primary);
     outline: none;
-    transition: background-color 0.2s;
-    color: var(--text-primary);
-}
-.chat-search-input:focus {
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    padding: 9px 9px 9px 37px; 
 }
 
-/* * STEP 5: Conversation List (Left Panel)
- */
 .conversation-list {
-    flex-grow: 1; /* Fills the rest of the left panel */
-    overflow-y: auto; /* Adds scrollbar if list is long */
-}
-.chat-list-empty {
-    text-align: center;
-    padding: 20px;
-    color: var(--text-secondary);
+    overflow-y: auto;
+    flex: 1;
 }
 
-.conversation-item {
+.convo-item {
     display: flex;
+    padding: 15px 20px;
     align-items: center;
-    padding: 12px 15px;
+    gap: 12px;
     text-decoration: none;
-    color: #333;
-    border-bottom: 1px solid var(--bg-accent);
-    text-decoration: none; color: var(--text-primary);
-    transition: background-color 0.2s;
+    border-bottom: 1px solid #f9f9f9;
+    transition: background 0.2s;
+    cursor: pointer;
+    position: relative;
 }
-.conversation-item:hover {
-    background-color: var(--bg-accent);
+
+.convo-item:hover {
+    background-color: #f8f9fa;
 }
-.conversation-item.active {
-    background-color: var(--bg-success-light);
+
+.convo-item.active {
+    background-color: #e8f5e9;
+    border-right: 3px solid var(--accent-primary);
 }
 
 .convo-avatar {
-    flex-shrink: 0;
-}
-.convo-avatar img {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    margin-right: 12px;
     object-fit: cover;
+    border: 1px solid #eee;
+    background: #fff;
 }
-.convo-details {
-    flex-grow: 1;
+
+.convo-info {
+    flex: 1;
     overflow: hidden;
 }
-.convo-user {
-    display: block;
-    font-weight: 600;
-    font-size: 1em;
-    color: var(--text-primary);
+
+.convo-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
 }
-.convo-excerpt {
-    display: block;
-    font-size: 0.9em;
-    color: var(--text-secondary);
+
+.convo-name {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.convo-time {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.convo-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.convo-preview {
+    font-size: 0.85rem;
+    color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-.convo-meta {
-    flex-shrink: 0;
-    text-align: right;
-    font-size: 0.8em;
-    color: var(--text-secondary);
-}
-.convo-timestamp {
-    display: block;
-    margin-bottom: 4px;
-}
-.convo-unread-count {
-    display: inline-block;
-    background-color: var(--accent-primary); /* Blue */
-    color: var(--text-on-accent);
-    font-weight: bold;
-    font-size: 0.85em;
-    padding: 2px 7px;
-    border-radius: 10px;
+    max-width: 85%;
 }
 
-/* * STEP 6: Active Chat Header (Right Panel)
- */
+.unread-badge {
+    background: var(--danger-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+.empty-convo-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-style: italic;
+}
+
+.main {
+    font-family: var(--font-main);
+}
+
 .chat-header {
+    background: #fff;
+    padding: 15px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chat-header-user {
     display: flex;
     align-items: center;
-    padding: 12px 18px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--bg-primary);
-    flex-shrink: 0; /* Prevents shrinking */
+    gap: 12px;
 }
-.chat-avatar img {
-    width: 40px;
-    height: 40px;
+
+.header-avatar {
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 12px;
-}
-.chat-info h2 {
-    margin: 0;
-    font-size: 1.2em;
-    color: var(--text-primary);
-}
-.chat-info .shop-name {
-    margin: 0;
-    font-size: 0.85em;
-    color: var(--text-secondary);
 }
 
-/* * STEP 7: Chat Window (Right Panel)
- */
-.chat-window {
-    flex-grow: 1; /* Fills the space */
-    padding: 20px;
-    overflow-y: auto;
-    background-color: var(--bg-secondary);
-    display: flex;
-    flex-direction: column;
-}
-.chat-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
-    color: var(--text-secondary);
-}
-.chat-placeholder h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+.header-details h3 {
+    margin: 0;
+    font-size: 1.1rem;
     color: var(--text-primary);
 }
 
-/* * STEP 8: Message Bubbles
- */
-.message {
-    display: flex;
-    margin-bottom: 15px;
-    max-width: 75%;
-}
-.message-bubble {
-    padding: 12px 18px;
-    border-radius: 20px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    font-size: 0.95em;
-}
-.message-bubble p {
-    margin: 0 0 5px 0;
-}
-.message-timestamp {
-    font-size: 0.75em;
+.header-status {
+    font-size: 0.8rem;
+    color: #2e7d32;
     display: block;
-    color: var(--text-secondary);
-}
-.read-receipt {
-    font-style: italic;
-    color: var(--info-color); /* Blue */
 }
 
-/* Sent Messages (Current User) */
-.message.sent {
-    align-self: flex-end; /* Aligns to the right */
+.header-badge {
+    font-size: 0.8rem;
+    color: #666;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
-.message.sent .message-bubble {
-    background-color: var(--accent-primary); /* Blue */
-    color: var(--text-on-accent);;
-    border-bottom-right-radius: 5px;
+
+.chat-messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
-.message.sent .message-timestamp {
-    color: var(--text-on-accent);
+
+.message-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: 70%;
+    position: relative;
+}
+
+.message-wrapper:hover .report-btn {
+    opacity: 1;
+}
+
+.message-wrapper.incoming {
+    align-self: flex-start;
+}
+
+.tiny-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+.message-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.incoming .message-bubble {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-bottom-left-radius: 4px;
+    color: var(--text-primary);
+}
+
+.message-wrapper.outgoing {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.outgoing .message-bubble {
+    background: var(--accent-primary);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 5px rgba(40, 84, 41, 0.2);
+}
+
+.message-time {
+    display: block;
+    font-size: 0.65rem;
+    margin-top: 4px;
+    opacity: 0.7;
     text-align: right;
 }
 
-/* Received Messages (Other User) */
-.message.received {
-    align-self: flex-start; /* Aligns to the left */
-}
-.message.received .message-bubble {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-bottom-left-radius: 5px;
-}
-.message.received .message-timestamp {
-    color: #888;
-    text-align: left;
+.message-media img.img-preview {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
 }
 
-/* Media Attachments */
-.message-media img {
-    max-width: 250px;
-    border-radius: 8px;
-    margin-top: 5px;
-    cursor: pointer;
-}
-.file-attachment {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    background: rgba(0,0,0,0.05);
-    border-radius: 8px;
-    margin-top: 5px;
-    text-decoration: none;
+.file-link {
     color: inherit;
+    text-decoration: underline;
     font-weight: 600;
 }
 
-
-/* * STEP 9: Message Form (Right Panel)
- */
-.message-form {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    border-top: 1px solid var(--border-color);
-    background-color: var(--bg-primary);
-    flex-shrink: 0; /* Prevents shrinking */
-}
-.message-form textarea {
-    flex-grow: 1;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 10px 18px;
-    margin: 0 10px;
-    font-family: inherit;
-    font-size: 1em;
-    resize: none;
-    max-height: 120px; /* Max 5 lines approx */
-    box-sizing: border-box;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-}
-
-.file-label,
-.btn-send {
-    padding: 8px;
-    cursor: pointer;
+.report-btn {
+    opacity: 0;
     background: none;
     border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-.btn-send {
-    background-color: var(--accent-primary);
-}
-.btn-send img {
-    filter: brightness(0) invert(1); /* Makes the icon white */
-}
-.btn-send:hover {
-    background-color: var(--accent-secondary); /* Darker blue */
-}
-
-/* --- Report Button --- */
-.message {
-    position: relative; /* Ensure report button is positioned relative to the message */
-    /* Add extra padding to message container to make room for the report icon */
-    padding-right: 30px; 
-}
-
-.report-btn-container {
-    /* Position the report icon near the received message bubble */
-    position: absolute;
-    top: 50%; 
-    transform: translateY(-50%);
+    color: #d32f2f;
+    font-weight: 900;
     cursor: pointer;
-    z-index: 5;
-}
-
-/* Position for received messages (left side) */
-.message.received .report-btn-container {
-    right: 5px; /* Adjust this value to place it correctly next to the bubble */
-}
-
-/* Hide report button on sent messages (optional, but good UX) */
-.message.sent .report-btn-container {
-    display: none;
-}
-
-.report-btn-icon {
-    width: 16px; 
-    height: 16px;
-    opacity: 0.5;
+    font-size: 1.1rem;
     transition: opacity 0.2s;
+    padding: 0 5px;
 }
 
-.report-btn-icon:hover {
-    opacity: 1.0;
-    filter: invert(30%) sepia(80%) saturate(600%) hue-rotate(330deg); /* Optional: turn icon red on hover */
-}
-
-
-/* --- Report Modal --- */
-.report-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
-    display: none; /* Hidden by default, controlled by JS */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it's on top of everything */
-}
-
-.report-modal-content {
-    background: var(--bg-primary);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 400px;
-    animation: fadeIn 0.3s ease-out; /* Optional fade-in effect */
-}
-
-.report-modal-content h3 {
-    margin-top: 0;
-    color: var(--danger-color); /* Red color for warning tone */
-}
-
-.report-modal-content textarea {
-    width: 100%;
-    height: 100px;
-    margin: 15px 0;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    resize: vertical;
-    box-sizing: border-box; /* Include padding in width calculation */
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-}
-
-.report-actions {
+.chat-input-area {
+    background: #fff;
+    padding: 15px 25px;
+    border-top: 1px solid #e0e0e0;
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     gap: 10px;
 }
-/* Assuming you have .btn styles defined elsewhere */
-.report-actions .btn-danger {
-    background-color: var(--danger-color);
-    color: var(--text-on-accent);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.report-actions .btn-secondary {
-    background-color: var(--text-secondary);
-    color: var(--text-on-accent);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
+
+.file-preview-bar {
+    background: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+.input-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    width: 100%;
+}
+
+.msg-input {
+    flex: 1;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    resize: none;
+    max-height: 120px;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+}
+
+.msg-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: #fff;
+}
+
+.attach-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding-bottom: 5px;
+}
+
+.attach-btn:hover {
+    color: var(--accent-primary);
+}
+
+.send-btn {
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: var(--font-main);
+}
+
+.send-btn:hover {
+    background: var(--accent-secondary);
+}
+
+.empty-chat-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+}
+
+.empty-logo {
+    width: 80px;
+    opacity: 0.2;
+    margin-bottom: 20px;
+    filter: grayscale(1);
+}
