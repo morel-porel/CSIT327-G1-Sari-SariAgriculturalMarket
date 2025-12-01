@@ -6,6 +6,8 @@
 
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/modern_modal.css' %}">
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
 
 <main class="container">
     <aside class="sidebar">
@@ -146,29 +148,57 @@
 <div class="modal-backdrop" id="product-modal-backdrop" style="display: none;"></div>
 <div class="modal" id="product-modal" style="display: none;">
     <button class="modal-close" id="modal-close-btn">&times;</button>
+    
     <div class="modal-content">
-        <div class="modal-image"><img src="" alt="Product Image" id="modal-img"></div>
+        <div class="modal-image">
+            <img src="" alt="Product Image" id="modal-img">
+        </div>
+
         <div class="modal-details">
-            <h2 id="modal-name"></h2>
-            <p class="modal-vendor">by <a href="#" id="modal-shop-link"></a></p>
-            <div class="modal-price" id="modal-price"></div>
-            <p class="modal-description" id="modal-description"></p>
-            <div class="modal-meta">
-                <span>Category: <strong id="modal-category"></strong></span>
-                <span>Stock: <strong id="modal-stock"></strong></span>
+            <span class="modal-category-badge" id="modal-category"></span>
+            
+            <h2 id="modal-name">Product Name</h2>
+            <p class="modal-vendor">
+                Sold by <a href="#" id="modal-shop-link">Vendor Name</a>
+            </p>
+            
+            <div class="modal-price" id="modal-price">₱0.00</div>
+            
+            <div class="stock-indicator">
+                In Stock: <strong id="modal-stock">0</strong>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <a href="#" class="btn-message-vendor" id="modal-chat-btn" style="flex: 1;">Chat with <span id="modal-seller-name"></span></a>
-                <button class="btn-share" id="modal-share-btn">Share</button>
-            </div>
-            <div id="share-panel" class="share-panel" style="display: none;">
-                <div class="share-actions">
-                    <button onclick="shareToSocial('facebook')">FB</button>
-                    <button onclick="shareToSocial('twitter')">X</button>
-                    <button onclick="copyProductLink()">Copy Link</button>
+
+            <p class="modal-description" id="modal-description">
+                Product description goes here...
+            </p>
+
+            <div class="modal-actions">
+                <a href="#" class="action-btn chat" id="modal-chat-btn" data-tooltip="Chat with Vendor">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                        <path d="M7 9h10v2H7zm0-3h10v2H7z"/> 
+                    </svg>
+                </a>
+
+                <button class="action-btn cart" id="modal-cart-btn" data-tooltip="Add to Cart" onclick="addToCart()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
+                    </svg>
+                </button>
+
+                <div style="position: relative;">
+                    <button class="action-btn share" id="modal-share-btn" data-tooltip="Share">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                        </svg>
+                    </button>
+                    <div id="share-panel" class="share-popover">
+                        <div id="qrcode-container" style="display: flex; justify-content: center;"></div>
+                        <button onclick="shareToSocial('facebook')">Share on Facebook</button>
+                        <button onclick="shareToSocial('twitter')">Share on X (Twitter)</button>
+                        <button onclick="copyProductLink()">Copy Link</button>
+                    </div>
                 </div>
-                <div id="qrcode-container"></div>
-                <p style="font-size: 0.8em; color: #666; margin-top: 5px;">Scan QR to view on mobile</p>
             </div>
         </div>
     </div>
@@ -177,8 +207,8 @@
 <div class="modal-backdrop" id="vendor-modal-backdrop" style="display: none;"></div>
 <div class="modal vendor-modal" id="vendor-modal" style="display: none;">
     <button class="modal-close" id="vendor-modal-close-btn">&times;</button>
-    <div class="modal-content portrait-content">
-        <h2 id="vendor-shop-name" class="modal-title"></h2>
+    <div class="modal-content portrait-content" style="display:block; padding: 20px; height:auto;">
+        <h2 id="vendor-shop-name" class="modal-title" style="margin-top:0;"></h2>
         <div class="vendor-header-image">
             <img src="" alt="Shop Profile" id="vendor-profile-img" class="vendor-profile-img">
             <span class="verification-status" id="vendor-verified"></span>
@@ -286,9 +316,13 @@
         const shopLink = document.getElementById('modal-shop-link');
         
         let currentProductId = null;
-        let currentVendorId = null;
+        let currentProductName = "";
 
-        const openProductModal = () => { productModal.style.display = 'block'; productBackdrop.style.display = 'block'; };
+        const openProductModal = () => { 
+            productModal.style.display = 'block'; 
+            productBackdrop.style.display = 'block'; 
+            sharePanel.style.display = 'none';
+        };
         const closeProductModal = () => { 
             productModal.style.display = 'none'; 
             productBackdrop.style.display = 'none'; 
@@ -302,22 +336,20 @@
         vendorCloseBtn.addEventListener('click', closeVendorModal);
         vendorBackdrop.addEventListener('click', closeVendorModal);
 
-        if(shareBtn){
-            shareBtn.addEventListener('click', () => {
-                if (sharePanel.style.display === 'none') {
-                    sharePanel.style.display = 'block';
-                    qrContainer.innerHTML = ''; 
-                    const productUrl = window.location.origin + '/?product_id=' + currentProductId;
-                    new QRCode(qrContainer, { text: productUrl, width: 100, height: 100 });
-                } else {
-                    sharePanel.style.display = 'none';
-                }
-            });
-        }
+        shareBtn.addEventListener('click', () => {
+            if (sharePanel.style.display === 'none' || sharePanel.style.display === '') {
+                sharePanel.style.display = 'flex';
+                qrContainer.innerHTML = ''; 
+                const productUrl = window.location.origin + '/?product_id=' + currentProductId;
+                new QRCode(qrContainer, { text: productUrl, width: 100, height: 100 });
+            } else {
+                sharePanel.style.display = 'none';
+            }
+        });
 
         window.shareToSocial = (platform) => {
             const url = encodeURIComponent(window.location.origin + '/?product_id=' + currentProductId);
-            const text = encodeURIComponent("Check out this fresh product on Sari-Sari!");
+            const text = encodeURIComponent(`Check out ${currentProductName} on Sari-Sari!`);
             let shareUrl = '';
             if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
             else if (platform === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
@@ -326,7 +358,37 @@
 
         window.copyProductLink = () => {
             const url = window.location.origin + '/?product_id=' + currentProductId;
-            navigator.clipboard.writeText(url).then(() => alert("Link copied!"));
+            navigator.clipboard.writeText(url).then(() => {
+                const shareBtn = document.getElementById('modal-share-btn');
+                const originalTooltip = shareBtn.getAttribute('data-tooltip');
+                shareBtn.setAttribute('data-tooltip', 'Copied!');
+                setTimeout(() => shareBtn.setAttribute('data-tooltip', originalTooltip), 2000);
+            });
+        };
+
+        window.addToCart = () => {
+            const cartBtn = document.getElementById('modal-cart-btn');
+            const originalHTML = cartBtn.innerHTML;
+            
+            cartBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="green" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+            cartBtn.setAttribute('data-tooltip', 'Added!');
+            
+            const productData = {
+                id: currentProductId,
+                name: currentProductName,
+                price: document.getElementById('modal-price').textContent,
+                image: document.getElementById('modal-img').src,
+                shop: document.getElementById('modal-shop-link').textContent
+            };
+
+            if (window.addToCartGlobal) {
+                window.addToCartGlobal(productData);
+            }
+            
+            setTimeout(() => {
+                cartBtn.innerHTML = originalHTML;
+                cartBtn.setAttribute('data-tooltip', 'Add to Cart');
+            }, 2000);
         };
 
         const loadProductDetails = (id) => {
@@ -335,23 +397,22 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) return; 
-                    currentVendorId = data.vendor_user_id; 
                     currentProductId = data.id; 
+                    currentProductName = data.name;
                     
                     document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
                     document.getElementById('modal-name').textContent = data.name;
                     document.getElementById('modal-price').textContent = data.price; 
                     document.getElementById('modal-description').textContent = data.description;
-                    
-                    shopLink.textContent = data.shop_name;
-                    if (data.is_verified) {
-                        shopLink.innerHTML += ' <img src="{% static "icons/verified.png" %}" class="vendor-badge" alt="Verified">';
-                    }
-
-                    document.getElementById('modal-seller-name').textContent = data.seller_name || data.shop_name;
-                    document.getElementById('modal-chat-btn').href = `/messages/start/${data.vendor_user_id}/`; 
                     document.getElementById('modal-category').textContent = data.category || 'N/A';
                     document.getElementById('modal-stock').textContent = data.stock || 'N/A';
+                    
+                    const shopLink = document.getElementById('modal-shop-link');
+                    shopLink.textContent = data.shop_name;
+
+                    const chatBtn = document.getElementById('modal-chat-btn');
+                    chatBtn.setAttribute('data-tooltip', `Chat with ${data.shop_name}`);
+                    chatBtn.href = `/messages/start/${data.vendor_user_id}/`; 
                 });
         };
 
@@ -392,3 +453,4 @@
     });
 </script>
 {% endblock %}
+}
