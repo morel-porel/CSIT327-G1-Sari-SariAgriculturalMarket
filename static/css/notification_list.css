@@ -1,3 +1,5 @@
+/* static/css/notification_list.css */
+
 .notification-page-wrapper {
     background-color: var(--bg-secondary); 
     padding: 40px 20px;
@@ -28,6 +30,7 @@
     margin: 0;
 }
 
+/* Base Notification Item Style */
 .notification-item {
     display: flex;
     align-items: flex-start;
@@ -36,6 +39,7 @@
     margin-bottom: 15px;
     background-color: #fff;
     border: 1px solid #eee;
+    border-left: 5px solid #ddd; /* Default border color */
     transition: all 0.2s ease;
     position: relative;
 }
@@ -43,14 +47,45 @@
 .notification-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    border-color: #e0e0e0;
 }
 
-.notification-item.unread {
-    background-color: #f0fdf4;
-    border-color: #bbf7d0;
+/* --- Notification Types Styling --- */
+
+/* 1. Standard Message (Blue) */
+.notification-item.type-message {
+    border-left-color: var(--info-color);
+    background-color: #f0f8ff; /* AliceBlue */
+}
+.notification-item.type-message .notification-message {
+    color: #0c5460;
 }
 
+/* 2. Warning / Report (Red/Orange) */
+.notification-item.type-warning {
+    border-left-color: var(--danger-color);
+    background-color: #fff5f5; /* Very light red */
+}
+.notification-item.type-warning .notification-message {
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* 3. Success / Verified (Green) */
+.notification-item.type-success {
+    border-left-color: var(--accent-secondary);
+    background-color: #f1f8e9; /* Very light green */
+}
+.notification-item.type-success .notification-message {
+    color: #2e7d32;
+}
+
+/* 4. General Info (Gray/Default) */
+.notification-item.type-info {
+    border-left-color: #b0b0b0;
+    background-color: #ffffff;
+}
+
+/* Unread Indicator */
 .notification-item.unread::after {
     content: '';
     position: absolute;
@@ -60,6 +95,12 @@
     height: 10px;
     background-color: var(--accent-primary);
     border-radius: 50%;
+    box-shadow: 0 0 0 2px #fff;
+}
+
+/* Text Styles */
+.notification-item.unread .notification-message {
+    font-weight: 700; /* Make text bold if unread */
 }
 
 .icon-section {
@@ -71,7 +112,8 @@
 .alert-icon {
     width: 40px;
     height: 40px;
-    opacity: 0.8;
+    opacity: 0.9;
+    object-fit: contain;
 }
 
 .content-section {
@@ -91,13 +133,9 @@
     display: block;
 }
 
-.notification-link:hover .notification-message {
-    color: var(--accent-primary);
-}
-
 .notification-timestamp {
     display: block;
-    color: #9ca3af;
+    color: #888;
     font-size: 0.85rem;
     font-weight: 500;
 }

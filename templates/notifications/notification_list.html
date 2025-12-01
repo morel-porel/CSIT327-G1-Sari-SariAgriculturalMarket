@@ -11,6 +11,10 @@
         footer, .footer {
             display: none !important;
         }
+        /* Hide search bar on this page */
+        .search-bar {
+            visibility: hidden;
+        }
     </style>
 {% endblock %}
 
@@ -22,31 +26,48 @@
         {% if notifications %}
             <ul class="notification-list">
                 {% for notification in notifications %}
-                    <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    {% with msg_lower=notification.message|lower %}
                         
-                        <div class="icon-section">
-                            {% if not notification.link %}
-                                <img src="{% static 'icons/warning.png' %}" alt="Warning" class="alert-icon">
+                        <li class="notification-item {% if not notification.is_read %}unread{% endif %} 
+                            {% if 'warning' in msg_lower or 'flagged' in msg_lower %}
+                                type-warning
+                            {% elif 'new message' in msg_lower %}
+                                type-message
+                            {% elif 'congratulations' in msg_lower or 'approved' in msg_lower or 'success' in msg_lower %}
+                                type-success
                             {% else %}
-                                <img src="{% static 'icons/message.png' %}" alt="Message" class="alert-icon">
-                            {% endif %}
-                        </div>
+                                type-info
+                            {% endif %}">
+                            
+                            <div class="icon-section">
+                                {% if 'warning' in msg_lower or 'flagged' in msg_lower %}
+                                    <img src="{% static 'icons/warning.png' %}" alt="Warning" class="alert-icon">
+                                {% elif 'new message' in msg_lower %}
+                                    <img src="{% static 'icons/message.png' %}" alt="Message" class="alert-icon">
+                                {% elif 'congratulations' in msg_lower or 'approved' in msg_lower or 'success' in msg_lower %}
+                                    <img src="{% static 'icons/verified.png' %}" alt="Success" class="alert-icon">
+                                {% else %}
+                                    <img src="{% static 'icons/notification.png' %}" alt="Info" class="alert-icon">
+                                {% endif %}
+                            </div>
 
-                        <div class="content-section">
-                            {% if notification.link %}
-                                <a href="{{ notification.link }}" class="notification-link">
-                                    <p class="notification-message">{{ notification.message }}</p>
-                                </a>
-                            {% else %}
-                                <p class="notification-message" style="color: #d32f2f;">
-                                    {{ notification.message }}
-                                </p>
-                            {% endif %}
-                            <small class="notification-timestamp">
-                                {{ notification.timestamp|timesince }} ago
-                            </small>
-                        </div>
-                    </li>
+                            <div class="content-section">
+                                {% if notification.link %}
+                                    <a href="{{ notification.link }}" class="notification-link">
+                                        <p class="notification-message">{{ notification.message }}</p>
+                                    </a>
+                                {% else %}
+                                    <p class="notification-message">
+                                        {{ notification.message }}
+                                    </p>
+                                {% endif %}
+                                <small class="notification-timestamp">
+                                    {{ notification.timestamp|timesince }} ago
+                                </small>
+                            </div>
+                        </li>
+                    
+                    {% endwith %}
                 {% endfor %}
             </ul>
         {% else %}
