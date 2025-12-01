@@ -7,31 +7,65 @@
 <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
 <style>
-    /* Hide Footer on Home Page */
-    footer, .footer {
+    /* 1. Global Reset for Full Screen - HIGH SPECIFICITY to override responsive.css */
+    html:root, body:root {
+        height: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important; /* Locks body scroll */
+        background-color: var(--bg-tertiary);
+    }
+
+    /* 2. Hide Footer Completely */
+    footer, .footer, #footer {
         display: none !important;
         height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 3. Main Wrapper must fill screen exactly */
+    .main-container {
+        width: 100% !important;
+        height: 100vh !important;
         padding: 0 !important;
         margin: 0 !important;
+        max-width: none !important;
+        display: block !important;
+        overflow: hidden !important; /* Prevent spillover */
     }
-    
-    /* Reset body margin and overflow */
-    body {
-        margin-bottom: 0 !important;
-        overflow: hidden; /* Prevents double scrollbars */
+
+    /* 4. Home Page Container Logic */
+    .container {
+        /* Content starts after the 70px header */
+        margin-top: 70px !important; 
+        /* Height is exactly viewport minus header */
+        height: calc(100vh - 70px) !important; 
+        width: 100% !important;
+        display: flex !important;
         padding-bottom: 0 !important;
     }
 
-    /* Fix the 1px gap by matching the 70px header height exactly */
-    .container {
-        margin-top: 70px !important;
-        height: calc(100vh - 70px) !important;
+    /* 5. Layout Pillars */
+    .sidebar {
+        height: 100% !important;
+        border-bottom: none !important;
+        overflow-y: auto; /* Allow sidebar to scroll if needed */
+    }
+    
+    .main {
+        height: 100% !important;
+        overflow: hidden; /* Container shouldn't scroll, only .content */
     }
 
-    /* Ensure no extra padding on the main wrapper from base.html */
-    .main-container {
-        padding: 0 !important;
-        margin: 0 !important;
+    .content {
+        height: 100% !important;
+        padding-bottom: 20px;
+        overflow-y: auto; /* This is the ONLY scrollbar we want */
     }
 </style>
 {% endblock %}
@@ -67,7 +101,13 @@
 
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
-            <a href="{% url 'product_list' %}"><img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon"></a>
+            <div class="cart-nav-container">
+                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
+                </a>
+            </div>
         {% else %}
             <div class="cart-nav-container">
                 <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
@@ -424,43 +464,15 @@
         let currentProductId = null;
         let currentProductName = "";
 
-        // --- FIXED CATEGORY FILTER LOGIC ---
         const categoryBtns = document.querySelectorAll('.category-filter-btn');
         const productGrid = document.getElementById('product-grid-container');
 
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Update UI active state
                 categoryBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
                 const category = this.getAttribute('data-category');
-                
-                // Get current search query from URL to preserve it
-                const urlParams = new URLSearchParams(window.location.search);
-                const currentQuery = urlParams.get('q') || '';
-
-                // Construct API URL with correct parameters
-                // Using 'categories' as expected by products/views.py logic
-                let apiUrl = '/my-products/api/list/';
-                const apiParams = new URLSearchParams();
-
-                // Only append category param if it's NOT 'all'
-                if (category && category !== 'all') {
-                    apiParams.append('categories', category);
-                }
-                
-                // Preserve text search if it exists
-                if (currentQuery) {
-                    apiParams.append('q', currentQuery);
-                }
-
-                // Append query string if params exist
-                if (Array.from(apiParams).length > 0) {
-                    apiUrl += `?${apiParams.toString()}`;
-                }
-
-                fetch(apiUrl)
+                fetch(`/my-products/api/list/?category=${encodeURIComponent(category)}`)
                     .then(response => response.json())
                     .then(data => {
                         productGrid.innerHTML = ''; 
@@ -470,37 +482,15 @@
                                 productCard.className = 'grid-item';
                                 productCard.setAttribute('data-product-id', product.id);
                                 productCard.style.cursor = 'pointer';
-                                
-                                productCard.addEventListener('click', (e) => {
-                                    if (e.target.closest('a') || e.target.closest('button')) return;
-                                    loadProductDetails(product.id);
-                                });
-
-                                const verifiedBadge = product.is_verified 
-                                    ? `<img src="{% static 'icons/verified.png' %}" class="vendor-badge" alt="Verified" title="Verified Vendor">` 
-                                    : '';
-
-                                productCard.innerHTML = `
-                                    <div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div>
-                                    <div class="product-info">
-                                        <h3 class="product-name">${product.name}</h3>
-                                        <p class="product-price">${product.price}</p>
-                                        <p class="product-vendor">
-                                            Seller: 
-                                            <span class="vendor-name-container">
-                                                ${product.shop_name}
-                                                ${verifiedBadge}
-                                            </span>
-                                        </p>
-                                    </div>
-                                `;
+                                productCard.addEventListener('click', () => loadProductDetails(product.id));
+                                const verifiedBadge = product.is_verified ? `<img src="/static/icons/verified.png" class="vendor-badge" alt="Verified" title="Verified Vendor">` : '';
+                                productCard.innerHTML = `<div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div><div class="product-info"><h3 class="product-name">${product.name}</h3><p class="product-price">${product.price}</p><p class="product-vendor">Seller: <span class="vendor-name-container">${product.shop_name} ${verifiedBadge}</span></p></div>`;
                                 productGrid.appendChild(productCard);
                             });
                         } else {
                             productGrid.innerHTML = '<p id="no-products-message">No products found in this category.</p>';
                         }
-                    })
-                    .catch(err => console.error("Error filtering products:", err));
+                    });
             });
         });
 
@@ -604,7 +594,7 @@
 
         document.querySelectorAll('.grid-item').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (e.target.closest('a') || e.target.closest('button')) return;
+                if (e.target.closest('a')) return;
                 loadProductDetails(card.dataset.productId);
             });
         });
