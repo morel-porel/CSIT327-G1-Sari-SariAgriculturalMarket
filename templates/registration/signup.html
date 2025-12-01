@@ -1,51 +1,54 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% endblock %}
 
-
 {% block content %}
-<div class="info-section">
-    <div class="logo-large">Sari-Sari</div>
-    <p class="tagline">We connect farmers, vendors, and families <br> — locally and affordably</p>
-</div>
+<div class="auth-overlay-wrapper">
+    <div class="auth-left-panel">
+        <div class="deco-circle-small"></div>
+        <div class="brand-hero">
+            <h1>Join Sari-Sari</h1>
+            <p>Experience the freshest local produce delivered to your doorstep. Join our community today.</p>
+        </div>
+        <div class="auth-footer-links">
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="#">Follow Us</a>
+            <a href="#">Feedback</a>
+        </div>
+    </div>
 
-<div class="form-section">
-    <div class="form-box">
-        <h2>Sign Up</h2>
-        <form method="post">
-            {% csrf_token %}
-        
-            <!-- Display any errors that aren't tied to a specific field -->
-            {% if form.non_field_errors %}
-                <div class="form-errors">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-        
-            <!-- Render each field manually -->
-            <div class="form-field">{{ form.username }} {{ form.username.errors }}</div>
-            <div class="form-field">{{ form.email }} {{ form.email.errors }}</div>
-            <div class="form-field">{{ form.phone_number }} {{ form.phone_number.errors }}</div>
-            
-            <!-- The role field is special (radio buttons) -->
-            <div class="form-field-role">
-                {{ form.role.label_tag }}
-                {{ form.role }}
-                {{ form.role.errors }}
+    <div class="auth-right-panel">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Sign up as a Consumer</p>
             </div>
-        
-            <div class="form-field">{{ form.password1 }} {{ form.password1.errors }}</div>
-            <div class="form-field">{{ form.password2 }} {{ form.password2.errors }}</div>
-        
-            <button type="submit" class="btn-submit">Sign up</button>
-        </form>
-        <div class="or-divider"></div>
-        <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
-        <!-- ... -->
+
+            <form method="post" class="modern-form">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="input-group">
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-primary-auth">Sign Up</button>
+            </form>
+
+            <div class="auth-switch">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
+                <p style="margin-top: 5px;">Want to sell? <a href="{% url 'vendor_signup' %}">Vendor Registration</a></p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

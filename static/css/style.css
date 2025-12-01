@@ -1,250 +1,261 @@
-/* static/css/style.css */
-body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-.navbar, .footer-links { display: flex; justify-content: space-between; align-items: center; padding: 12px 30px;; border-bottom: 1px solid var(--border-color);}
-footer { border-top: 1px solid var(--border-color); margin-top: auto; }
-.footer-links {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 18px 30px;
-    font-size: 15px;
-    width: 100%;
-    background: var(--bg-primary);
-    border-top: 1px solid var(--border-color);
-    border-bottom: 5px solid var(--accent-highlight);
-    /* position: fixed; <-- This was removed to prevent overlap */
-    bottom: 0;
-    left: 0;
-}
-.footer-links a {
-    color: var(--text-primary);;
-    text-decoration: none;
-    margin: 0 1rem;
+:root {
+    --auth-gradient: linear-gradient(135deg, #175e52 0%, #2e7d32 100%);
+    --auth-bg: #ffffff;
+    --text-main: #333;
+    --text-muted: #666;
+    --input-bg: #f8f9fa;
+    --border-color: #e1e1e1;
+    --brand-orange: #faa625; /* Updated Color */
 }
 
-/* --- NEW: Notification Badge Style --- */
-.nav-icons a {
-    position: relative; /* Needed to position the badge relative to the icon */
-    display: inline-block;
-    text-decoration: none;
-}
-
-.notification-count {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 5px;
-    font-size: 10px;
-    font-weight: bold;
-    min-width: 15px;
-    text-align: center;
-    line-height: 1.2;
-    border: 1px solid white; /* Optional: adds a tiny separation from the icon */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* This is the original rule for your homepage, etc. */
-.main-container {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    gap: 5rem;
-    padding-bottom: 2rem;
-    padding-left: 2rem;
-}
-.info-section { text-align: center; }
-.logo-large { font-size: 3rem; font-weight: bold; margin-bottom: 1rem; color: var(--text-primary); }
-.tagline { font-size: 1.5rem; color: var(--text-secondary); }
-.form-section { }
-.form-box { background-color: var(--bg-form); padding: 2rem; border-radius: 8px; width: 350px; }
-.form-box h2 { text-align: center; margin-bottom: 1.5rem; color: var(--text-primary);}
-form { display: flex; flex-direction: column; gap: 1rem; }
-form input { padding: 0.8rem; border: 1px solid var(--border-input); border-radius: 4px; 
-    background-color: var(--bg-primary); 
-    color: var(--text-primary);
-}
-.btn-submit { background-color: var(--text-primary); color: var(--bg-primary); padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
-.forgot-password { display: block; text-align: center; margin-top: 0.5rem; font-size: 0.9rem; }
-.or-divider { text-align: center; margin: 1rem 0;  color: var(--text-secondary); }
-p { text-align: center;  color: var(--text-primary); }
-/* Style for field-specific errors */
-.form-field .errorlist {
-    list-style-type: none;
-    padding: 0;
-    margin: 5px 0 0 0;
-    font-size: 0.9em;
-    color: var(--danger-color); /* A standard error red color */
-}
-
-/* Style for general form errors at the top */
-.form-errors .errorlist {
-    list-style-type: none;
-    padding: 10px;
-    margin-bottom: 1rem;
-    background-color: var(--bg-accent);
-    border: 1px solid var(--danger-color);
-    color: var(--danger-color);
-    border-radius: 4px;
-}
-.form-box input[type="text"],
-.form-box input[type="email"],
-.form-box input[type="password"],
-.form-box select {
-    width: 100%;
-    box-sizing: border-box;
-}
-.form-box .btn-submit {
-    width: 100%;
-    box-sizing: border-box;
-}
-.form-field-role > div {
-    display: flex;
-    gap: 1.5rem; /* Space between the options */
-    margin-top: 0.5rem;
-    justify-content: center; /* Center the radio buttons */
-}
-
-/* Style each individual radio option */
-.form-field-role label {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem; /* Space between the radio circle and its text */
-    color: var(--text-primary);
-}
-.form-box p a {
-    text-decoration: none;
-    font-weight: bold;
-    color: var(--link-color); /* A color from your theme */
-}
-
-
-/* ========================================= */
-/* PRODUCT MODAL STYLES (This is OK to keep)
-/* ========================================= */
-
-.modal-backdrop {
+.auth-overlay-wrapper {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    z-index: 9999;
+    display: flex;
+    overflow: hidden;
 }
 
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
+.auth-left-panel {
+    flex: 1.2;
+    background: var(--auth-gradient);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+    position: relative;
+    overflow: hidden; 
 }
 
-.modal-close {
+/* Decorative Circles */
+.auth-left-panel::before,
+.auth-left-panel::after {
+    content: '';
     position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 2.5em;
-    font-weight: bold;
-    color: var(--text-secondary);
-    background: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 1;
+}
+
+.auth-left-panel::before {
+    width: 400px;
+    height: 400px;
+    top: -100px;
+    right: -50px;
+}
+
+.auth-left-panel::after {
+    width: 600px;
+    height: 600px;
+    bottom: -200px;
+    left: -150px;
+}
+
+.deco-circle-small {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    top: 40%;
+    left: 20%;
+    z-index: 1;
+}
+
+.brand-hero {
+    margin-top: 100px;
+    position: relative;
+    z-index: 2; 
+}
+
+.brand-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.brand-hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+.auth-footer-links {
+    display: flex;
+    gap: 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+.auth-footer-links a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.auth-footer-links a:hover {
+    opacity: 1;
+}
+
+.auth-right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--auth-bg);
+    padding: 40px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-header {
+    margin-bottom: 30px;
+}
+
+.auth-welcome-text {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 90px 0;
+    line-height: 1.1;
+}
+
+.auth-header h2 {
+    font-size: 2rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.auth-header p {
+    color: var(--text-muted);
+}
+
+.modern-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.modern-input, 
+.input-group input, 
+.input-group select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    background-color: white;
+    border-color: #175e52;
+    box-shadow: 0 0 0 4px rgba(23, 94, 82, 0.1);
+}
+
+input[type="checkbox"] {
+    accent-color: var(--brand-orange);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.btn-primary-auth {
+    background: var(--auth-gradient);
+    color: white;
+    padding: 15px;
     border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(23, 94, 82, 0.2);
+}
+
+.auth-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.auth-actions label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     cursor: pointer;
 }
-.modal-close:hover {
-    color: var(--text-primary);
-}
 
-.modal-content {
-    display: flex;
-    padding: 30px;
-}
-
-.modal-image {
-    flex: 1;
-    margin-right: 30px;
-}
-.modal-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.modal-details {
-    flex: 2;
-}
-.modal-details h2 {
-    margin: 0 0 5px 0;
-    font-size: 2em;
-    color: var(--text-primary);
-}
-.modal-vendor {
-    font-size: 1.1em;
-    color: var(--text-secondary);
-    margin-bottom: 20px;
-    display: block;
-}
-.modal-price {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: var(--accent-primary);
-    margin-bottom: 20px;
-}
-.modal-description {
-    font-size: 1em;
-    line-height: 1.6;
-    color: var(--text-secondary);
-    margin-bottom: 20px;
-}
-.modal-meta {
-    font-size: 0.9em;
-    color: var(--text-secondary);
-    padding-top: 15px;
-    border-top: 1px solid var(--bg-accent);
-}
-.modal-meta span {
-    margin-right: 20px;
-}
-
-/* Style the chat button */
-.modal-details .btn-message-vendor {
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    padding: 15px;
-    margin-top: 25px;
-    background: var(--accent-primary);
-    color: var(--text-on-accent);
+.auth-actions a {
+    color: #175e52;
     text-decoration: none;
-    font-weight: bold;
-    border-radius: 5px;
-    font-size: 1.1em;
-    transition: background-color 0.2s;
-}
-.modal-details .btn-message-vendor:hover {
-    background: var(--accent-secondary);
+    font-weight: 600;
 }
 
-/* ========================================= */
-/* PROFILE PAGE AVATAR FIX (This is OK to keep)
-/* ========================================= */
-.profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--border-color);
+.auth-switch {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.auth-switch a {
+    color: #175e52;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.errorlist {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    list-style: none;
+    padding: 0;
     margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+    .auth-overlay-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .auth-left-panel {
+        flex: 0 0 200px;
+        padding: 30px;
+    }
+    .brand-hero { margin-top: 20px; }
+    .brand-hero h1 { font-size: 2rem; }
+    .auth-welcome-text { font-size: 2.5rem; }
+    .auth-footer-links { display: none; }
+    .auth-right-panel { padding: 40px 20px; }
 }

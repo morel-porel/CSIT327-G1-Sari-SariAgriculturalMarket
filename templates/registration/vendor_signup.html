@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block css %}
@@ -7,29 +6,49 @@
 {% endblock %}
 
 {% block content %}
-<div class="info-section">
-    <div class="logo-large">Sari-Sari</div>
-    <p class="tagline">TAGLINE TAGLINE TAGLINE TAGLINE</p>
-</div>
+<div class="auth-overlay-wrapper">
+    <div class="auth-left-panel">
+        <div class="deco-circle-small"></div>
+        <div class="brand-hero">
+            <h1>Partner with Us</h1>
+            <p>Grow your business, reach more local customers, and manage your shop efficiently.</p>
+        </div>
+        <div class="auth-footer-links">
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="#">Follow Us</a>
+            <a href="#">Feedback</a>
+        </div>
+    </div>
 
-<div class="form-section">
-    <div class="form-box">
-        <h2>Create a Vendor Account</h2>
-        <form method="post">
-            {% csrf_token %}
+    <div class="auth-right-panel">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h2>Vendor Registration</h2>
+                <p>Start your journey as a Seller</p>
+            </div>
 
-            <!-- Manually render each field to use our placeholders -->
-            <div class="form-field">{{ form.username }} {{ form.username.errors }}</div>
-            <div class="form-field">{{ form.email }} {{ form.email.errors }}</div>
-            <div class="form-field">{{ form.shop_name }} {{ form.shop_name.errors }}</div>
-            <div class="form-field">{{ form.business_permit_number }} {{ form.business_permit_number.errors }}</div>
-            <div class="form-field">{{ form.password1 }} {{ form.password1.errors }}</div>
-            <div class="form-field">{{ form.password2 }} {{ form.password2.errors }}</div>
+            <form method="post" class="modern-form">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="input-group">
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
 
-            <button type="submit" class="btn-submit">Sign up as Vendor</button>
-        </form>
-        <div class="or-divider"></div>
-        <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
+                <button type="submit" class="btn-primary-auth">Register Shop</button>
+            </form>
+
+            <div class="auth-switch">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
+                <p style="margin-top: 5px;">Looking to buy? <a href="{% url 'signup' %}">Consumer Signup</a></p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
