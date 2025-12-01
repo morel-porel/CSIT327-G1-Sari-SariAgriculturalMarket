@@ -41,11 +41,15 @@ class VendorSignUpForm(CustomUserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ('username', 'email')
+        # Added first_name and last_name to fields
+        fields = ('first_name', 'last_name', 'username', 'email')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Updated order to show names first
         self.field_order = [
+            'first_name',
+            'last_name',
             'username', 
             'email', 
             'shop_name', 

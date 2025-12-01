@@ -1,104 +1,112 @@
 /* static/css/become_vendor.css */
 
-/*
-Ensure body is a flex column and fills the viewport height,
-which allows .main-container to grow.
-(This is missing from home.css but present in style.css)
-*/
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-}
-
-/*
-Reset body/html styles from home.css which breaks normal layout.
-home.css sets overflow: hidden, which we don't want.
-*/
-body, html {
-    overflow: auto !important;
-    height: auto !important;
-    width: 100%; /* Ensure full width */
-}
-
-/*
-Override .main-container from style.css (used by login)
-and set it up as a vertical container that stretches.
-home.css does not define .main-container.
-*/
-.main-container {
-    display: flex;
-    flex-direction: column; /* Make it a column */
-    flex: 1; /* This makes it fill the space between header and footer */
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    /* Reset justify/align from style.css */
-    justify-content: normal;
-    align-items: normal;
-    gap: 0;
-}
-
-/*
-This container will now be the single child of .main-container.
-We make it a flex container to center its own content (the box).
-And 'flex: 1' makes it fill the .main-container.
-*/
-.center-container {
-    flex: 1; /* This makes it fill the entire .main-container space */
+.vendor-intro-wrapper {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 2rem;
-    padding-top: 60px;
-    background-color: #f9f9f9;
+    align-items: center;
+    min-height: calc(100vh - 70px);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    padding: 40px 20px;
+    font-family: var(--font-main, sans-serif);
 }
 
-/* The content box itself, no changes needed */
-.content-box {
-    background-color: #d8e4a9; /* Greenish color from image */
-    padding: 14rem 17rem;
-    border-radius: 8px;
+.vendor-intro-card {
+    background: white;
+    max-width: 600px;
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    padding: 60px 40px;
     text-align: center;
-    max-width: 1500px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: relative;
+    border-top: 6px solid var(--accent-primary, #285429);
 }
 
-.content-box h2 {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    /* CHANGED: Use variable */
-    font-family: var(--font-main);
+/* Updated Logo Styling: Only Logo + Green Border */
+.page-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -90px auto 20px; /* Pull it up to overlap border */
 }
 
-.content-box p {
-    font-size: 1.5rem;
+.page-logo .logo-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 5px;
+    /* Emphasis on Green Border */
+    border: 4px solid var(--accent-primary, #285429);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.intro-title {
+    font-size: 2.5rem;
     color: #333;
-    margin-bottom: 2rem;
-    line-height: 1.5;
-    /* CHANGED: Use variable */
-    font-family: var(--font-main);
+    margin-bottom: 15px;
+    font-weight: 800;
 }
 
-.btn-start {
+.hero-text {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn-start-application {
     display: inline-block;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    padding: 0.75rem 5rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #333;
+    background-color: var(--accent-primary, #285429);
+    color: white;
     text-decoration: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    /* CHANGED: Use variable */
-    font-family: var(--font-main);
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(40, 84, 41, 0.3);
 }
 
-.btn-start:hover {
-    background-color: #f1f1f1;
-    border-color: #aaa;
+.btn-start-application:hover {
+    background-color: var(--accent-secondary, #2e7d32);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 84, 41, 0.4);
+}
+
+.terms-note {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Pending State Styles */
+.status-box.pending {
+    background-color: #fff8e1;
+    border: 1px solid #ffe082;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.status-box h3 {
+    color: #f57f17;
+    margin-top: 0;
+}
+
+.btn-secondary {
+    display: inline-block;
+    margin-top: 20px;
+    color: #555;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .vendor-intro-card {
+        padding: 40px 20px;
+    }
+    .intro-title {
+        font-size: 2rem;
+    }
 }

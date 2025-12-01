@@ -8,9 +8,10 @@
 body, html {
     width: 100%;
     height: 100%;
-    overflow: hidden; 
+    overflow: hidden; /* Ensures no scrollbar on the whole window */
 }
 
+/* FIX 1: Make Navbar Fixed and give it a z-index */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -19,10 +20,10 @@ body, html {
     width: 100%;
     background: var(--bg-primary);
     border-bottom: 2px solid var(--border-color);
-    position: fixed; 
+    position: fixed; /* NEW: Fix position */
     top: 0;
-    z-index: 10; 
-    height: 69px; 
+    z-index: 10; /* NEW: Ensure it stays on top */
+    height: 69px; /* Approximate height based on padding/content */
 }
 
 .sidebar .logo {
@@ -61,12 +62,13 @@ body, html {
     cursor: pointer;
 }
 
+/* FIX 2: Set .container to take the space below the navbar and above the footer */
 .container {
     display: flex;
     width: 100%;
-    height: calc(100vh - 70px); /* UPDATED: Adjusted height to remove footer gap */
-    margin-top: 69px; 
-    overflow: hidden; 
+    height: calc(100vh - 150px); /* 150px = approx Navbar (70px) + Footer (80px) */
+    margin-top: 69px; /* Push container down below fixed navbar */
+    overflow: hidden; /* Ensures the container itself doesn't scroll */
 }
 
 .main {
@@ -74,12 +76,15 @@ body, html {
     display: flex;
     flex-direction: column;
     width: 100%;
+    /* No overflow property needed here */
+    
+    /* ADD A Z-INDEX TO ENSURE .main's content (the product grid) IS CLICKABLE */
     position: relative;
-    z-index: 2; 
+    z-index: 2; /* Ensures it's above the sidebar if there's any overlap/layering issue */
 }
 
 .sidebar {
-    width: 350px; 
+    width: 350px; /* Wider Sidebar */
     padding: 10px 20px;
     background: var(--bg-primary);
     display: flex;
@@ -112,6 +117,7 @@ body, html {
     color: var(--text-primary);
 }
 
+/* --- UPDATED SIDEBAR BUTTONS (UNIFIED STYLE) --- */
 .sidebar-btn {
     display: flex;
     align-items: center;
@@ -126,6 +132,7 @@ body, html {
     font-size: 16px;
     cursor: pointer;
     
+    /* Base State: Clean White */
     background-color: #ffffff;
     color: #333;
     
@@ -142,7 +149,9 @@ body, html {
     height: 24px;
     position: relative;
     z-index: 1;
-    object-fit: contain; 
+    object-fit: contain; /* Ensure icons fit nicely */
+    
+    /* REMOVED: filter property so original colors show */
 }
 
 .sidebar-btn span {
@@ -151,22 +160,28 @@ body, html {
     font-weight: 600;
 }
 
+/* --- UNIFIED HOVER & ACTIVE STATE (Green Tint) --- */
 .sidebar-btn:hover, .sidebar-btn.active {
-    background-color: #285429; 
-    border-color: #ffffff;     
-    color: #000;               
+    background-color: #285429; /* Light Green background */
+    border-color: #ffffff;     /* Slightly darker green border */
+    color: #000;               /* Keep text black as requested */
     box-shadow: 0 4px 12px rgba(23, 94, 82, 0.15);
     transform: scale(1.02);
     color: #fff;
 }
 
+/* REMOVED: The rule that changed icon filter on hover */
+
+/* --- END SIDEBAR BUTTONS --- */
+
 .content {
     flex: 1;
     padding: 20px;
-    padding-bottom: 20px; /* UPDATED: Reduced padding since there is no footer */
+    padding-bottom: 80px;
     width: 100%;
     background: var(--bg-tertiary);
     overflow-y: auto;
+    /* The sidebar is part of the flex container, so the content just needs to scroll */
 }
 
 .content-banner {
@@ -242,6 +257,7 @@ body, html {
 
 .grid {
     display: grid;
+    /* Use auto-fill to allow grid to adapt to wider sidebar without breaking */
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 37px;
     width: 100%;
@@ -249,6 +265,7 @@ body, html {
 
 .grid-item {
     background: var(--bg-primary);
+    border: 1px solid #d4d4d4;
     border-radius: 6px;
     height: 300px;
     display: flex;
@@ -299,6 +316,29 @@ body, html {
     color: var(--accent-highlight);
 }
 
+/* FOOTER STYLES */
+.footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 18px 30px;
+    font-size: 15px;
+    width: 100%;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 5px solid var(--accent-highlight);
+    position: fixed; /* FIXED: Already fixed */
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    height: 80px; /* NEW: Explicit height for easier calculation */
+}
+
+.footer a {
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
 .product-vendor {
     font-size: 14px;
     color: var(--text-secondary);
@@ -316,6 +356,10 @@ body, html {
 .nav-text-link:hover {
     color: var(--accent-primary); 
 }
+
+/* ======================================= */
+/* MODAL/POP-UP STYLES */
+/* ======================================= */
 
 .modal-backdrop {
     position: fixed;

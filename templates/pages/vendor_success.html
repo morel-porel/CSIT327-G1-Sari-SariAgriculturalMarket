@@ -3,95 +3,96 @@
 
 {% block css %}
 <style>
+    /* Hide search bar & footer */
+    .search-bar { visibility: hidden !important; opacity: 0; }
+    footer, .footer { display: none !important; }
+
+    /* Match body bg */
     body, html {
+        background-color: #f5f7f9;
         height: 100%;
         margin: 0;
-        background-color: #ffffff;
     }
 
-    /* Main container overrides to center content perfectly */
-    .main-container {
+    .success-wrapper {
+        min-height: calc(100vh - 90px);
+        background-color: #f5f7f9;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: calc(100vh - 80px); /* Adjust for navbar/footer */
-        background-color: #ffffff;
+        padding: 20px;
+        margin-top: 70px !important; /* Gap from Navbar */
     }
 
     .success-card {
-        background-color: #d8e4a9; /* Matching Green Box */
-        width: 80%;
-        max-width: 900px;
-        padding: 80px 40px;
-        border-radius: 4px;
+        background-color: #fff;
+        max-width: 600px;
+        width: 100%;
+        padding: 60px 40px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border-top: 6px solid var(--accent-secondary, #2e7d32);
+    }
+
+    .icon-success {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: var(--accent-secondary, #2e7d32);
+        display: block;
     }
 
     .success-title {
-        /* CHANGED: Use variable */
         font-family: var(--font-main);
-        font-size: 4rem;
-        color: #000;
-        margin-bottom: 40px;
-        line-height: 1;
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 800;
     }
 
     .success-message {
-        /* CHANGED: Use variable */
         font-family: var(--font-main);
-        font-size: 1.3rem;
-        color: #333;
-        margin-bottom: 50px;
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 40px;
         line-height: 1.6;
-        font-style: italic;
     }
     
     .btn-home {
         display: inline-block;
-        background-color: #e0e0e0;
-        border: 1px solid #333;
-        color: #333;
-        padding: 10px 40px;
+        background-color: var(--accent-primary, #285429);
+        color: white;
+        padding: 14px 40px;
         text-decoration: none;
-        /* CHANGED: Use variable */
         font-family: var(--font-main);
-        font-size: 1.1rem;
-        border-radius: 2px;
-        transition: background-color 0.2s;
-        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        border-radius: 50px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 15px rgba(40, 84, 41, 0.2);
     }
 
     .btn-home:hover {
-        background-color: #d0d0d0;
-    }
-
-    /* Mobile Responsiveness */
-    @media (max-width: 768px) {
-        .success-title {
-            font-size: 2.5rem;
-        }
-        .success-message {
-            font-size: 1rem;
-        }
-        .success-card {
-            width: 90%;
-            padding: 40px 20px;
-        }
+        background-color: var(--accent-secondary, #2e7d32);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 84, 41, 0.3);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-    <div class="success-card">
-        <h1 class="success-title">Sari-Sari</h1>
-        
-        <div class="success-message">
-            <p>Thank you for submitting the required information.</p>
-            <p>Your vendor status application has been submitted for review.</p>
-            <p>We encourage you to be honest in all transactions and wish you great success in your selling journey!</p>
+    <div class="success-wrapper">
+        <div class="success-card">
+            <span class="icon-success">🎉</span>
+            <h1 class="success-title">Application Submitted!</h1>
+            
+            <div class="success-message">
+                <p>Thank you for completing the vendor registration.</p>
+                <p>Your application is now <strong>under review</strong>. We will notify you once your account has been verified.</p>
+                <p style="margin-top:20px; font-size: 0.9rem; color:#888;">We wish you great success in your selling journey!</p>
+            </div>
+            
+            <a href="{% url 'home' %}" class="btn-home">Return to Home</a>
         </div>
-        
-        <a href="{% url 'home' %}" class="btn-home">Home</a>
     </div>
 {% endblock %}

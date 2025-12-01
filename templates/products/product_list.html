@@ -3,6 +3,15 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/products.css' %}">
+<style>
+    .search-bar {
+        visibility: hidden !important;
+        opacity: 0;
+    }
+    body {
+        overflow-y: auto !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -30,7 +39,7 @@
                     <td data-label="Product Name"><strong>{{ product.name }}</strong></td>
                     <td data-label="Price">₱{{ product.price }}</td>
                     <td data-label="Stock">{{ product.stock }}</td>
-                    <td data-label="Category">{{ product.category }}</td>
+                    <td data-label="Category">{{ product.category|join:", " }}</td>
                     <td class="actions" data-label="Actions">
                         <a href="{% url 'product_update' product.pk %}" class="btn btn-info">Edit</a>
                         <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">Delete</a>

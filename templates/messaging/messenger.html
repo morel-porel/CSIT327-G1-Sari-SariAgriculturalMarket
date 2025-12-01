@@ -2,218 +2,229 @@
 {% load static %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/messenger.css' %}">
+    <style>
+        body { overflow: hidden; }
+        .container { height: calc(100vh - 70px) !important; }
+        .sidebar { width: 350px; border-right: 1px solid #e0e0e0; padding: 0; background: #fff; }
+        .main { background-color: #f5f7f9; }
+        .content { padding: 0; display: flex; flex-direction: column; height: 100%; background: transparent; }
+        .search-bar { visibility: hidden !important; opacity: 0; }
+    </style>
 {% endblock %}
 
-
 {% block content %}
-
-<div class="my-centered-rectangle">
-
-    <div class="chat-left-panel" id="chat-left-panel">
-        
-        <div class="chat-panel-header">
+<main class="container">
+    
+    <aside class="sidebar messenger-sidebar">
+        <div class="messenger-sidebar-header">
             <h2>Messages</h2>
-            <div class="chat-search-container">
-                <img src="{% static 'icons/search.png' %}" alt="Search" class="chat-search-icon">
-                <input type="text" class="chat-search-input" placeholder="Search conversations...">
+            <div class="search-wrapper">
+                <img src="{% static 'icons/search.png' %}" class="search-icon-small">
+                <input type="text" id="convo-search" placeholder="Search people..." onkeyup="filterConversations()">
             </div>
         </div>
-        
-        <div class="conversation-list">
+
+        <div class="conversation-list" id="conversation-list">
             {% for convo, other, last_message, unread_count in conversations_with_recipient %}
-                <a href="{% url 'conversation_detail' convo.id %}" class="conversation-item {% if other_participant.id == other.id %}active{% endif %}">
-                    <div class="convo-avatar">
+                <a href="{% url 'conversation_detail' convo.id %}" class="convo-item {% if other_participant.id == other.id %}active{% endif %}">
+                    <div class="convo-avatar-wrapper">
                         {% if other.avatar %}
-                            <img src="{{ other.avatar.url }}" alt="{{ other.username }}'s avatar">
+                            <img src="{{ other.avatar.url }}" class="convo-avatar">
                         {% else %}
-                            <img src="{% static 'icons/profile.png' %}" alt="Default avatar">
+                            <img src="{% static 'icons/profile.png' %}" class="convo-avatar">
                         {% endif %}
                     </div>
-                    <div class="convo-details">
-                        <span class="convo-user">{{ other.username }}</span>
-                        <span class="convo-excerpt">
+                    
+                    <div class="convo-info">
+                        <div class="convo-top">
+                            <span class="convo-name">{{ other.username }}</span>
                             {% if last_message %}
-                                {% if last_message.sender == request.user %}You: {% endif %}
-                                {% if last_message.is_moderator_deleted %}
-                                    <span style="color: red;">[Message Removed]</span>
-                                {% else %}
-                                    {{ last_message.text_content|truncatechars:30 }}
-                                {% endif %}
-                            {% else %}
-                                Start the conversation
+                                <span class="convo-time">{{ last_message.timestamp|date:"M d" }}</span>
                             {% endif %}
-                        </span>
-                    </div>
-                    <div class="convo-meta">
-                        {% if last_message %}
-                            <span class="convo-timestamp">{{ last_message.timestamp|timesince }} ago</span>
-                        {% endif %}
-                        {% if unread_count > 0 %}
-                            <span class="convo-unread-count">{{ unread_count }}</span>
-                        {% endif %}
+                        </div>
+                        <div class="convo-bottom">
+                            <span class="convo-preview">
+                                {% if last_message %}
+                                    {% if last_message.sender == request.user %}You: {% endif %}
+                                    {% if last_message.is_moderator_deleted %}
+                                        <i style="color:#dc3545;">Message removed</i>
+                                    {% else %}
+                                        {{ last_message.text_content|truncatechars:25 }}
+                                    {% endif %}
+                                {% else %}
+                                    Start chatting...
+                                {% endif %}
+                            </span>
+                            {% if unread_count > 0 %}
+                                <span class="unread-badge">{{ unread_count }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </a>
             {% empty %}
-                <p class="chat-list-empty">You have no messages.</p>
+                <div class="empty-convo-state">
+                    <p>No conversations yet.</p>
+                </div>
             {% endfor %}
         </div>
-    </div>
+    </aside>
 
-    <div class="chat-divider" id="chat-divider"></div>
-
-    <div class="chat-right-panel">
-        
-        {% if other_participant %}
-            <div class="chat-header">
-                <div class="chat-avatar">
-                    {% if other_participant.avatar %}
-                        <img src="{{ other_participant.avatar.url }}" alt="{{ other_participant.username }}'s avatar">
-                    {% else %}
-                        <img src="{% static 'icons/profile.png' %}" alt="Default avatar">
-                    {% endif %}
-                </div>
-                <div class="chat-info">
-                    <h2>{{ other_participant.username }}</h2>
-                    {% if other_participant.vendorprofile.shop_name %}
-                        <span class="shop-name">{{ other_participant.vendorprofile.shop_name }}</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="chat-window" id="chat-window">
-                {% for message in chat_messages %}
-                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                        <div class="message-bubble">
-                            
-                            {% if message.is_moderator_deleted %}
-                                <p style="color: red; font-style: italic;">This message has been removed by a moderator.</p>
+    <div class="main">
+        <section class="content">
+            {% if other_participant %}
+                
+                <div class="chat-header">
+                    <div class="chat-header-user">
+                        {% if other_participant.avatar %}
+                            <img src="{{ other_participant.avatar.url }}" class="header-avatar">
+                        {% else %}
+                            <img src="{% static 'icons/profile.png' %}" class="header-avatar">
+                        {% endif %}
+                        <div class="header-details">
+                            <h3>{{ other_participant.username }}</h3>
+                            {% if other_participant.role == 'VENDOR' and other_participant.vendorprofile.shop_name %}
+                                <span class="header-badge">Shop: {{ other_participant.vendorprofile.shop_name }}</span>
                             {% else %}
-                                <p>{{ message.text_content }}</p>
-
-                                {% if message.media_file %}
-                                    <div class="message-media">
-                                        {% with message_url_lower=message.media_file.url|lower %}
-                                            {% if '.jpg' in message_url_lower or '.png' in message_url_lower or '.jpeg' in message_url_lower or '.gif' in message_url_lower %}
-                                                <a href="{{ message.media_file.url }}" target="_blank">
-                                                    <img src="{{ message.media_file.url }}" alt="Attached media">
-                                                </a>
-                                            {% else %}
-                                                <a href="{{ message.media_file.url }}" target="_blank" class="file-attachment">
-                                                    <img src="{% static 'icons/search.png' %}" alt="File" style="width: 16px; margin-right: 8px;">
-                                                    View Attached File
-                                                </a>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                {% endif %}
-                                
-                                <span class="message-timestamp">
-                                    {{ message.timestamp|date:"P M d" }}
-                                    {% if message.sender == request.user and message.is_read %}
-                                        <span class="read-receipt">(Read)</span>
-                                    {% endif %}
-                                </span>
+                                <span class="header-status">Active now</span>
                             {% endif %}
                         </div>
-
-                        {% if message.sender != request.user and not message.is_moderator_deleted %}
-                            <div class="report-btn-container">
-                                <span class="report-btn-icon"
-                                      onclick="openReportModal('{{ message.id }}')"
-                                      style="font-size: 1.2rem; 
-                                             color: #D9534F; 
-                                             font-weight: 900; 
-                                             line-height: 16px; 
-                                             text-align: center;
-                                             width: 16px;
-                                             height: 16px;
-                                             display: block;">
-                                    !
-                                </span>
-                            </div>
-                        {% endif %}
                     </div>
-                {% endfor %}
-            </div>
+                    <div class="header-actions">
+                    </div>
+                </div>
 
-            <div id="file-preview-container" 
-                 style="display: none; 
-                        padding: 10px 20px; 
-                        background-color: #f0f0f0; 
-                        border-top: 1px solid #e0e0e0;
-                        font-size: 0.9em; 
-                        color: #333;">
-            </div>
-            <form class="message-form" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <label for="media_file_input" class="file-label">
-                    <span style="font-size: 26px; 
-                                 color: #175e52; 
-                                 font-weight: 300; 
-                                 line-height: 20px; 
-                                 opacity: 0.8;
-                                 padding-bottom: 4px;">
-                        +
-                    </span>
-                </label>
-                
-                <input type="file" 
-                       name="media_file" 
-                       id="media_file_input" 
-                       style="display: none;" 
-                       onchange="updateFilePreview()">
-                
-                <textarea name="text_content" placeholder="Type your message..." rows="1" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" autocomplete="off"></textarea>
-                
-                <button type="submit" class="btn-send">
-                    <span style="font-size: 20px; 
-                                 line-height: 20px; 
-                                 color: white; 
-                                 margin-left: 2px; 
-                                 margin-bottom: 2px;
-                                 transform: rotate(45deg);
-                                 display: inline-block;">
-                        &#10148;
-                    </span>
-                </button>
-            </form>
+                <div class="chat-messages-area" id="chat-window">
+                    {% for message in chat_messages %}
+                        <div class="message-wrapper {% if message.sender == request.user %}outgoing{% else %}incoming{% endif %}">
+                            
+                            {% if message.sender != request.user %}
+                                <div class="message-avatar-spacer">
+                                    {% if message.sender.avatar %}
+                                        <img src="{{ message.sender.avatar.url }}" class="tiny-avatar">
+                                    {% else %}
+                                        <img src="{% static 'icons/profile.png' %}" class="tiny-avatar">
+                                    {% endif %}
+                                </div>
+                            {% endif %}
 
-        {% else %}
-            <div class="chat-placeholder">
-                <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo" width="100">
-                <h2>Select a conversation</h2>
-                <p>Choose from your existing conversations on the left to start chatting.</p>
-            </div>
-        {% endif %}
+                            <div class="message-bubble">
+                                {% if message.is_moderator_deleted %}
+                                    <span class="deleted-msg">This message was removed by moderation.</span>
+                                {% else %}
+                                    {% if message.text_content %}
+                                        <p>{{ message.text_content|linebreaksbr }}</p>
+                                    {% endif %}
+                                    
+                                    {% if message.media_file %}
+                                        <div class="message-media">
+                                            {% with f_url=message.media_file.url|lower %}
+                                                {% if '.jpg' in f_url or '.png' in f_url or '.jpeg' in f_url %}
+                                                    <a href="{{ message.media_file.url }}" target="_blank">
+                                                        <img src="{{ message.media_file.url }}" class="img-preview">
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{{ message.media_file.url }}" target="_blank" class="file-link">
+                                                        📄 View Attachment
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <span class="message-time">{{ message.timestamp|date:"g:i A" }}</span>
+                            </div>
+
+                            {% if message.sender != request.user and not message.is_moderator_deleted %}
+                                <button type="button" class="report-btn" onclick="openReportModal('{{ message.id }}')" title="Report">!</button>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="chat-input-area">
+                    <div id="file-preview-bar" class="file-preview-bar" style="display:none;">
+                        <span id="file-name"></span>
+                        <button type="button" onclick="removeFile()">×</button>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data" class="input-form">
+                        {% csrf_token %}
+                        
+                        <label for="media_file" class="attach-btn" title="Attach File">
+                            <span>📎</span>
+                        </label>
+                        <input type="file" name="media_file" id="media_file" style="display:none;" onchange="handleFileSelect(this)">
+                        
+                        <textarea name="text_content" class="msg-input" placeholder="Type a message..." rows="1" oninput="autoResize(this)"></textarea>
+                        
+                        <button type="submit" class="send-btn">
+                            Send
+                        </button>
+                    </form>
+                </div>
+
+            {% else %}
+                <div class="empty-chat-view">
+                    <img src="{% static 'icons/sari-sari-logo.png' %}" class="empty-logo">
+                    <h2>Select a conversation</h2>
+                    <p>Choose a user from the sidebar to start chatting</p>
+                </div>
+            {% endif %}
+        </section>
     </div>
+</main>
 
-</div>
-
-<div id="reportModal" class="report-modal" onclick="closeReportModalOutside(event)">
-    <div class="report-modal-content">
-        <h3>Report Message</h3>
-        <p>Please briefly explain why you are reporting this message:</p>
-        <textarea id="reportReason" placeholder="e.g., Hate speech, spam, harassment, etc." maxlength="500"></textarea>
-        <input type="hidden" id="messageIdToReport">
-        <div class="report-actions">
-            <button class="btn btn-secondary" onclick="closeReportModal()">Cancel</button>
-            <button class="btn btn-danger" onclick="submitReport()">Submit Report</button>
+<div id="reportModal" class="modal" style="display:none; align-items:center; justify-content:center;">
+    <div class="modal-content" style="max-width:400px; height:auto; flex-direction:column; padding:20px;">
+        <h3 style="color:#d32f2f;">Report Message</h3>
+        <p>Why are you reporting this?</p>
+        <textarea id="reportReason" style="width:100%; border:1px solid #ddd; padding:10px; margin:10px 0; border-radius:4px;" rows="3"></textarea>
+        <input type="hidden" id="msgIdToReport">
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="closeReportModal()" style="background:#eee; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Cancel</button>
+            <button onclick="submitReport()" style="background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Submit</button>
         </div>
-        <p id="reportFeedback" style="color: green; margin-top: 10px;"></p>
     </div>
 </div>
 
 <script>
-    // Helper function to get the CSRF token from cookies
+    const chatWindow = document.getElementById('chat-window');
+    if(chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+
+    function handleFileSelect(input) {
+        const bar = document.getElementById('file-preview-bar');
+        if(input.files && input.files[0]) {
+            document.getElementById('file-name').textContent = input.files[0].name;
+            bar.style.display = 'flex';
+        }
+    }
+    function removeFile() {
+        document.getElementById('media_file').value = '';
+        document.getElementById('file-preview-bar').style.display = 'none';
+    }
+
+    function filterConversations() {
+        const input = document.getElementById('convo-search').value.toLowerCase();
+        const items = document.querySelectorAll('.convo-item');
+        items.forEach(item => {
+            const name = item.querySelector('.convo-name').textContent.toLowerCase();
+            item.style.display = name.includes(input) ? 'flex' : 'none';
+        });
+    }
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
             for (let i = 0; i < cookies.length; i++) {
                 let cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -223,144 +234,26 @@
         return cookieValue;
     }
 
-    // --- Report Modal Functions ---
-    function openReportModal(messageId) {
-        document.getElementById('messageIdToReport').value = messageId;
+    function openReportModal(id) {
+        document.getElementById('msgIdToReport').value = id;
         document.getElementById('reportModal').style.display = 'flex';
-        document.getElementById('reportReason').value = ''; // Clear previous reason
-        document.getElementById('reportFeedback').textContent = ''; // Clear feedback
     }
-
     function closeReportModal() {
         document.getElementById('reportModal').style.display = 'none';
     }
-
-    function closeReportModalOutside(event) {
-        if (event.target.id === 'reportModal') {
-            closeReportModal();
-        }
-    }
-
     function submitReport() {
-        const messageId = document.getElementById('messageIdToReport').value;
-        const reason = document.getElementById('reportReason').value.trim();
-        const feedbackElement = document.getElementById('reportFeedback');
+        const id = document.getElementById('msgIdToReport').value;
+        const reason = document.getElementById('reportReason').value;
+        if(!reason) return alert("Please provide a reason");
 
-        if (reason.length < 5) {
-            feedbackElement.style.color = 'red';
-            feedbackElement.textContent = 'Please provide a brief reason (at least 5 characters).';
-            return;
-        }
-
-        feedbackElement.style.color = 'gray';
-        feedbackElement.textContent = 'Submitting...';
-
-        const url = "{% url 'report_message' message_id=123456 %}".replace('123456', messageId);
-        
-        const csrfToken = getCookie('csrftoken');
-        
-        const formData = new FormData();
-        formData.append('reason', reason);
-
-        fetch(url, {
+        fetch(`/messages/report/${id}/`, {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok && response.headers.get('content-type')?.includes('application/json')) {
-                return response.json(); 
-            } else if (!response.ok) {
-                throw new Error('Server returned an error.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success' || data.status === 'exists') {
-                feedbackElement.style.color = 'green';
-                feedbackElement.textContent = data.message;
-                setTimeout(closeReportModal, 2000); 
-            } else {
-                feedbackElement.style.color = 'red';
-                feedbackElement.textContent = data.message || 'An unknown error occurred during submission.';
-            }
-        })
-        .catch(error => {
-            console.error('Error reporting message:', error);
-            feedbackElement.style.color = 'red';
-            feedbackElement.textContent = 'Failed to submit report. Please try again.';
+            headers: {'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `reason=${encodeURIComponent(reason)}`
+        }).then(res => res.json()).then(data => {
+            alert(data.message);
+            closeReportModal();
         });
     }
-
-    // --- File Preview Functions ---
-    function updateFilePreview() {
-        const fileInput = document.getElementById('media_file_input');
-        const previewContainer = document.getElementById('file-preview-container');
-
-        if (fileInput.files && fileInput.files.length > 0) {
-            const filename = fileInput.files[0].name;
-            // Display the file name and a 'remove' button
-            previewContainer.innerHTML = 'Attached: <strong>' + filename + '</strong>' +
-                ' <span onclick="removeFile()" style="cursor: pointer; color: #D9534F; font-weight: bold; margin-left: 10px; float: right;">Remove</span>';
-            previewContainer.style.display = 'block';
-        } else {
-            previewContainer.innerHTML = '';
-            previewContainer.style.display = 'none';
-        }
-    }
-
-    function removeFile() {
-        const fileInput = document.getElementById('media_file_input');
-        fileInput.value = ''; // This clears the selected file
-        
-        const previewContainer = document.getElementById('file-preview-container');
-        previewContainer.innerHTML = '';
-        previewContainer.style.display = 'none';
-    }
-
-    // --- Existing DOM Content Loaded Logic ---
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- SCROLL TO BOTTOM ---
-        const chatWindow = document.getElementById('chat-window');
-        if (chatWindow) {
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        // --- DIVIDER LOGIC ---
-        const divider = document.getElementById('chat-divider');
-        const leftPanel = document.getElementById('chat-left-panel');
-        
-        if (!divider) return; // Exit if divider doesn't exist
-
-        let isResizing = false;
-
-        divider.addEventListener('mousedown', function(e) {
-            isResizing = true;
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', stopResize);
-        });
-
-        function handleMouseMove(e) {
-            if (!isResizing) return;
-            const containerRect = leftPanel.parentElement.getBoundingClientRect();
-            let newLeftWidth = e.clientX - containerRect.left;
-
-            // Enforce min/max widths
-            if (newLeftWidth < 250) newLeftWidth = 250; 
-            if (newLeftWidth > (containerRect.width - 250)) newLeftWidth = (containerRect.width - 250); 
-            
-            leftPanel.style.width = newLeftWidth + 'px';
-            leftPanel.style.flexBasis = newLeftWidth + 'px';
-        }
-
-        function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', stopResize);
-        }
-    });
 </script>
-
 {% endblock %}

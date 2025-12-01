@@ -7,13 +7,65 @@
 <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
 <style>
-    /* Hide Footer on Home Page */
-    footer, .footer {
-        display: none !important;
+    /* 1. Global Reset for Full Screen - HIGH SPECIFICITY to override responsive.css */
+    html:root, body:root {
+        height: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important; /* Locks body scroll */
+        background-color: var(--bg-tertiary);
     }
-    /* Remove the bottom margin reserved for the fixed footer */
-    body {
-        margin-bottom: 0 !important;
+
+    /* 2. Hide Footer Completely */
+    footer, .footer, #footer {
+        display: none !important;
+        height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 3. Main Wrapper must fill screen exactly */
+    .main-container {
+        width: 100% !important;
+        height: 100vh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: none !important;
+        display: block !important;
+        overflow: hidden !important; /* Prevent spillover */
+    }
+
+    /* 4. Home Page Container Logic */
+    .container {
+        /* Content starts after the 70px header */
+        margin-top: 70px !important; 
+        /* Height is exactly viewport minus header */
+        height: calc(100vh - 70px) !important; 
+        width: 100% !important;
+        display: flex !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* 5. Layout Pillars */
+    .sidebar {
+        height: 100% !important;
+        border-bottom: none !important;
+        overflow-y: auto; /* Allow sidebar to scroll if needed */
+    }
+    
+    .main {
+        height: 100% !important;
+        overflow: hidden; /* Container shouldn't scroll, only .content */
+    }
+
+    .content {
+        height: 100% !important;
+        padding-bottom: 20px;
+        overflow-y: auto; /* This is the ONLY scrollbar we want */
     }
 </style>
 {% endblock %}
@@ -49,7 +101,13 @@
 
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
-            <a href="{% url 'product_list' %}"><img src="{% static 'icons/cart.png' %}" alt="My Products Icon" class="nav-icon"></a>
+            <div class="cart-nav-container">
+                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
+                </a>
+            </div>
         {% else %}
             <div class="cart-nav-container">
                 <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
@@ -91,7 +149,13 @@
         </div>
         
         {% if user.is_authenticated %}
-            <a href="{% url 'profile' %}"><img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon"></a>
+            <a href="{% url 'profile' %}" style="display: flex; align-items: center;">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Profile" class="nav-icon" style="border-radius: 50%; object-fit: cover; width: 28px; height: 28px; border: 1px solid #ddd;">
+                {% else %}
+                    <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+                {% endif %}
+            </a>
         {% else %}
             <a href="{% url 'login' %}" class="nav-text-link">Login</a>
             <span style="color: var(--text-color); margin: 0 5px;">/</span>

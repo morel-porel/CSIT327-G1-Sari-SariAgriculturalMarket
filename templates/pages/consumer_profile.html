@@ -8,24 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
-        .search-bar {
-            visibility: hidden;
-        }
-        /* Ensure body doesn't scroll */
-        body {
-            overflow: hidden;
-        }
-        /* Prevent sidebar from disappearing */
-        .sidebar {
-            flex-shrink: 0 !important;
-            width: 350px !important;
-        }
-        /* Allow main content to fit in remaining space */
-        .main {
-            flex-grow: 1 !important;
-            min-width: 0 !important; 
-            width: auto !important;
-        }
+        /* Force search bar visibility in profile header but keep hidden visual style if desired, 
+           or use visibility:hidden as requested previously */
+        .search-bar { visibility: hidden !important; opacity: 0; }
+        body { overflow: hidden; }
     </style>
 {% endblock %}
 
@@ -41,18 +27,13 @@
     </a>
 
     <div class="search-bar">
-        <form method="get" action="{% url 'search' %}" autocomplete="off">
-            <div class="search-container-wrapper">
-                <input type="text" name="q" placeholder="Search products..." style="width: 100%;">
-            </div>
-            <button type="submit">
-                <img src="{% static 'icons/search.png' %}" alt="Search" class="search-icon">
-            </button>
-        </form>
+        <div class="search-container-wrapper">
+            <input type="text" id="base-search-input" name="q" placeholder="Search products...">
+        </div>
     </div>
 
     <div class="nav-icons">
-        {% if user.is_authenticated and user.role == 'VENDOR' %}
+        {% if user.role == 'VENDOR' %}
             <a href="{% url 'product_list' %}">
                 <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
             </a>
@@ -67,8 +48,7 @@
                 
                 <div class="cart-dropdown">
                     <h4>Recently Added Products</h4>
-                    <div class="cart-dropdown-list" id="nav-cart-list">
-                        </div>
+                    <div class="cart-dropdown-list" id="nav-cart-list"></div>
                     <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
                         <span class="cart-more-text" id="cart-more-text"></span>
                         <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
@@ -96,15 +76,13 @@
             </div>
         </div>
 
-        {% if user.is_authenticated %}
-            <a href="{% url 'profile' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile" class="nav-icon">
-            </a>
-        {% else %}
-            <a href="{% url 'login' %}">
-                <img src="{% static 'icons/profile.png' %}" alt="Profile" class="nav-icon">
-            </a>
-        {% endif %}
+        <a href="{% url 'profile' %}" style="display: flex; align-items: center;">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Profile" class="nav-icon" style="border-radius: 50%; object-fit: cover; width: 28px; height: 28px; border: 1px solid #ddd;">
+            {% else %}
+                <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+            {% endif %}
+        </a>
     </div>
 </header>
 
@@ -131,150 +109,195 @@
         <a href="{% url 'about' %}" class="sidebar-btn" style="text-decoration: none;">
             <span>About Us</span>
         </a>
-
-        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
-            <span>Follow Us</span>
-        </a>
-
-        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
-            <span>Feedback</span>
-        </a>
-
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
-            {% if user.role == 'VENDOR' %}
-                <a href="{% url 'vendor_profile' %}" class="sidebar-btn" style="background-color: #fff3cd; border-color: #ffeeba; color: #856404; text-decoration: none;">
-                    <span>Manage Shop</span>
-                </a>
-            {% else %}
-                <a href="{% url 'become_vendor' %}" class="sidebar-btn" style="background-color: #faa625; border-color: #faa625; color: #000; text-decoration: none;">
-                    <span>Be a Vendor!</span>
-                </a>
-            {% endif %}
-
-        
-            <a href="{% url 'logout' %}" class="sidebar-btn" style="text-decoration: none; background-color: #c82333; border-color: #bd2130; color: #fff;">
-                <span>Logout</span>
-            </a>
-        </div>
     </aside>
 
     <div class="main" style="height: 100%; padding: 0;">
-        <section class="content" style="height: 100%; overflow: hidden; background-color: var(--bg-secondary); padding: 20px;">
+        <section class="content" style="height: 100%; overflow-y: auto; background-color: var(--bg-secondary); padding: 30px;">
             
-            <form method="post" enctype="multipart/form-data" class="profile-form" id="profile-form" style="height: 100%;">
+            <form method="post" enctype="multipart/form-data" id="profile-form">
                 {% csrf_token %}
-                
-                <div class="profile-unified-card">
+                <input type="hidden" name="update_profile" value="update_profile">
+
+                <div class="profile-grid-layout">
                     
-                    <div class="profile-sidebar-panel">
-                        
-                        <div class="sidebar-header">
-                            <div class="profile-avatar-wrapper">
+                    <div class="grid-column col-1">
+                        <div class="modern-card profile-summary-card">
+                            <div class="profile-header-bg"></div>
+                            <div class="profile-avatar-container">
                                 {% if form.instance.avatar %}
-                                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
+                                    <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="avatar-img" id="avatar-preview">
                                 {% else %}
-                                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="profile-avatar">
+                                    <img src="{% static 'icons/profile.png' %}" alt="Profile Avatar" class="avatar-img" id="avatar-preview">
                                 {% endif %}
-
-                                {% if user.role == 'VENDOR' %}
-                                    <img src="{% static 'icons/verified.png' %}" class="profile-verified-badge" alt="Verified Vendor" title="Verified Vendor">
-                                {% endif %}
+                                
+                                <label for="{{ form.avatar.id_for_label }}" class="avatar-edit-overlay">
+                                    <span>📷</span>
+                                </label>
+                                <div style="display:none;">{{ form.avatar }}</div>
                             </div>
-                            
-                            <h2 class="sidebar-username">{{ user.username }}</h2>
-                            <p class="sidebar-role">{{ user.get_role_display }}</p>
 
-                            <label for="{{ form.avatar.id_for_label }}" class="btn-upload" id="photo-upload-btn">Change Photo</label>
-                            <div style="display:none;">{{ form.avatar }}</div>
+                            <div class="profile-identity">
+                                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                                <p class="username">@{{ user.username }}</p>
+                                <span class="role-badge">{{ user.get_role_display }}</span>
+                            </div>
+
+                            <div class="profile-info-list">
+                                <div class="info-row">
+                                    <span class="label">Email</span>
+                                    <span class="value" title="{{ user.email }}">{{ user.email|truncatechars:20 }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Phone</span>
+                                    <span class="value">{{ user.phone_number|default:"--" }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Location</span>
+                                    <span class="value">{{ user.city|default:"--" }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Joined</span>
+                                    <span class="value">{{ user.date_joined|date:"M Y" }}</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <a href="{% url 'loyalty_rewards' %}" class="sidebar-loyalty-box">
-                            <div class="loyalty-row">
-                                <span class="loyalty-label">Loyalty Points</span>
-                                <span class="loyalty-points">{{ user.loyaltyprofile.points|default:"0" }}</span>
-                            </div>
-                            <div class="loyalty-row">
-                                <span class="loyalty-label">Rank</span>
-                                <span class="loyalty-rank">{{ user.loyaltyprofile.rank|default:"Bronze" }}</span>
-                            </div>
-                            <div class="loyalty-arrow">➔</div>
-                        </a>
-
-                        <div class="sidebar-menu">
-                            <h3 class="menu-title">Settings</h3>
-                            
-                            <button type="button" class="menu-item" onclick="openPasswordModal()">
-                                <span class="icon">🔒</span> Change Password
-                            </button>
-
-                            <div class="menu-item">
-                                <span class="icon">◑</span> 
-                                <span>Theme</span>
-                                <select id="theme-switcher" class="mini-select">
-                                    <option value="light">Light</option>
-                                    <option value="dark">Dark</option>
-                                    <option value="contrast">High Contrast</option>
-                                </select>
-                            </div>
-
-                            <button type="button" class="menu-item text-danger btn-delete-account">
-                                <span class="icon">✖</span> Delete Account
-                            </button>
+                        <div class="modern-card promo-card">
+                            {% if user.role == 'VENDOR' %}
+                                <div class="card-body">
+                                    <h3>Manage Your Shop</h3>
+                                    <p>Check your orders, add products, and view your sales performance.</p>
+                                    <a href="{% url 'vendor_profile' %}" class="btn-full-width btn-vendor">
+                                        Go to Shop Dashboard
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="card-body">
+                                    <h3>Start Selling Today!</h3>
+                                    <p>Join our community of local vendors. Reach more customers and grow your business with Sari-Sari.</p>
+                                    <a href="{% url 'become_vendor' %}" class="btn-full-width btn-vendor">
+                                        Be A Vendor!
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <div class="profile-content-panel">
-                        
-                        <div class="panel-section">
-                            <h2 class="panel-title">Personal Details</h2>
-                            <div class="profile-grid">
-                                <div class="form-group">
+                    <div class="grid-column col-2">
+                        <div class="modern-card">
+                            <div class="card-header">
+                                <h3>Personal Information</h3>
+                                <button type="button" class="icon-btn edit-toggle" onclick="toggleEdit(this, 'personal-fields')">
+                                    <svg class="edit-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    <svg class="save-icon" viewBox="0 0 24 24" style="display:none;"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
+                            <div class="card-body form-grid-2">
+                                <div class="form-group field-wrapper personal-fields disabled">
                                     <label>First Name</label>
                                     {{ form.first_name }}
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group field-wrapper personal-fields disabled">
                                     <label>Last Name</label>
                                     {{ form.last_name }}
                                 </div>
-                                <div class="form-group span-2">
+                                <div class="form-group span-2 field-wrapper personal-fields disabled">
                                     <label>Email Address</label>
                                     {{ form.email }}
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group field-wrapper personal-fields disabled">
                                     <label>Phone Number</label>
                                     {{ form.phone_number }}
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group field-wrapper personal-fields disabled">
                                     <label>Date of Birth</label>
                                     {{ form.date_of_birth }}
                                 </div>
                             </div>
                         </div>
 
-                        <div class="panel-section">
-                            <h2 class="panel-title">Address Book</h2>
-                            <div class="profile-grid">
-                                <div class="form-group span-2">
-                                    <label>Street Address</label>
+                        <div class="modern-card">
+                            <div class="card-header">
+                                <h3>Address Book</h3>
+                                <button type="button" class="icon-btn edit-toggle" onclick="toggleEdit(this, 'address-fields')">
+                                    <svg class="edit-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    <svg class="save-icon" viewBox="0 0 24 24" style="display:none;"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
+                            <div class="card-body form-grid-2">
+                                <div class="form-group span-2 field-wrapper address-fields disabled">
+                                    <label>Street Address / House No.</label>
                                     {{ form.address }}
                                 </div>
-                                <div class="form-group">
-                                    <label>City</label>
+                                <div class="form-group field-wrapper address-fields disabled">
+                                    <label>City / Municipality</label>
                                     {{ form.city }}
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group field-wrapper address-fields disabled">
                                     <label>Zip Code</label>
                                     {{ form.zip_code }}
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="panel-footer">
-                            <p class="member-since">Member Since: {{ user.date_joined|date:'F d, Y' }}</p>
-                            <button type="button" class="btn-save-main" id="save-all-btn">Save Changes</button>
-                            <input type="hidden" name="update_profile" value="update_profile">
+                    <div class="grid-column col-3">
+                        <div class="modern-card loyalty-bg">
+                            <div class="card-header no-border">
+                                <h3 style="color: white;">My Rewards</h3>
+                                <a href="{% url 'loyalty_rewards' %}" class="icon-link-white">➔</a>
+                            </div>
+                            <div class="loyalty-body">
+                                <div class="points-circle">
+                                    <span class="points-num">{{ user.loyaltyprofile.points|default:"0" }}</span>
+                                    <span class="points-label">PTS</span>
+                                </div>
+                                <div class="rank-display">
+                                    Current Rank: <strong>{{ user.loyaltyprofile.rank|default:"Bronze" }}</strong>
+                                </div>
+                                <div class="loyalty-progress-container">
+                                    <div class="loyalty-progress-bar" style="width: 40%;"></div> 
+                                </div>
+                                <p class="loyalty-next">150 pts to Silver</p>
+                            </div>
                         </div>
 
+                        <div class="modern-card">
+                            <div class="card-header">
+                                <h3>Settings</h3>
+                            </div>
+                            <div class="settings-list">
+                                <button type="button" class="setting-item" onclick="openPasswordModal()">
+                                    <span class="icon">🔒</span>
+                                    <span class="text">Change Password</span>
+                                    <span class="arrow">›</span>
+                                </button>
+                                
+                                <div class="setting-item">
+                                    <span class="icon">◑</span>
+                                    <span class="text">Theme</span>
+                                    <select id="theme-switcher" class="mini-select">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                        <option value="contrast">High Contrast</option>
+                                    </select>
+                                </div>
+
+                                <button type="button" class="setting-item danger">
+                                    <span class="icon">🗑️</span>
+                                    <span class="text">Delete Account</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="modern-card logout-card">
+                            <div class="card-body">
+                                <p>Securely end your session.</p>
+                                <a href="{% url 'logout' %}" class="btn-full-width btn-logout">
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -295,45 +318,62 @@
                     {% if field.errors %}<div style="color:red; font-size:0.8rem;">{{ field.errors }}</div>{% endif %}
                 </div>
             {% endfor %}
-            <button type="submit" name="change_password" value="change_password" class="btn-save-main">Update</button>
+            <button type="submit" name="change_password" value="change_password" class="btn-save-main">Update Password</button>
         </form>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const saveBtn = document.getElementById('save-all-btn');
-        const form = document.getElementById('profile-form');
-        const photoBtn = document.getElementById('photo-upload-btn');
-        
-        const inputs = form.querySelectorAll('input:not([type="hidden"]), select');
-        let isEditing = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('.field-wrapper input');
+        inputs.forEach(input => input.disabled = true);
 
-        inputs.forEach(input => {
-            if (!input.classList.contains('readonly-field')) {
-                input.disabled = true;
-            }
-        });
-        photoBtn.style.display = 'none';
-        saveBtn.textContent = 'Edit Profile';
-
-        saveBtn.addEventListener('click', function(e) {
-            if (!isEditing) {
-                e.preventDefault();
-                inputs.forEach(input => {
-                    if (!input.classList.contains('readonly-field')) {
-                        input.disabled = false;
+        const avatarInput = document.getElementById('{{ form.avatar.id_for_label }}');
+        if(avatarInput){
+            avatarInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    // 1. Update Preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('avatar-preview').src = e.target.result;
                     }
-                });
-                photoBtn.style.display = 'inline-block';
-                saveBtn.textContent = 'Save Changes';
-                saveBtn.classList.add('active-edit');
-                isEditing = true;
-            } else {
-                form.submit();
-            }
-        });
+                    reader.readAsDataURL(this.files[0]);
+
+                    // 2. Enable ALL fields before auto-submitting
+                    // (Important so Django doesn't think we are sending empty/missing data for required fields)
+                    const allInputs = document.querySelectorAll('#profile-form input, #profile-form select');
+                    allInputs.forEach(input => input.disabled = false);
+
+                    // 3. Submit form to save image
+                    document.getElementById('profile-form').submit();
+                }
+            });
+        }
     });
+
+    function toggleEdit(btn, fieldClass) {
+        const fields = document.querySelectorAll('.' + fieldClass);
+        const inputs = document.querySelectorAll('.' + fieldClass + ' input');
+        const editIcon = btn.querySelector('.edit-icon');
+        const saveIcon = btn.querySelector('.save-icon');
+        const form = document.getElementById('profile-form');
+
+        const isEditing = !inputs[0].disabled;
+
+        if (isEditing) {
+            form.submit();
+        } else {
+            inputs.forEach(input => {
+                input.disabled = false;
+            });
+            fields.forEach(div => div.classList.remove('disabled'));
+            
+            editIcon.style.display = 'none';
+            saveIcon.style.display = 'block';
+            
+            if(inputs.length > 0) inputs[0].focus();
+        }
+    }
 
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }

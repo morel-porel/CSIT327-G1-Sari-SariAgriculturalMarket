@@ -56,13 +56,16 @@ def product_detail_api(request, pk):
         if hasattr(product.vendor, 'vendorprofile'):
             is_verified = product.vendor.vendorprofile.is_verified
 
+        # Join categories list into a string for display
+        category_display = ", ".join(product.category) if product.category else "N/A"
+
         data = {
             'id': product.pk,
             'name': product.name,
             'description': product.description,
             'price': f"₱{product.price}",
             'stock': product.stock,
-            'category': product.get_category_display(),
+            'category': category_display,
             'image_url': image_url,
             'shop_name': product.vendor.vendorprofile.shop_name,
             'seller_name': product.vendor.username,
@@ -94,11 +97,12 @@ def product_list_api(request):
             Q(description__icontains=query)
         )
 
-    # 2. Category Filter (List)
+    # 2. Category Filter (List) using ArrayField Overlap
     if categories:
         category_list = categories.split(',')
         if category_list:
-            products_qs = products_qs.filter(category__in=category_list)
+            # Check if product categories overlap with selected categories
+            products_qs = products_qs.filter(category__overlap=category_list)
 
     # 3. Location/Region Filter (List)
     if regions:

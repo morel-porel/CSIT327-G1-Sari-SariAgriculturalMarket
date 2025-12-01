@@ -3,28 +3,50 @@
 
 {% block css %}
 <style>
-    .onboarding-container {
-        max-width: 800px;
-        margin: 60px auto;
+    /* Hide search bar & footer */
+    .search-bar { visibility: hidden !important; opacity: 0; }
+    footer, .footer { display: none !important; }
+
+    /* Match body bg to wrapper */
+    body, html {
+        background-color: #f5f7f9;
+        height: 100%;
+        margin: 0;
+    }
+
+    /* Reuse styles from Step 1 for consistency */
+    .onboarding-wrapper {
+        min-height: calc(100vh - 90px);
+        background-color: #f5f7f9;
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+        margin-top: 70px !important; /* Gap from Navbar */
+    }
+
+    .onboarding-card {
         background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        max-width: 800px;
+        width: 100%;
         overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
     }
 
     .wizard-header {
-        background-color: #d8e4a9; 
-        padding: 40px 20px;
+        background-color: var(--accent-primary, #285429);
+        padding: 30px;
         text-align: center;
+        color: white;
     }
 
     .wizard-title {
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 2rem;
-        font-weight: bold;
-        font-family: 'Song Myung', serif;
+        margin: 0 0 25px;
+        font-family: var(--font-main);
+        font-weight: 700;
+        font-size: 1.8rem;
     }
 
     .progress-track {
@@ -32,63 +54,73 @@
         justify-content: space-between;
         align-items: center;
         position: relative;
-        max-width: 600px;
+        max-width: 500px;
         margin: 0 auto;
     }
 
     .track-line {
         position: absolute;
-        top: 50%;
+        top: 14px;
         left: 0;
         width: 100%;
         height: 2px;
-        background-color: #555;
+        background-color: rgba(255,255,255,0.3);
         z-index: 1;
-        transform: translateY(-50%);
     }
 
     .step-node {
         position: relative;
         z-index: 2;
-        background-color: #d8e4a9; 
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 0 10px;
+        width: 80px;
     }
 
     .dot {
-        width: 15px;
-        height: 15px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
-        background-color: #333;
-        border: 2px solid #333;
-        transition: all 0.3s ease;
+        background-color: #fff;
+        color: var(--accent-primary, #285429);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        border: 2px solid transparent;
     }
 
-    /* Completed Step Style */
     .step-node.completed .dot {
-        background-color: #4CAF50; /* Green for completed */
-        border-color: #4CAF50;
+        background-color: #81c784;
+        color: white;
     }
 
-    /* Active Step Style */
     .step-node.active .dot {
-        transform: scale(1.3);
-        box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
-        background-color: #333;
+        background-color: #faa625;
+        color: white;
+        transform: scale(1.2);
     }
 
     .step-label {
-        margin-top: 10px;
-        font-size: 0.9rem;
-        color: #333;
+        font-size: 0.75rem;
         font-weight: 600;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .wizard-body {
-        padding: 40px 60px;
-        background-color: #e4eeb3; 
+        padding: 40px;
+    }
+
+    .step-title {
+        font-size: 1.4rem;
+        color: #333;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
     }
 
     .form-grid-row {
@@ -106,164 +138,173 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: #333;
-        font-size: 0.95rem;
+        color: #555;
+        font-size: 0.9rem;
     }
 
     .form-control {
         width: 100%;
         padding: 12px;
-        border: 1px solid #999;
-        border-radius: 4px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
         font-size: 1rem;
-        background: transparent;
         color: #333;
+        background-color: #fff;
     }
     
     .form-control:focus {
         outline: none;
-        border-color: #000;
-        background-color: rgba(255,255,255,0.3);
+        border-color: var(--accent-primary, #285429);
+        box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
     }
 
-    /* File Upload Custom */
+    /* ID Upload Custom */
     .id-upload-box {
-        background-color: #fff;
-        border: 2px dashed #aaa;
+        background-color: #f9f9f9;
+        border: 2px dashed #ccc;
         padding: 30px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 12px;
         cursor: pointer;
         transition: 0.2s;
     }
     .id-upload-box:hover {
-        border-color: #333;
-        background-color: #f9f9f9;
+        border-color: var(--accent-primary);
+        background-color: #f0fdf4;
     }
     .cloud-icon {
-        font-size: 3rem;
-        color: #00aaff; 
+        font-size: 2.5rem;
+        color: var(--accent-primary);
         margin-bottom: 10px;
     }
 
     .wizard-footer {
-        padding: 20px 60px 40px;
-        background-color: #e4eeb3;
+        padding: 20px 40px 40px;
         display: flex;
         justify-content: flex-end;
         gap: 15px;
     }
 
     .btn-wizard {
-        padding: 10px 25px;
-        border: 1px solid #333;
-        background-color: #ccc;
-        color: #333;
+        padding: 12px 30px;
+        background-color: var(--accent-primary, #285429);
+        color: white;
+        border: none;
         font-weight: bold;
         cursor: pointer;
-        border-radius: 4px;
+        border-radius: 8px;
         font-size: 1rem;
         transition: all 0.2s;
-        text-decoration: none; /* For 'Back' link */
+        text-decoration: none;
+    }
+
+    .btn-wizard.btn-back {
+        background-color: #e0e0e0;
+        color: #555;
     }
 
     .btn-wizard:hover {
-        background-color: #bbb;
+        background-color: var(--accent-secondary, #2e7d32);
+        transform: translateY(-1px);
+    }
+    .btn-wizard.btn-back:hover {
+        background-color: #d0d0d0;
     }
 
     @media (max-width: 768px) {
         .form-grid-row { grid-template-columns: 1fr; }
-        .wizard-body { padding: 20px; }
-        .wizard-footer { padding: 20px; }
-        .step-label { font-size: 0.8rem; }
+        .wizard-body { padding: 25px; }
+        .wizard-footer { padding: 25px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="onboarding-container">
-    <div class="wizard-header">
-        <h2 class="wizard-title">Sari-Sari</h2>
-        
-        <div class="progress-track">
-            <div class="track-line"></div>
+<div class="onboarding-wrapper">
+    <div class="onboarding-card">
+        <div class="wizard-header">
+            <h2 class="wizard-title">Vendor Application</h2>
             
-            <div class="step-node completed">
-                <div class="dot"></div>
-                <span class="step-label">Shop's Information</span>
-            </div>
-            
-            <div class="step-node active">
-                <div class="dot"></div>
-                <span class="step-label">Vendor's Information</span>
-            </div>
-            
-            <div class="step-node">
-                <div class="dot"></div>
-                <span class="step-label">Submit</span>
+            <div class="progress-track">
+                <div class="track-line"></div>
+                
+                <div class="step-node completed">
+                    <div class="dot">✓</div>
+                    <span class="step-label">Shop Info</span>
+                </div>
+                
+                <div class="step-node active">
+                    <div class="dot">2</div>
+                    <span class="step-label">Owner Info</span>
+                </div>
+                
+                <div class="step-node">
+                    <div class="dot">3</div>
+                    <span class="step-label">Review</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="wizard-body">
-            
-            <h3 style="margin-bottom: 20px; border-bottom: 1px solid #aaa; padding-bottom: 10px;">Step 2: Personal Details</h3>
-
-            <div class="form-grid-row">
-                <div class="form-group">
-                    <label>First Name</label>
-                    {{ user_form.first_name }}
-                </div>
-                <div class="form-group">
-                    <label>Last Name</label>
-                    {{ user_form.last_name }}
-                </div>
-            </div>
-
-            <div class="form-grid-row">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="text" class="form-control" value="{{ request.user.email }}" readonly style="background: rgba(0,0,0,0.05);">
-                </div>
-                <div class="form-group">
-                    <label>Date of Birth</label>
-                    {{ user_form.date_of_birth }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label style="display: block; margin-bottom: 10px;">Upload a Valid ID</label>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="wizard-body">
                 
-                <div class="id-upload-box" onclick="document.getElementById('{{ profile_form.profile_image.id_for_label }}').click()">
-                    <div class="cloud-icon">☁️</div>
-                    <p style="font-weight: bold; margin: 0;">Click to Upload Valid ID</p>
-                    <p id="file-name-display" style="margin-top: 5px; font-size: 0.9rem; color: #175e52;"></p>
-                </div>
-                
-                <div style="height: 0; overflow: hidden;">
-                    {{ profile_form.profile_image }}
-                </div>
-                
-                {% if profile_form.profile_image.errors %}
-                    <div style="color: red; margin-top: 5px;">
-                        {{ profile_form.profile_image.errors }}
+                <h3 class="step-title">Step 2: Personal Details</h3>
+
+                <div class="form-grid-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        {{ user_form.first_name }}
                     </div>
-                {% endif %}
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        {{ user_form.last_name }}
+                    </div>
+                </div>
+
+                <div class="form-grid-row">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="text" class="form-control" value="{{ request.user.email }}" readonly style="background: #f0f0f0; color: #777;">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        {{ user_form.date_of_birth }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 10px;">Upload Valid ID</label>
+                    
+                    <div class="id-upload-box" onclick="document.getElementById('{{ profile_form.profile_image.id_for_label }}').click()">
+                        <div class="cloud-icon">📂</div>
+                        <p style="font-weight: 600; margin: 0; color: #333;">Click here to upload your ID</p>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">Supported formats: JPG, PNG</p>
+                        <p id="file-name-display" style="margin-top: 10px; font-weight: bold; color: var(--accent-primary);"></p>
+                    </div>
+                    
+                    <div style="height: 0; overflow: hidden;">
+                        {{ profile_form.profile_image }}
+                    </div>
+                    
+                    {% if profile_form.profile_image.errors %}
+                        <div style="color: red; margin-top: 5px; font-size: 0.9rem;">
+                            {{ profile_form.profile_image.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
             </div>
 
-        </div>
-
-        <div class="wizard-footer">
-            <a href="{% url 'vendor_onboarding_step1' %}" class="btn-wizard" style="margin-right: auto;">Back</a>
-            <button type="submit" class="btn-wizard" style="background-color: #ddd;">Next</button>
-        </div>
-    </form>
+            <div class="wizard-footer">
+                <a href="{% url 'vendor_onboarding_step1' %}" class="btn-wizard btn-back" style="margin-right: auto;">Back</a>
+                <button type="submit" class="btn-wizard">Next Step</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-    // Simple JS to show selected filename
     const fileInput = document.querySelector('input[type="file"]');
     if(fileInput){
         fileInput.addEventListener('change', function(){

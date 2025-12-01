@@ -3,28 +3,83 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/products.css' %}">
+<style>
+    .search-bar {
+        visibility: hidden !important;
+        opacity: 0;
+    }
+    body {
+        overflow-y: auto !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="product-container">
-    <div class="card product-form">
-        <h2>{% if form.instance.pk %}Edit Product{% else %}Add New Product{% endif %}</h2>
-        <form method="post" enctype="multipart/form-data">
+    <div class="card product-form-card">
+        <div class="form-header">
+            <h2>{% if form.instance.pk %}Edit Product{% else %}New Product{% endif %}</h2>
+            <p>Enter the details below to list your item on the market.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="modern-form">
             {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="errors">
-                    {{ field.errors }}
+            
+            {% if form.non_field_errors %}
+                <div class="alert-error">
+                    {{ form.non_field_errors }}
                 </div>
-                {% endif %}
+            {% endif %}
+
+            <div class="form-grid">
+                
+                <div class="form-group full-width">
+                    <label for="{{ form.name.id_for_label }}">Product Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<span class="error-text">{{ form.name.errors.0 }}</span>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.category.id_for_label }}">Category</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}<span class="error-text">{{ form.category.errors.0 }}</span>{% endif %}
+                </div>
+
+                <div class="vertical-stack">
+                    <div class="form-group">
+                        <label for="{{ form.price.id_for_label }}">Price (₱)</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}<span class="error-text">{{ form.price.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.stock.id_for_label }}">Stock Quantity</label>
+                        {{ form.stock }}
+                        {% if form.stock.errors %}<span class="error-text">{{ form.stock.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <div class="form-group file-group">
+                        <label for="{{ form.image.id_for_label }}">Product Image</label>
+                        <div class="file-input-wrapper">
+                            {{ form.image }}
+                        </div>
+                        {% if form.image.errors %}<span class="error-text">{{ form.image.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}<span class="error-text">{{ form.description.errors.0 }}</span>{% endif %}
+                </div>
+
             </div>
-            {% endfor %}
+
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save Product</button>
                 <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}Update Product{% else %}Publish Product{% endif %}
+                </button>
             </div>
         </form>
     </div>
