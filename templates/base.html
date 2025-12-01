@@ -115,10 +115,10 @@
 
     <main class="main-container">
         {% if messages %}
-            <div class="messages-container" style="width: 100%; position: absolute; top: 80px; left: 0; z-index: 10;">
-                <ul class="messages" style="list-style-type: none; padding: 0; margin: 0;">
+            <div class="messages-container" style="width: 100%; position: absolute; top: 80px; left: 0; z-index: 9999; display: flex; justify-content: center; pointer-events: none;">
+                <ul class="messages" style="list-style-type: none; padding: 0; margin: 0; pointer-events: auto;">
                     {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}" style="background-color: #e8f5e9; color: #2e7d32; padding: 1rem; text-align: center;"{% endif %}>
+                        <li{% if message.tags %} class="{{ message.tags }}" style="background-color: #e8f5e9; color: #2e7d32; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; text-align: center; font-weight: 600;"{% endif %}>
                             {{ message }}
                         </li>
                     {% endfor %}
@@ -131,6 +131,19 @@
     <script src="{% static 'js/theme.js' %}"></script>
 
     <script>
+        // --- AUTO-DISMISS MESSAGES (NEW) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const msgContainer = document.querySelector('.messages-container');
+            if (msgContainer) {
+                setTimeout(() => {
+                    msgContainer.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                    msgContainer.style.opacity = "0";
+                    msgContainer.style.transform = "translateY(-10px)";
+                    setTimeout(() => msgContainer.remove(), 500); // Remove from DOM after fade
+                }, 2000); // Disappear after 2 seconds
+            }
+        });
+
         // --- CART LOGIC ---
         function getCart() { return JSON.parse(localStorage.getItem('sari_cart')) || []; }
         function saveCart(cart) { localStorage.setItem('sari_cart', JSON.stringify(cart)); updateCartUI(); }
