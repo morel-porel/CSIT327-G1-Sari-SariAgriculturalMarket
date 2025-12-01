@@ -3,270 +3,133 @@
 
 {% block css %}
 <style>
-    .onboarding-container {
-        max-width: 800px;
-        margin: 60px auto;
+    .search-bar { visibility: hidden !important; opacity: 0; }
+    footer, .footer { display: none !important; }
+
+    body, html {
+        background-color: #f5f7f9;
+        height: 100%;
+        margin: 0;
+    }
+
+    .onboarding-wrapper {
+        min-height: calc(100vh - 90px);
+        background-color: #f5f7f9;
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+        margin-top: 70px !important; /* Gap from Navbar */
+    }
+
+    .onboarding-card {
         background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        max-width: 800px;
+        width: 100%;
         overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
     }
 
     .wizard-header {
-        background-color: #d8e4a9; 
-        padding: 40px 20px;
+        background-color: var(--accent-primary, #285429);
+        padding: 30px;
         text-align: center;
+        color: white;
     }
 
-    .wizard-title {
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 2rem;
-        font-weight: bold;
-        font-family: 'Song Myung', serif;
-    }
+    .wizard-title { margin: 0 0 25px; font-family: var(--font-main); font-weight: 700; font-size: 1.8rem; }
 
-    /* Progress Bar */
     .progress-track {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative;
-        max-width: 600px;
-        margin: 0 auto;
+        display: flex; justify-content: space-between; align-items: center; position: relative; max-width: 500px; margin: 0 auto;
     }
-
-    .track-line {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #555;
-        z-index: 1;
-        transform: translateY(-50%);
-    }
-
-    .step-node {
-        position: relative;
-        z-index: 2;
-        background-color: #d8e4a9; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0 10px;
-    }
-
-    .dot {
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        background-color: #333;
-        border: 2px solid #333;
-        transition: all 0.3s ease;
-    }
-
-    .step-node.active .dot, .step-node.completed .dot {
-        transform: scale(1.3);
-        background-color: #333; 
-        box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
-    }
+    .track-line { position: absolute; top: 14px; left: 0; width: 100%; height: 2px; background-color: rgba(255,255,255,0.3); z-index: 1; }
+    .step-node { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 80px; }
+    .dot { width: 30px; height: 30px; border-radius: 50%; background-color: #fff; color: var(--accent-primary); display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 8px; }
     
-    .step-node.completed .dot {
-        background-color: #4CAF50;
-        border-color: #4CAF50;
-    }
+    .step-node.completed .dot { background-color: #81c784; color: white; }
+    .step-node.active .dot { background-color: #faa625; color: white; transform: scale(1.2); }
+    .step-label { font-size: 0.75rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; }
 
-    .step-label {
-        margin-top: 10px;
-        font-size: 0.9rem;
-        color: #333;
-        font-weight: 600;
-    }
+    .wizard-body { padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .full-width-col { grid-column: span 2; }
 
-    /* Summary Body */
-    .wizard-body {
-        padding: 40px 60px;
-        background-color: #e4eeb3; 
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 20px;
-    }
-
-    .summary-col {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .summary-col h3 {
-        font-size: 1rem;
-        text-decoration: underline;
-        margin-bottom: 10px;
-        color: #333;
-    }
-
-    .info-item {
-        font-size: 0.9rem;
-        color: #333;
-        font-style: italic;
-    }
+    .summary-section h3 { font-size: 1.1rem; color: var(--accent-primary); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px; }
     
-    .info-item strong {
-        font-style: normal;
-        font-weight: 600;
-        display: block;
-        font-size: 0.8rem;
-        color: #555;
-    }
+    .info-item { margin-bottom: 12px; font-size: 0.95rem; color: #333; }
+    .info-item strong { display: block; font-size: 0.8rem; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
 
     .id-preview {
-        width: 100%;
-        height: 150px;
-        background-color: #fff;
-        border: 1px solid #999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-top: 10px;
+        width: 100%; height: 200px; background-color: #f9f9f9; border: 1px solid #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 10px;
     }
+    .id-preview img { width: 100%; height: 100%; object-fit: contain; }
+
+    .wizard-footer { padding: 20px 40px 40px; display: flex; justify-content: flex-end; gap: 15px; }
     
-    .id-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
+    .btn-wizard { padding: 12px 30px; background-color: var(--accent-primary, #285429); color: white; border: none; font-weight: bold; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-wizard:hover { background-color: var(--accent-secondary); transform: translateY(-1px); }
+    .btn-wizard.btn-back { background-color: #e0e0e0; color: #555; }
+    .btn-wizard.btn-submit { background-color: #faa625; color: #000; }
 
-    /* Footer */
-    .wizard-footer {
-        padding: 20px 60px 40px;
-        background-color: #e4eeb3;
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-    }
-
-    .btn-wizard {
-        padding: 10px 25px;
-        border: 1px solid #333;
-        background-color: #ccc;
-        color: #333;
-        font-weight: bold;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-
-    .btn-wizard:hover {
-        background-color: #bbb;
-    }
-    
-    /* Mobile Responsive */
     @media (max-width: 768px) {
-        .wizard-body { 
-            grid-template-columns: 1fr; 
-            padding: 20px;
-        }
-        .id-preview { height: 200px; }
-        .wizard-footer { padding: 20px; }
+        .wizard-body { grid-template-columns: 1fr; padding: 25px; }
+        .full-width-col { grid-column: span 1; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="onboarding-container">
-    <div class="wizard-header">
-        <h2 class="wizard-title">Sari-Sari</h2>
-        
-        <div class="progress-track">
-            <div class="track-line"></div>
+<div class="onboarding-wrapper">
+    <div class="onboarding-card">
+        <div class="wizard-header">
+            <h2 class="wizard-title">Vendor Application</h2>
             
-            <div class="step-node completed">
-                <div class="dot"></div>
-                <span class="step-label">Shop's Information</span>
-            </div>
-            
-            <div class="step-node completed">
-                <div class="dot"></div>
-                <span class="step-label">Vendor's Information</span>
-            </div>
-            
-            <div class="step-node active">
-                <div class="dot"></div>
-                <span class="step-label">Submit</span>
+            <div class="progress-track">
+                <div class="track-line"></div>
+                
+                <div class="step-node completed"><div class="dot">✓</div><span class="step-label">Shop Info</span></div>
+                <div class="step-node completed"><div class="dot">✓</div><span class="step-label">Owner Info</span></div>
+                <div class="step-node active"><div class="dot">3</div><span class="step-label">Review</span></div>
             </div>
         </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="wizard-body">
+                
+                <div class="summary-col">
+                    <h3>Shop Information</h3>
+                    <div class="info-item"><strong>Shop Name</strong> {{ profile.shop_name }}</div>
+                    <div class="info-item"><strong>Email</strong> {{ user.email }}</div>
+                    <div class="info-item"><strong>Pickup Address</strong> {{ profile.pickup_address }}<br>{{ profile.barangay }}, {{ profile.city }} {{ profile.zip_code }}</div>
+                </div>
+
+                <div class="summary-col">
+                    <h3>Vendor Details</h3>
+                    <div class="info-item"><strong>Full Name</strong> {{ user.first_name }} {{ user.last_name }}</div>
+                    <div class="info-item"><strong>Contact No.</strong> {{ profile.contact_number }}</div>
+                    <div class="info-item"><strong>Date of Birth</strong> {{ user.date_of_birth|date:"M d, Y" }}</div>
+                </div>
+
+                <div class="full-width-col">
+                    <h3>ID Verification</h3>
+                    <div class="id-preview">
+                        {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" alt="Uploaded ID">
+                        {% else %}
+                            <span style="color: #999;">No ID Uploaded</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="wizard-footer">
+                <a href="{% url 'vendor_onboarding_step2' %}" class="btn-wizard btn-back" style="margin-right: auto;">Back</a>
+                <button type="submit" class="btn-wizard btn-submit">Submit Application</button>
+            </div>
+        </form>
     </div>
-
-    <form method="POST">
-        {% csrf_token %}
-        <div class="wizard-body">
-            
-            <div class="summary-col">
-                <h3>Shop's Information</h3>
-                
-                <div class="info-item">
-                    <strong>Shop Name</strong>
-                    {{ profile.shop_name }}
-                </div>
-                
-                <div class="info-item">
-                    <strong>Shop's Email</strong>
-                    {{ user.email }}
-                </div>
-                
-                <div class="info-item">
-                    <strong>Shop's Pickup Address</strong>
-                    {{ profile.pickup_address }} <br>
-                    {{ profile.barangay }}, {{ profile.city }} <br>
-                    {{ profile.zip_code }}
-                </div>
-            </div>
-
-            <div class="summary-col">
-                <h3>Vendor's Information</h3>
-                
-                <div class="info-item">
-                    <strong>Vendor's Full Name</strong>
-                    {{ user.first_name }} {{ user.last_name }}
-                </div>
-                
-                <div class="info-item">
-                    <strong>Contact Number</strong>
-                    {{ profile.contact_number }}
-                </div>
-                
-                <div class="info-item">
-                    <strong>Date of Birth</strong>
-                    {{ user.date_of_birth|date:"M d, Y" }}
-                </div>
-            </div>
-
-            <div class="summary-col" style="text-align: center;">
-                <h3>Valid ID</h3>
-                
-                <div class="id-preview">
-                    {% if profile.profile_image %}
-                        <img src="{{ profile.profile_image.url }}" alt="Uploaded ID">
-                    {% else %}
-                        <span style="color: #999;">No ID Uploaded</span>
-                    {% endif %}
-                </div>
-                <p style="font-size: 0.8rem; color: #555; margin-top: 5px;">// Show the ID</p>
-
-            </div>
-
-        </div>
-
-        <div class="wizard-footer">
-            <a href="{% url 'vendor_onboarding_step2' %}" class="btn-wizard" style="margin-right: auto;">Back</a>
-            <button type="submit" class="btn-wizard" style="background-color: #ddd;">Submit</button>
-        </div>
-    </form>
 </div>
 {% endblock %}
