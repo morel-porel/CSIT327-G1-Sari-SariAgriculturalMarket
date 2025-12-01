@@ -10,10 +10,28 @@
     /* Hide Footer on Home Page */
     footer, .footer {
         display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    /* Remove the bottom margin reserved for the fixed footer */
+    
+    /* Reset body margin and overflow */
     body {
         margin-bottom: 0 !important;
+        overflow: hidden; /* Prevents double scrollbars */
+        padding-bottom: 0 !important;
+    }
+
+    /* Fix the 1px gap by matching the 70px header height exactly */
+    .container {
+        margin-top: 70px !important;
+        height: calc(100vh - 70px) !important;
+    }
+
+    /* Ensure no extra padding on the main wrapper from base.html */
+    .main-container {
+        padding: 0 !important;
+        margin: 0 !important;
     }
 </style>
 {% endblock %}
@@ -406,15 +424,43 @@
         let currentProductId = null;
         let currentProductName = "";
 
+        // --- FIXED CATEGORY FILTER LOGIC ---
         const categoryBtns = document.querySelectorAll('.category-filter-btn');
         const productGrid = document.getElementById('product-grid-container');
 
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', function() {
+                // Update UI active state
                 categoryBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
+                
                 const category = this.getAttribute('data-category');
-                fetch(`/my-products/api/list/?category=${encodeURIComponent(category)}`)
+                
+                // Get current search query from URL to preserve it
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentQuery = urlParams.get('q') || '';
+
+                // Construct API URL with correct parameters
+                // Using 'categories' as expected by products/views.py logic
+                let apiUrl = '/my-products/api/list/';
+                const apiParams = new URLSearchParams();
+
+                // Only append category param if it's NOT 'all'
+                if (category && category !== 'all') {
+                    apiParams.append('categories', category);
+                }
+                
+                // Preserve text search if it exists
+                if (currentQuery) {
+                    apiParams.append('q', currentQuery);
+                }
+
+                // Append query string if params exist
+                if (Array.from(apiParams).length > 0) {
+                    apiUrl += `?${apiParams.toString()}`;
+                }
+
+                fetch(apiUrl)
                     .then(response => response.json())
                     .then(data => {
                         productGrid.innerHTML = ''; 
@@ -424,15 +470,37 @@
                                 productCard.className = 'grid-item';
                                 productCard.setAttribute('data-product-id', product.id);
                                 productCard.style.cursor = 'pointer';
-                                productCard.addEventListener('click', () => loadProductDetails(product.id));
-                                const verifiedBadge = product.is_verified ? `<img src="/static/icons/verified.png" class="vendor-badge" alt="Verified" title="Verified Vendor">` : '';
-                                productCard.innerHTML = `<div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div><div class="product-info"><h3 class="product-name">${product.name}</h3><p class="product-price">${product.price}</p><p class="product-vendor">Seller: <span class="vendor-name-container">${product.shop_name} ${verifiedBadge}</span></p></div>`;
+                                
+                                productCard.addEventListener('click', (e) => {
+                                    if (e.target.closest('a') || e.target.closest('button')) return;
+                                    loadProductDetails(product.id);
+                                });
+
+                                const verifiedBadge = product.is_verified 
+                                    ? `<img src="{% static 'icons/verified.png' %}" class="vendor-badge" alt="Verified" title="Verified Vendor">` 
+                                    : '';
+
+                                productCard.innerHTML = `
+                                    <div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">${product.name}</h3>
+                                        <p class="product-price">${product.price}</p>
+                                        <p class="product-vendor">
+                                            Seller: 
+                                            <span class="vendor-name-container">
+                                                ${product.shop_name}
+                                                ${verifiedBadge}
+                                            </span>
+                                        </p>
+                                    </div>
+                                `;
                                 productGrid.appendChild(productCard);
                             });
                         } else {
                             productGrid.innerHTML = '<p id="no-products-message">No products found in this category.</p>';
                         }
-                    });
+                    })
+                    .catch(err => console.error("Error filtering products:", err));
             });
         });
 

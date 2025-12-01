@@ -265,6 +265,7 @@ body, html {
 
 .grid-item {
     background: var(--bg-primary);
+    border: 1px solid #d4d4d4;
     border-radius: 6px;
     height: 300px;
     display: flex;
