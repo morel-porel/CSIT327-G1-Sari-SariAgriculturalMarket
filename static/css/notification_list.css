@@ -1,75 +1,119 @@
 /* static/css/notification_list.css */
 
-/* --- Page Structure --- */
 .notification-page-wrapper {
     background-color: var(--bg-secondary); 
-    padding: 30px 0;
-    min-height: 80vh;
+    padding: 40px 20px;
+    min-height: 100vh;
 }
 
 .notification-container-main {
-    max-width: 700px;
-    margin: 0 auto;
+    max-width: 1200px;
+    margin: 50px auto 0;
     background-color: var(--bg-primary); 
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    margin-top: 60px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 40px;
 }
 
 .page-title {
     color: var(--text-primary);
-    border-bottom: 2px solid var(--border-color);
+    font-size: 2rem;
+    margin-bottom: 30px;
     padding-bottom: 15px;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
+    border-bottom: 2px solid #f0f0f0;
+    font-weight: 800;
 }
 
-/* --- Notification List & Items --- */
 .notification-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
+/* Base Notification Item Style */
 .notification-item {
     display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    transition: background-color 0.2s;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-left: 5px solid #ddd; /* Default border color */
+    transition: all 0.2s ease;
     position: relative;
 }
 
 .notification-item:hover {
-    background-color: var(--bg-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
-/* Style for unread notifications */
-.notification-item.unread {
-    background-color: var(--bg-tertiary); /* Light blue background for unread */
-    border-left: 5px solid var(--info-color); /* Highlight border */
-    padding-left: 10px;
+/* --- Notification Types Styling --- */
+
+/* 1. Standard Message (Blue) */
+.notification-item.type-message {
+    border-left-color: var(--info-color);
+    background-color: #f0f8ff; /* AliceBlue */
+}
+.notification-item.type-message .notification-message {
+    color: #0c5460;
 }
 
-/* Style for warning messages (like moderation actions) */
-.notification-item.warning {
-    background-color: var(--bg-form); /* Light yellow background */
-    border-left: 5px solid var(--warning-color); /* Orange/Yellow highlight border */
+/* 2. Warning / Report (Red/Orange) */
+.notification-item.type-warning {
+    border-left-color: var(--danger-color);
+    background-color: #fff5f5; /* Very light red */
+}
+.notification-item.type-warning .notification-message {
+    color: #c62828;
+    font-weight: 600;
 }
 
-/* --- Item Sections --- */
+/* 3. Success / Verified (Green) */
+.notification-item.type-success {
+    border-left-color: var(--accent-secondary);
+    background-color: #f1f8e9; /* Very light green */
+}
+.notification-item.type-success .notification-message {
+    color: #2e7d32;
+}
+
+/* 4. General Info (Gray/Default) */
+.notification-item.type-info {
+    border-left-color: #b0b0b0;
+    background-color: #ffffff;
+}
+
+/* Unread Indicator */
+.notification-item.unread::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #fff;
+}
+
+/* Text Styles */
+.notification-item.unread .notification-message {
+    font-weight: 700; /* Make text bold if unread */
+}
+
 .icon-section {
     flex-shrink: 0;
-    margin-right: 15px;
+    margin-right: 20px;
+    padding-top: 2px;
 }
 
 .alert-icon {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
+    opacity: 0.9;
+    object-fit: contain;
 }
 
 .content-section {
@@ -77,38 +121,33 @@
 }
 
 .notification-message {
-    margin: 0;
-    line-height: 1.4;
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    line-height: 1.5;
     color: var(--text-primary);
 }
 
 .notification-link {
     text-decoration: none;
     color: inherit;
+    display: block;
 }
 
 .notification-timestamp {
     display: block;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    margin-top: 3px;
-}
-
-/* Unread Status Dot */
-.status-dot {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 8px;
-    height: 8px;
-    background-color: var(--danger-color); /* Red dot for new */
-    border-radius: 50%;
+    color: #888;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 .no-notifications {
     text-align: center;
-    padding: 40px;
-    color: var(--text-secondary);
-    border: 1px dashed var(--border-color);
-    border-radius: 8px;
+    padding: 60px;
+    color: #9ca3af;
+    border: 2px dashed #e5e7eb;
+    border-radius: 12px;
+}
+
+.no-notifications p {
+    font-size: 1.1rem;
 }
