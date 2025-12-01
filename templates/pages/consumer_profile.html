@@ -4,7 +4,29 @@
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <style>
+        .search-bar {
+            visibility: hidden;
+        }
+        /* Ensure body doesn't scroll */
+        body {
+            overflow: hidden;
+        }
+        /* Prevent sidebar from disappearing */
+        .sidebar {
+            flex-shrink: 0 !important;
+            width: 350px !important;
+        }
+        /* Allow main content to fit in remaining space */
+        .main {
+            flex-grow: 1 !important;
+            min-width: 0 !important; 
+            width: auto !important;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -35,17 +57,44 @@
                 <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
             </a>
         {% else %}
-            <a href="#">
-                <img src="{% static 'icons/cart.png' %}" alt="Cart" class="nav-icon">
-            </a>
+            <div class="cart-nav-container">
+                <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
+                    </svg>
+                    <span class="cart-badge" id="nav-cart-badge" style="display:none;">0</span>
+                </a>
+                
+                <div class="cart-dropdown">
+                    <h4>Recently Added Products</h4>
+                    <div class="cart-dropdown-list" id="nav-cart-list">
+                        </div>
+                    <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
+                        <span class="cart-more-text" id="cart-more-text"></span>
+                        <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
+                    </div>
+                </div>
+            </div>
         {% endif %}
         
-        <a href="{% url 'notification_list' %}">
-            <img src="{% static 'icons/notification.png' %}" alt="Notifications" class="nav-icon">
-            {% if unread_notifications %}
-                <span class="notification-count">{{ unread_notifications.count }}</span>
-            {% endif %}
-        </a>
+        <div class="notif-nav-container" id="notif-container">
+            <a href="{% url 'notification_list' %}" style="display:flex; align-items:center; text-decoration:none;">
+                <svg class="notif-icon-svg" viewBox="0 0 24 24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+                </svg>
+                <span class="notif-badge" id="nav-notif-badge" style="display:none;">0</span>
+            </a>
+
+            <div class="notif-dropdown">
+                <h4>Recent Notifications</h4>
+                <div class="notif-dropdown-list" id="nav-notif-list">
+                    <div class="empty-notif">Loading...</div>
+                </div>
+                <div class="notif-dropdown-footer">
+                    <a href="{% url 'notification_list' %}" class="view-all-link">View All Notifications</a>
+                </div>
+            </div>
+        </div>
 
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}">
@@ -59,7 +108,7 @@
     </div>
 </header>
 
-<main class="container">
+<main class="container" style="height: calc(100vh - 70px);">
     <aside class="sidebar">
         <h2>Account Menu</h2>
         
@@ -75,15 +124,19 @@
             <span>Messages</span>
         </a>
 
-        <a href="{% url 'about' %}"class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none;">
+            <span>Notifications</span>
+        </a>
+
+        <a href="{% url 'about' %}" class="sidebar-btn" style="text-decoration: none;">
             <span>About Us</span>
         </a>
 
-        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
             <span>Follow Us</span>
         </a>
 
-        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
             <span>Feedback</span>
         </a>
 
@@ -105,17 +158,17 @@
         </div>
     </aside>
 
-    <div class="main">
-        <section class="content" style="height: 100%; overflow-y: auto; background-color: var(--bg-secondary); padding: 0;">
+    <div class="main" style="height: 100%; padding: 0;">
+        <section class="content" style="height: 100%; overflow: hidden; background-color: var(--bg-secondary); padding: 20px;">
             
             <form method="post" enctype="multipart/form-data" class="profile-form" id="profile-form" style="height: 100%;">
                 {% csrf_token %}
-                <div class="dashboard-grid">
+                
+                <div class="profile-unified-card">
                     
-                    <div class="dashboard-card profile-card">
-                        <h2 class="card-title">My Profile</h2>
+                    <div class="profile-sidebar-panel">
                         
-                        <div class="profile-avatar-section">
+                        <div class="sidebar-header">
                             <div class="profile-avatar-wrapper">
                                 {% if form.instance.avatar %}
                                     <img src="{{ form.instance.avatar.url }}" alt="Profile Avatar" class="profile-avatar">
@@ -127,143 +180,104 @@
                                     <img src="{% static 'icons/verified.png' %}" class="profile-verified-badge" alt="Verified Vendor" title="Verified Vendor">
                                 {% endif %}
                             </div>
+                            
+                            <h2 class="sidebar-username">{{ user.username }}</h2>
+                            <p class="sidebar-role">{{ user.get_role_display }}</p>
 
-                            <div class="avatar-controls">
-                                <label for="{{ form.avatar.id_for_label }}" class="btn-upload" id="photo-upload-btn">Change Photo</label>
-                                <div style="display:none;">{{ form.avatar }}</div>
-                                {{ form.avatar.errors }}
-                            </div>
+                            <label for="{{ form.avatar.id_for_label }}" class="btn-upload" id="photo-upload-btn">Change Photo</label>
+                            <div style="display:none;">{{ form.avatar }}</div>
                         </div>
 
-                        <div class="profile-inputs" id="profile-inputs-container">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" value="{{ user.username }}" disabled class="readonly-field">
+                        <a href="{% url 'loyalty_rewards' %}" class="sidebar-loyalty-box">
+                            <div class="loyalty-row">
+                                <span class="loyalty-label">Loyalty Points</span>
+                                <span class="loyalty-points">{{ user.loyaltyprofile.points|default:"0" }}</span>
+                            </div>
+                            <div class="loyalty-row">
+                                <span class="loyalty-label">Rank</span>
+                                <span class="loyalty-rank">{{ user.loyaltyprofile.rank|default:"Bronze" }}</span>
+                            </div>
+                            <div class="loyalty-arrow">➔</div>
+                        </a>
+
+                        <div class="sidebar-menu">
+                            <h3 class="menu-title">Settings</h3>
+                            
+                            <button type="button" class="menu-item" onclick="openPasswordModal()">
+                                <span class="icon">🔒</span> Change Password
+                            </button>
+
+                            <div class="menu-item">
+                                <span class="icon">◑</span> 
+                                <span>Theme</span>
+                                <select id="theme-switcher" class="mini-select">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="contrast">High Contrast</option>
+                                </select>
                             </div>
 
-                            <div class="form-group">
-                                <label>First Name</label>
-                                {{ form.first_name }}
-                                {{ form.first_name.errors }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                {{ form.last_name }}
-                                {{ form.last_name.errors }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                {{ form.email }}
-                                {{ form.email.errors }}
-                            </div>
-                            <div class="form-group">
-                                <label>Phone Number</label>
-                                {{ form.phone_number }}
-                                {{ form.phone_number.errors }}
-                            </div>
-                            <div class="form-group">
-                                <label>Date of Birth</label>
-                                {{ form.date_of_birth }}
-                                {{ form.date_of_birth.errors }}
-                            </div>
-                            <div class="form-group">
-                                <label>Member Since</label>
-                                <input type="text" value="{{ user.date_joined|date:'F d, Y' }}" disabled class="readonly-field">
-                            </div>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="button" class="btn-save" id="edit-profile-btn" name="update_profile" value="update_profile">Edit Profile</button>
+                            <button type="button" class="menu-item text-danger btn-delete-account">
+                                <span class="icon">✖</span> Delete Account
+                            </button>
                         </div>
                     </div>
 
-                    <div class="right-column">
+                    <div class="profile-content-panel">
                         
-                        <a href="{% url 'loyalty_rewards' %}" class="dashboard-card loyalty-card-link">
-                            <div class="card-header-row">
-                                <h2 class="card-title" style="margin:0;">Loyalty Rewards</h2>
-                                <img src="{% static 'icons/verified.png' %}" class="card-icon">
-                            </div>
-                            <div class="loyalty-summary">
-                                <div class="points-display">
-                                    <span class="points-value">{{ user.loyaltyprofile.points|default:"0" }}</span>
-                                    <span class="points-label">Total Points</span>
+                        <div class="panel-section">
+                            <h2 class="panel-title">Personal Details</h2>
+                            <div class="profile-grid">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    {{ form.first_name }}
                                 </div>
-                                <div class="rank-badge">
-                                    {{ user.loyaltyprofile.rank|default:"Bronze" }} Member
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    {{ form.last_name }}
                                 </div>
-                                <p class="click-hint">Click to view rewards & redeem</p>
-                            </div>
-                        </a>
-
-                        <div class="dashboard-card settings-card">
-                            <h2 class="card-title">Settings</h2>
-                            
-                            <div class="settings-list">
-                                <div class="setting-item">
-                                    <div class="setting-label">
-                                        <span class="setting-icon">🔒</span>
-                                        <span>Password</span>
-                                    </div>
-                                    <button type="button" class="btn-change-password" onclick="openPasswordModal()">Change</button>
+                                <div class="form-group span-2">
+                                    <label>Email Address</label>
+                                    {{ form.email }}
                                 </div>
-
-                                <div class="setting-item">
-                                    <div class="setting-label">
-                                        <span class="setting-icon">◑</span>
-                                        <span>Appearance</span>
-                                    </div>
-                                    <select id="theme-switcher">
-                                        <option value="light">Light</option>
-                                        <option value="dark">Dark</option>
-                                        <option value="contrast">High Contrast</option>
-                                    </select>
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    {{ form.phone_number }}
                                 </div>
-
-                                <div class="setting-item">
-                                    <div class="setting-label">
-                                        <span class="setting-icon" style="color: #c82333;">✖</span>
-                                        <span style="color: #c82333;">Delete Account</span>
-                                    </div>
-                                    <button type="button" class="btn-delete-account">Delete</button>
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    {{ form.date_of_birth }}
                                 </div>
                             </div>
                         </div>
 
-                        <div class="dashboard-card address-card">
-                            <h2 class="card-title">Address Book</h2>
-                            
-                            <div class="profile-inputs" id="address-inputs-container">
-                                <div class="form-group">
+                        <div class="panel-section">
+                            <h2 class="panel-title">Address Book</h2>
+                            <div class="profile-grid">
+                                <div class="form-group span-2">
                                     <label>Street Address</label>
                                     {{ form.address }}
-                                    {{ form.address.errors }}
                                 </div>
-                                <div class="form-group address-row">
-                                    <div>
-                                        <label>City</label>
-                                        {{ form.city }}
-                                        {{ form.city.errors }}
-                                    </div>
-                                    <div>
-                                        <label>Zip Code</label>
-                                        {{ form.zip_code }}
-                                        {{ form.zip_code.errors }}
-                                    </div>
+                                <div class="form-group">
+                                    <label>City</label>
+                                    {{ form.city }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Zip Code</label>
+                                    {{ form.zip_code }}
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="form-actions">
-                                <button type="button" class="btn-save" id="edit-address-btn" name="update_profile" value="update_profile">Edit Address</button>
-                            </div>
+                        <div class="panel-footer">
+                            <p class="member-since">Member Since: {{ user.date_joined|date:'F d, Y' }}</p>
+                            <button type="button" class="btn-save-main" id="save-all-btn">Save Changes</button>
+                            <input type="hidden" name="update_profile" value="update_profile">
                         </div>
 
                     </div>
                 </div>
             </form>
-
         </section>
     </div>
 </main>
@@ -271,97 +285,57 @@
 <div id="passwordModal" class="settings-modal">
     <div class="settings-modal-content">
         <span class="settings-close-modal" onclick="closePasswordModal()">&times;</span>
-        <h2 style="margin-top: 0; color: var(--text-primary); margin-bottom: 20px;">Change Password</h2>
-        
+        <h2>Change Password</h2>
         <form method="post">
             {% csrf_token %}
             {% for field in password_form %}
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="{{ field.id_for_label }}" style="font-size: 0.85rem;">{{ field.label }}</label>
+                    <label>{{ field.label }}</label>
                     {{ field }}
-                    {% if field.errors %}
-                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 5px;">{{ field.errors }}</div>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <div style="color: #666; font-size: 0.75rem; margin-top: 3px;">{{ field.help_text|safe }}</div>
-                    {% endif %}
+                    {% if field.errors %}<div style="color:red; font-size:0.8rem;">{{ field.errors }}</div>{% endif %}
                 </div>
             {% endfor %}
-            <button type="submit" name="change_password" value="change_password" class="btn-save" style="margin-top: 10px;">Update Password</button>
+            <button type="submit" name="change_password" value="change_password" class="btn-save-main">Update</button>
         </form>
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('passwordModal');
-        if (modal && modal.parentNode !== document.body) {
-            document.body.appendChild(modal);
-        }
-
-        const profileBtn = document.getElementById('edit-profile-btn');
-        const addressBtn = document.getElementById('edit-address-btn');
+        const saveBtn = document.getElementById('save-all-btn');
+        const form = document.getElementById('profile-form');
         const photoBtn = document.getElementById('photo-upload-btn');
-
-        const profileContainer = document.getElementById('profile-inputs-container');
-        const addressContainer = document.getElementById('address-inputs-container');
-
-        function setInputsDisabled(container, disabled) {
-            const inputs = container.querySelectorAll('input:not([type="hidden"]), select, textarea');
-            inputs.forEach(input => {
-                // Ensure read-only fields stay disabled
-                if (!input.classList.contains('readonly-field')) {
-                    input.disabled = disabled;
-                }
-            });
-        }
-
-        setInputsDisabled(profileContainer, true);
-        setInputsDisabled(addressContainer, true);
         
-        if(photoBtn) photoBtn.style.display = 'none';
+        const inputs = form.querySelectorAll('input:not([type="hidden"]), select');
+        let isEditing = false;
 
-        profileBtn.addEventListener('click', function(e) {
-            if (profileBtn.innerText === 'Edit Profile') {
-                e.preventDefault();
-                setInputsDisabled(profileContainer, false);
-                if(photoBtn) photoBtn.style.display = 'inline-block';
-                profileBtn.innerText = 'Save Changes';
-                profileBtn.type = 'submit';
-                
-                const firstInput = profileContainer.querySelector('input');
-                if(firstInput) firstInput.focus();
+        inputs.forEach(input => {
+            if (!input.classList.contains('readonly-field')) {
+                input.disabled = true;
             }
         });
+        photoBtn.style.display = 'none';
+        saveBtn.textContent = 'Edit Profile';
 
-        addressBtn.addEventListener('click', function(e) {
-            if (addressBtn.innerText === 'Edit Address') {
+        saveBtn.addEventListener('click', function(e) {
+            if (!isEditing) {
                 e.preventDefault();
-                setInputsDisabled(addressContainer, false);
-                addressBtn.innerText = 'Save Address';
-                addressBtn.type = 'submit';
-                
-                const firstInput = addressContainer.querySelector('input');
-                if(firstInput) firstInput.focus();
+                inputs.forEach(input => {
+                    if (!input.classList.contains('readonly-field')) {
+                        input.disabled = false;
+                    }
+                });
+                photoBtn.style.display = 'inline-block';
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.classList.add('active-edit');
+                isEditing = true;
+            } else {
+                form.submit();
             }
         });
     });
 
-    function openPasswordModal() {
-        const modal = document.getElementById('passwordModal');
-        modal.style.display = 'flex';
-    }
-
-    function closePasswordModal() {
-        const modal = document.getElementById('passwordModal');
-        modal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('passwordModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    }
+    function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
+    function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
 </script>
 {% endblock %}
