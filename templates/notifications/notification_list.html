@@ -4,19 +4,25 @@
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/notification_list.css' %}">
+    <style>
+        body {
+            margin-bottom: 0 !important;
+        }
+        footer, .footer {
+            display: none !important;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="notification-page-wrapper">
     <div class="notification-container-main">
-        <h2 class="page-title">Alerts & Warnings</h2>
+        <h2 class="page-title">Your Notifications</h2>
         
         {% if notifications %}
             <ul class="notification-list">
                 {% for notification in notifications %}
-                    {% comment %} Uses the 'warning' class for messages without links (moderation warnings) {% endcomment %}
-                    <li class="notification-item {% if not notification.is_read %}unread{% endif %} 
-                                        {% if not notification.link %}warning{% endif %}">
+                    <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
                         
                         <div class="icon-section">
                             {% if not notification.link %}
@@ -32,24 +38,21 @@
                                     <p class="notification-message">{{ notification.message }}</p>
                                 </a>
                             {% else %}
-                                <p class="notification-message" style="font-weight: bold; color: #cc0000;">
+                                <p class="notification-message" style="color: #d32f2f;">
                                     {{ notification.message }}
                                 </p>
                             {% endif %}
                             <small class="notification-timestamp">
-                                Received {{ notification.timestamp|timesince }} ago
+                                {{ notification.timestamp|timesince }} ago
                             </small>
                         </div>
-                        
-                        {% if not notification.is_read %}
-                            <span class="status-dot"></span>
-                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
             <div class="no-notifications">
-                <p>All clear! You have no new alerts or warnings.</p>
+                <img src="{% static 'icons/notification.png' %}" style="width: 60px; opacity: 0.2; margin-bottom: 15px; filter: grayscale(1);">
+                <p>You're all caught up! No new notifications.</p>
             </div>
         {% endif %}
     </div>
