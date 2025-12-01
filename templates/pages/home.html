@@ -91,7 +91,13 @@
         </div>
         
         {% if user.is_authenticated %}
-            <a href="{% url 'profile' %}"><img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon"></a>
+            <a href="{% url 'profile' %}" style="display: flex; align-items: center;">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Profile" class="nav-icon" style="border-radius: 50%; object-fit: cover; width: 28px; height: 28px; border: 1px solid #ddd;">
+                {% else %}
+                    <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
+                {% endif %}
+            </a>
         {% else %}
             <a href="{% url 'login' %}" class="nav-text-link">Login</a>
             <span style="color: var(--text-color); margin: 0 5px;">/</span>
@@ -530,7 +536,7 @@
 
         document.querySelectorAll('.grid-item').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (e.target.closest('a')) return;
+                if (e.target.closest('a') || e.target.closest('button')) return;
                 loadProductDetails(card.dataset.productId);
             });
         });
