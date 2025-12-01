@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .main-container {
+            background-color: transparent;
+        }
+        footer, .footer {
+            display: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-page-container">
+    
+    <div id="cart-content">
+        <div class="cart-table-header">
+            <div class="cart-col-checkbox">
+                <input type="checkbox" id="selectAll" class="cart-checkbox" onchange="toggleSelectAll('header')">
+            </div>
+            <div class="cart-col-product">Product</div>
+            <div class="cart-col-price">Unit Price</div>
+            <div class="cart-col-qty">Quantity</div>
+            <div class="cart-col-total">Total Price</div>
+            <div class="cart-col-action">Actions</div>
+        </div>
+
+        <div id="cart-items-list">
+        </div>
+
+        <div class="cart-summary-bar">
+            <div class="cart-summary-content">
+                <div class="summary-left">
+                    <div class="cart-select-all-footer">
+                        <input type="checkbox" id="selectAllFooter" class="cart-checkbox" onchange="toggleSelectAll('footer')">
+                        <label for="selectAllFooter" style="cursor:pointer;">Select All (<span id="total-item-count">0</span>)</label>
+                        <button class="btn-delete-all" onclick="deleteSelected()">Delete</button>
+                    </div>
+                </div>
+                <div class="summary-right">
+                    <div class="summary-text">
+                        Total (<span id="selected-count">0</span> items): 
+                        <span class="summary-total-price" id="cart-total">₱0.00</span>
+                    </div>
+                    <button class="btn-checkout" onclick="alert('Checkout functionality coming soon!')">Check Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="empty-cart-view" style="display:none; text-align: center; padding: 100px 0;">
+        <img src="{% static 'icons/cart.png' %}" style="width: 100px; opacity: 0.1; margin-bottom: 20px; filter: grayscale(1);">
+        <h2 style="color: #888; font-size: 1.2rem;">Your shopping cart is empty</h2>
+        <a href="{% url 'home' %}" class="btn-view-cart" style="display:inline-block; width:auto; margin-top:20px;">Go Shopping Now</a>
+    </div>
+</div>
+
+<script>
+    let currentSearchTerm = '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupCartSearch();
+        renderCartPage();
+    });
+
+    function setupCartSearch() {
+        const searchInput = document.getElementById('base-search-input');
+        const dropdown = document.getElementById('base-search-dropdown');
+
+        if (searchInput) {
+            // 1. Clone input to remove existing event listeners (autocomplete, global search)
+            const newInput = searchInput.cloneNode(true);
+            searchInput.parentNode.replaceChild(newInput, searchInput);
+            
+            // 2. Style and Config
+            newInput.value = '';
+            newInput.placeholder = "Search your cart...";
+            newInput.id = 'cart-search-input'; // Prevent conflicts
+
+            // 3. Disable Global Dropdown
+            if(dropdown) dropdown.remove(); // Remove it from DOM entirely for this page
+
+            // 4. Prevent Form Submission (Enter Key)
+            const form = newInput.closest('form');
+            if (form) {
+                form.onsubmit = function(e) { 
+                    e.preventDefault(); 
+                    return false; 
+                };
+            }
+
+            // 5. Attach Local Search Logic
+            newInput.addEventListener('input', function(e) {
+                currentSearchTerm = e.target.value.toLowerCase().trim();
+                renderCartPage();
+            });
+        }
+    }
+
+    function renderCartPage() {
+        const cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+        const itemsList = document.getElementById('cart-items-list');
+        const contentDiv = document.getElementById('cart-content');
+        const emptyDiv = document.getElementById('empty-cart-view');
+        const selectAllBox = document.getElementById('selectAll');
+        const selectAllFooter = document.getElementById('selectAllFooter');
+        const totalCountLabel = document.getElementById('total-item-count');
+        
+        if (cart.length === 0) {
+            contentDiv.style.display = 'none';
+            emptyDiv.style.display = 'block';
+            return;
+        }
+
+        contentDiv.style.display = 'block';
+        emptyDiv.style.display = 'none';
+        itemsList.innerHTML = '';
+        
+        if(selectAllBox) selectAllBox.checked = true;
+        if(selectAllFooter) selectAllFooter.checked = true;
+        if(totalCountLabel) totalCountLabel.textContent = cart.length;
+
+        // --- Filter Cart based on Search ---
+        const filteredCart = cart.filter(item => 
+            item.name.toLowerCase().includes(currentSearchTerm)
+        );
+
+        if (filteredCart.length === 0 && currentSearchTerm !== '') {
+            itemsList.innerHTML = `<div style="text-align:center; padding:40px; color:#888; font-size:1.1rem; background:#fff; margin-top:15px; border-radius:4px;">
+                No items found matching "<strong>${currentSearchTerm}</strong>"
+            </div>`;
+            // Reset totals to 0 visually since nothing is showing
+            document.getElementById('selected-count').textContent = 0;
+            document.getElementById('cart-total').textContent = '₱0.00';
+            return;
+        }
+
+        // --- Group Items by Shop ---
+        const groupedCart = filteredCart.reduce((acc, item) => {
+            const shop = item.shop || 'Unknown Shop';
+            if (!acc[shop]) acc[shop] = [];
+            acc[shop].push(item);
+            return acc;
+        }, {});
+
+        for (const [shopName, items] of Object.entries(groupedCart)) {
+            const shopHeader = document.createElement('div');
+            shopHeader.className = 'cart-shop-header';
+            shopHeader.innerHTML = `
+                <div class="cart-col-checkbox">
+                    <svg class="shop-icon" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/></svg>
+                </div>
+                <span>${shopName}</span>
+            `;
+            itemsList.appendChild(shopHeader);
+
+            items.forEach((item) => {
+                const total = item.price * item.qty;
+                // Find original index to ensure Delete/Update works on the real cart
+                const originalIndex = cart.findIndex(c => c.id === item.id); 
+
+                const itemRow = document.createElement('div');
+                itemRow.className = 'cart-item-row';
+                itemRow.innerHTML = `
+                    <div class="cart-col-checkbox">
+                        <input type="checkbox" class="cart-checkbox item-check" data-index="${originalIndex}" data-price="${total}" onchange="calculateTotal()" checked>
+                    </div>
+                    <div class="cart-col-product">
+                        <div class="cart-product-flex">
+                            <img src="${item.image}" class="cart-product-img">
+                            <span class="cart-product-name">${item.name}</span>
+                        </div>
+                    </div>
+                    <div class="cart-col-price">₱${item.price.toFixed(2)}</div>
+                    <div class="cart-col-qty">
+                        <div class="qty-control">
+                            <button class="btn-qty" onclick="changeQty(${originalIndex}, -1)">-</button>
+                            <input type="text" class="qty-input" value="${item.qty}" readonly>
+                            <button class="btn-qty" onclick="changeQty(${originalIndex}, 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="cart-col-total">₱${total.toFixed(2)}</div>
+                    <div class="cart-col-action">
+                        <button class="btn-remove" onclick="removeItem(${originalIndex})">Delete</button>
+                    </div>
+                `;
+                itemsList.appendChild(itemRow);
+            });
+        }
+
+        calculateTotal();
+    }
+
+    function toggleSelectAll(source) {
+        const selectAllHeader = document.getElementById('selectAll');
+        const selectAllFooter = document.getElementById('selectAllFooter');
+        const isChecked = source === 'header' ? selectAllHeader.checked : selectAllFooter.checked;
+
+        if(selectAllHeader) selectAllHeader.checked = isChecked;
+        if(selectAllFooter) selectAllFooter.checked = isChecked;
+
+        // Only toggle currently visible (searched) items
+        const checkboxes = document.querySelectorAll('.item-check');
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+        });
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        const checkboxes = document.querySelectorAll('.item-check:checked');
+        let grandTotal = 0;
+        let count = 0;
+
+        checkboxes.forEach(cb => {
+            grandTotal += parseFloat(cb.getAttribute('data-price'));
+            count++;
+        });
+
+        document.getElementById('selected-count').textContent = count;
+        document.getElementById('cart-total').textContent = '₱' + grandTotal.toFixed(2);
+    }
+
+    function deleteSelected() {
+        const checkboxes = document.querySelectorAll('.item-check:checked');
+        
+        if (checkboxes.length === 0) {
+            alert("Please select items to delete.");
+            return;
+        }
+
+        if(confirm(`Are you sure you want to delete ${checkboxes.length} item(s)?`)) {
+            let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+            
+            // Get indices, sort descending to delete without messing up array order
+            const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-index'))).sort((a, b) => b - a);
+
+            indicesToDelete.forEach(index => {
+                cart.splice(index, 1);
+            });
+
+            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            renderCartPage();
+            if(window.updateCartUI) window.updateCartUI();
+        }
+    }
+
+    function changeQty(index, change) {
+        let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+        if (cart[index]) {
+            cart[index].qty += change;
+            if (cart[index].qty < 1) cart[index].qty = 1;
+            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            renderCartPage();
+            if(window.updateCartUI) window.updateCartUI();
+        }
+    }
+
+    function removeItem(index) {
+        if(confirm('Remove this item?')) {
+            let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            renderCartPage();
+            if(window.updateCartUI) window.updateCartUI();
+        }
+    }
+</script>
+{% endblock %}
