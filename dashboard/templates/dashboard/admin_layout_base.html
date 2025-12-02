@@ -29,6 +29,10 @@
                         <a href="{% url 'vendor_verification' %}">Vendor Applications</a>
                     </li>
 
+                    <li {% if request.resolver_match.url_name == 'vendor_list' %}class="active"{% endif %}>
+                        <a href="{% url 'vendor_list' %}">Vendor Management</a>
+                    </li>
+
                     <li {% if request.resolver_match.url_name == 'reported_messages' %}class="active"{% endif %}>
                         <a href="{% url 'reported_messages' %}">Reported Messages</a>
                     </li>
@@ -44,10 +48,6 @@
             {% block panel_content %}{% endblock %}
         </main>
     </div>
-
-    <footer class="panel-footer">
-        &copy; {% now "Y" %} Sari-Sari | Admin Panel
-    </footer>
     
     {% block scripts %}{% endblock %}
 </body>
