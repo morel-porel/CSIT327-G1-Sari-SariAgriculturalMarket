@@ -112,16 +112,23 @@ def product_list_api(request):
             Q(description__icontains=query)
         )
 
-    # 2. Category Filter (List) using ArrayField with OR logic
+    # 2. Category Filter (List) using ArrayField
     if categories:
-        # Split by comma to get multiple selected categories from frontend
-        category_list = [cat.strip() for cat in categories.split(',') if cat.strip()]
-        if category_list:
-            # Use Q objects with OR logic to show products that match ANY selected category
-            category_filter = Q()
-            for category in category_list:
-                category_filter |= Q(category__contains=[category])
-            products_qs = products_qs.filter(category_filter)
+        # Check if multiple categories are sent (separated by pipe |)
+        # Use pipe as delimiter since category names contain commas
+        if '|' in categories:
+            category_list = [cat.strip() for cat in categories.split('|') if cat.strip()]
+            if category_list:
+                # Use Q objects with OR logic to show products that match ANY selected category
+                category_filter = Q()
+                for category in category_list:
+                    category_filter |= Q(category__overlap=[category])
+                products_qs = products_qs.filter(category_filter)
+        else:
+            # Single category filter (from home page buttons)
+            category = categories.strip()
+            if category:
+                products_qs = products_qs.filter(category__overlap=[category])
 
     # 3. Location/Barangay Filter (List) - Filter by vendor's barangay
     if regions:
