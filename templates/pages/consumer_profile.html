@@ -6,31 +6,36 @@
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
     <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern_modal.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
 
-        .shop-modal-content {
+        .shop-modal-container {
             max-width: 800px !important;
-            padding: 0 !important;
-            background: var(--bg-primary);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-height: 90vh;
+            width: 95% !important;
+            /* CRITICAL FIX: Enforce 100% height relative to max-height to enable inner scrolling */
+            height: 100% !important; 
+            max-height: 90vh !important;
+            overflow: hidden !important;
         }
 
-        .modal-header-row {
+        .shop-content-override {
+            flex-direction: column !important;
+            height: 100% !important;
+            padding: 0 !important;
+            background-color: var(--bg-primary);
+        }
+
+        .shop-modal-header {
             padding: 20px 30px;
             border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             background: var(--bg-secondary);
+            flex-shrink: 0;
         }
 
-        .modal-header-row h2 {
+        .shop-modal-header h2 {
             font-size: 1.5rem;
             color: var(--accent-primary);
             margin: 0;
@@ -39,7 +44,9 @@
 
         .shop-modal-body {
             padding: 30px;
+            /* CRITICAL FIX: This is the element that needs the overflow set */
             overflow-y: auto;
+            flex-grow: 1;
         }
 
         .shop-edit-form {
@@ -195,9 +202,7 @@
 
             <div class="notif-dropdown">
                 <h4>Recent Notifications</h4>
-                <div class="notif-dropdown-list" id="nav-notif-list">
-                    <div class="empty-notif">Loading...</div>
-                </div>
+                <div class="notif-dropdown-list" id="nav-notif-list"></div>
                 <div class="notif-dropdown-footer">
                     <a href="{% url 'notification_list' %}" class="view-all-link">View All Notifications</a>
                 </div>
@@ -451,11 +456,13 @@
     </div>
 </div>
 
-<div id="shopModal" class="settings-modal">
-    <div class="settings-modal-content shop-modal-content">
-        <div class="modal-header-row">
+<div class="modal-backdrop" id="shop-modal-backdrop" style="display: none;"></div>
+<div class="modal shop-modal-container" id="shopModal" style="display: none;">
+    <button class="modal-close" onclick="closeShopModal()">&times;</button>
+    
+    <div class="modal-content shop-content-override">
+        <div class="shop-modal-header">
             <h2>Edit Shop Profile</h2>
-            <span class="settings-close-modal" onclick="closeShopModal()">&times;</span>
         </div>
         
         <div class="shop-modal-body">
@@ -592,7 +599,13 @@
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
 
-    function openShopModal() { document.getElementById('shopModal').style.display = 'flex'; }
-    function closeShopModal() { document.getElementById('shopModal').style.display = 'none'; }
+    function openShopModal() { 
+        document.getElementById('shopModal').style.display = 'block'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'block'; 
+    }
+    function closeShopModal() { 
+        document.getElementById('shopModal').style.display = 'none'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'none'; 
+    }
 </script>
 {% endblock %}
