@@ -32,7 +32,7 @@
     top: -4px;
     right: -6px;
     background-color: var(--danger-color);
-    color: white;
+    color: var(text-on-accent);
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0 5px;
@@ -42,7 +42,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #fff;
+    border: 2px solid var(--bg-primary);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     z-index: 2;
 }
@@ -53,8 +53,8 @@
     top: 120%;
     right: 0;
     width: 380px; /* Matching Cart Width */
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.08);
+    background: var(--bg-primary);
+    border: 1px solid var(0,0,0,0.08);
     border-radius: 12px; /* Matching Cart Radius */
     box-shadow: 0 10px 40px rgba(0,0,0,0.12);
     padding: 0;
@@ -92,9 +92,9 @@
     padding: 15px 20px;
     font-size: 0.95rem;
     font-weight: 600;
-    color: #9ca3af;
-    background-color: #fff;
-    border-bottom: 1px solid #f0f0f0;
+    color: var(--text-secondary);
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* List */
@@ -107,7 +107,7 @@
 
 .notif-item {
     padding: 15px 20px;
-    border-bottom: 1px solid #f9f9f9;
+    border-bottom: 1px solid var(--border-color);
     transition: background-color 0.1s;
     text-decoration: none;
     display: flex;
@@ -117,11 +117,11 @@
 }
 
 .notif-item:hover {
-    background-color: #f8f9fa;
+    background-color: var(--bg-secondary);
 }
 
 .notif-item.unread {
-    background-color: #f0fdf4; /* Very light green for unread */
+    background-color: var(--bg-success-light); /* Very light green for unread */
 }
 
 .notif-item.unread::after {
@@ -144,14 +144,14 @@
 
 .notif-time {
     font-size: 0.75rem;
-    color: #9ca3af;
+    color: var(--text-secondary);
 }
 
 /* Footer */
 .notif-dropdown-footer {
     padding: 12px 20px;
-    background-color: #fafafa;
-    border-top: 1px solid #eee;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
     text-align: center;
 }
 
@@ -172,7 +172,7 @@
 .empty-notif {
     padding: 40px;
     text-align: center;
-    color: #999;
+    color: var(--text-secondary);
     font-style: italic;
     font-size: 0.9rem;
 }
