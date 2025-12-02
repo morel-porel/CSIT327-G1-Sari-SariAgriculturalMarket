@@ -535,7 +535,7 @@
 }
 
 .points-label {
-    color: var(--text-on-accent);
+    color: var(--text-secondary);
     margin-top: -8px;
     font-size: 0.9rem;
 }
@@ -546,18 +546,18 @@
     color: var(--text-primary);
 }
 
-/* PROGRESS BAR */
 .progress-wrapper {
     width: 230px;
     height: 10px;
-    background: var(--bg-accent);
+    background: #d1d1d1 !important;  /* stronger light grey */
     border-radius: 10px;
+    overflow: hidden; /* ensures fill stays inside & rounded corners work */
 }
 
 .progress-bar-fill {
     height: 100%;
-    background: var(--accent-primary);
-    border-radius: 10px;
+    background: var(--accent-primary) !important; /* keep your orange/green */
+    transition: width 0.3s ease;
 }
 
 /* PERKS */
@@ -585,6 +585,7 @@
     border: 1px solid var(--border-color);
     margin-bottom: 20px;
     font-size: 1rem;
+    color: var(--text-primary);
     background: var(--bg-primary);
 }
 

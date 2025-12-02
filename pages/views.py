@@ -95,27 +95,49 @@ def clear_search_history(request):
 @login_required
 def loyalty_rewards(request):
     loyalty, created = LoyaltyProfile.objects.get_or_create(user=request.user)
+
+    # Tier thresholds
     tiers = [
         ("Bronze", 0),
         ("Silver", 300),
         ("Gold", 1500),
         ("Platinum", 3000),
     ]
-    current_points = loyalty.points
-    next_tier = None
-    points_needed = 0
 
+    current_points = loyalty.points
+    current_tier = "Bronze"
+    next_tier = None
+    current_tier_points = 0
+    next_tier_points = None
+
+    # Determine current tier and next tier
     for tier_name, threshold in tiers:
-        if current_points < threshold:
+        if current_points >= threshold:
+            current_tier = tier_name
+            current_tier_points = threshold
+        else:
             next_tier = tier_name
-            points_needed = threshold - current_points
+            next_tier_points = threshold
             break
+
+    # Calculate progress
+    if next_tier:
+        total_needed = next_tier_points - current_tier_points
+        gained = current_points - current_tier_points
+        progress_percentage = int((gained / total_needed) * 100)
+        points_needed = next_tier_points - current_points
+    else:
+        # Highest tier reached
+        progress_percentage = 100
+        points_needed = 0
 
     context = {
         "loyalty": loyalty,
         "next_tier": next_tier,
         "points_needed": points_needed,
+        "progress_percentage": progress_percentage,
     }
+
     return render(request, "pages/loyalty_rewards.html", context)
 
 @login_required
@@ -125,11 +147,23 @@ def redeem_points(request):
         if reward_raw:
             reward_name, cost = reward_raw.split("|")
             cost = int(cost)
+
             loyalty = LoyaltyProfile.objects.get(user=request.user)
+
             if loyalty.points >= cost:
                 loyalty.points -= cost
+
+                # APPLY REWARD EFFECT
+                if reward_name == "5% Discount":
+                    loyalty.has_5_discount = True
+
+                elif reward_name == "Free Delivery":
+                    loyalty.free_delivery = True
+
                 loyalty.save()
+
     return redirect('loyalty_rewards')
+
 
 @login_required
 def recent_searches_api(request):
