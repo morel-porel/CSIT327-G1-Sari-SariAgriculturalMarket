@@ -265,7 +265,7 @@ body, html {
 
 .grid-item {
     background: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-product-modal);
     border-radius: 6px;
     height: 300px;
     display: flex;
@@ -714,7 +714,7 @@ body, html {
     height: 24px;  
     object-fit: contain;  
 }  
-  
+
 /* Seasonal Badge in Modal */  
 .seasonal-badge-modal {  
     position: absolute;  

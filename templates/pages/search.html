@@ -25,7 +25,7 @@
                 </label>
                 <label class="filter-btn-label">
                     <input type="checkbox" class="filter-checkbox" name="category" value="Meat, Poultry and Seafood">
-                    <span>Meat & Poultry</span>
+                    <span>Meat, Poultry & Seafood</span>
                 </label>
                 <label class="filter-btn-label">
                     <input type="checkbox" class="filter-checkbox" name="category" value="Dairy & Eggs">
@@ -283,7 +283,7 @@
 
         function applyFilters() {
             const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
-                                            .map(cb => cb.value).join(',');
+                                            .map(cb => cb.value).join('|'); // Use pipe delimiter since category names contain commas
             const selectedRegions = Array.from(document.querySelectorAll('input[name="region"]:checked'))
                                          .map(cb => cb.value).join(',');
             const minPrice = document.getElementById('min-price').value;
