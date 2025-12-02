@@ -152,17 +152,15 @@ def redeem_points(request):
 
             if loyalty.points >= cost:
                 loyalty.points -= cost
-
-                # APPLY REWARD EFFECT
                 if reward_name == "5% Discount":
                     loyalty.has_5_discount = True
-
                 elif reward_name == "Free Delivery":
                     loyalty.free_delivery = True
-
                 loyalty.save()
-
-    return redirect('loyalty_rewards')
+                return JsonResponse({'status': 'success', 'message': f'Reward "{reward_name}" redeemed!'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Not enough points'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
 @login_required
