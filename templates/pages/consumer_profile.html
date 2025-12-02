@@ -678,31 +678,33 @@
 <div class="modal-backdrop" id="loyalty-modal-backdrop" style="display: none"></div>
 <div class="modal loyalty-modal-container" id="loyaltyModal" style="display: none">
     <button class="modal-close" onclick="closeLoyaltyModal()">&times;</button>
-    
+
     <div class="modal-content loyalty-modal-content-override">
         <h1 class="page-title" style="margin-top: 0">Loyalty Rewards</h1>
 
         <div class="modern-card loyalty-main-card" style="padding: 30px; margin-bottom: 30px">
-
             <div class="loyalty-card-flex">
-
                 <div class="loyalty-info">
                     <h2 class="title">Your Points Balance</h2>
-
                     <p class="loyalty-points"><strong>{{ user.loyaltyprofile.points|default:"0" }}</strong></p>
                     <p class="points-label" style="font-weight: 800; color: white !important">PTS</p>
 
-                    <p class="progress-msg">
-                        {% with points=user.loyaltyprofile.points|default:0 %}
-                            {% if points < 50 %}
-                                Earn <strong>{{ 50|add:"-"|add:points }}</strong> more points to reach <strong>Silver</strong> tier
-                            {% elif points < 150 %}
-                                Earn <strong>{{ 150|add:"-"|add:points }}</strong> more points to reach <strong>Gold</strong> tier
-                            {% else %}
-                                You reached the highest tier! 🎉
-                            {% endif %}
-                        {% endwith %}
-                    </p>
+<p class="progress-msg">
+    {% with points=user.loyaltyprofile.points|default:0 %}
+        {% if points < 50 %}
+            {% with remaining=50|add:"-points" %}
+                Earn <strong>{{ remaining }}</strong> more points to reach <strong>Silver</strong> tier
+            {% endwith %}
+        {% elif points < 150 %}
+            {% with remaining=150|add:"-points" %}
+                Earn <strong>{{ remaining }}</strong> more points to reach <strong>Gold</strong> tier
+            {% endwith %}
+        {% else %}
+            You reached the highest tier! 🎉
+        {% endif %}
+    {% endwith %}
+</p>
+
 
                     <div class="progress-wrapper">
                         {% with points=user.loyaltyprofile.points|default:0 %}
@@ -725,10 +727,9 @@
                     <img src="{% static 'images/logo.png' %}" class="perk-img">
                     <p class="perk-text">Exclusive<br>Member<br>Perks</p>
                 </div>
-
             </div>
         </div>
-        
+
         <div class="modern-card" style="margin-bottom: 30px">
             <div class="card-header no-border">
                 <h3>Earn Points</h3>
@@ -745,25 +746,83 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{% url 'redeem_points' %}">
+                <form id="redeemForm" method="POST">
                     {% csrf_token %}
-
                     <select name="reward" class="reward-dropdown">
                         <option value="5% Discount|150">5% Discount – 150 points</option>
                         <option value="Free Delivery|300">Free Delivery – 300 points</option>
                         <option value="VIP Badge|700">VIP Badge – 700 points</option>
                     </select>
-
-                    <button type="submit" class="btn-redeem" style="width: 100%; padding: 14px; border-radius: 10px; border: none; background: var(--accent-secondary); color: var(--text-on-accent); font-weight: 700; font-size: 1.1rem; cursor: pointer">
-                        Redeem
-                    </button>
+                    <button type="submit" class="btn-redeem">Redeem</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
+
+
+    function closeRedeemPopup() {
+    document.getElementById('redeemPopup').style.display = 'none';
+}
+
+document.getElementById('redeemForm').addEventListener('submit', function(e){
+    e.preventDefault(); // prevent normal form submit
+    const formData = new FormData(this);
+
+    fetch("{% url 'redeem_points' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+        },
+        body: formData
+    }).then(res => res.json())
+      .then(data => {
+          const popup = document.getElementById('redeemPopup');
+          const message = document.getElementById('redeemPopupMessage');
+
+          message.textContent = data.message;
+          popup.style.display = 'block';
+
+          if(data.status === 'error' && navigator.vibrate) {
+              navigator.vibrate([100, 50, 100]); // vibrate pattern
+          }
+      })
+      .catch(err => {
+          console.error('Error:', err);
+      });
+});
+
+    document.getElementById('redeemForm').addEventListener('submit', function(e){
+    e.preventDefault(); // prevent normal form submit
+    const formData = new FormData(this);
+
+    fetch("{% url 'redeem_points' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+        },
+        body: formData
+    }).then(res => res.json())
+      .then(data => {
+          if(data.status === 'success'){
+              alert('Reward redeemed!');
+              // Optionally, update points dynamically here
+          } else {
+              // Vibrate the device for 200ms and show alert
+              if (navigator.vibrate) {
+                  navigator.vibrate(200);
+              }
+              alert('Not enough points to redeem this reward!');
+          }
+      })
+      .catch(err => {
+          console.error('Error:', err);
+          alert('Server error. Try again.');
+      });
+});
     document.addEventListener('DOMContentLoaded', () => {
         const profileForm = document.getElementById('profile-form');
         
