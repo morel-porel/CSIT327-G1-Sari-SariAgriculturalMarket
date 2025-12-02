@@ -1,26 +1,262 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
+{% load tz %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
     <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern_modal.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
-        /* Force search bar visibility in profile header but keep hidden visual style if desired, 
-           or use visibility:hidden as requested previously */
-        .search-bar { visibility: hidden !important; opacity: 0; }
-        body { overflow: hidden; }
+        .search-bar { visibility: hidden !important; opacity: 0 }
+        body { overflow: hidden }
+
+        .shop-modal-container {
+            max-width: 800px !important;
+            width: 95% !important;
+            height: 100% !important; 
+            max-height: 90vh !important;
+            overflow: hidden !important;
+        }
+
+        .shop-content-override {
+            flex-direction: column !important;
+            height: 100% !important;
+            padding: 0 !important;
+            background-color: var(--bg-primary);
+        }
+
+        .shop-modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .shop-modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .shop-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .shop-edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .shop-image-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .shop-img-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-tertiary);
+        }
+
+        .file-upload-wrapper {
+            flex: 1;
+        }
+
+        .shop-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group-shop {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group-shop label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group-shop input, 
+        .form-group-shop textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s;
+            font-family: var(--font-main);
+        }
+
+        .form-group-shop input:focus,
+        .form-group-shop textarea:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .btn-save-shop {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-save-shop:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        .clickable-loyalty-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .clickable-loyalty-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        .loyalty-bg .points-label {
+            color: white !important;
+            font-weight: 800;
+        }
+        .loyalty-bg .points-num {
+            font-weight: 800;
+        }
+
+        .logout-modal-content {
+            max-width: 350px !important;
+            text-align: center;
+        }
+
+        .logout-modal-content h2 {
+            color: var(--danger-color);
+        }
+
+        .logout-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--danger-color);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel-logout:hover { background: #e0e0e0; }
+        .btn-confirm-logout:hover { background: #b71c1c; }
+
+        .loyalty-modal-container {
+            max-width: 900px !important;
+            width: 95% !important;
+            height: auto;
+            max-height: 90vh;
+        }
+        .loyalty-modal-content-override {
+            flex-direction: column !important;
+            height: auto !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            padding: 30px !important;
+            display: block !important;
+        }
+        .loyalty-modal-content-override .title {
+             font-size: 1.5rem;
+             margin-bottom: 10px;
+        }
+
+        .logout-modal-custom {
+            max-width: 380px !important;
+            width: 90% !important;
+            padding: 0 !important;
+        }
+        .logout-modal-custom .modal-content {
+            display: block !important;
+            padding: 30px !important;
+            height: auto !important;
+        }
+
+        .field-wrapper.disabled input {
+            font-weight: bold;
+            color: var(--text-primary);
+            pointer-events: none;
+            background-color: transparent !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+
+        @media (max-width: 768px) {
+            .shop-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 <header class="navbar">
-    <a href="{% url 'home' %}" style="text-decoration: none;">
+    <a href="{% url 'home' %}" style="text-decoration: none">
         <div class="logo">
             <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo Icon" class="logo-icon">
-            <span style="font-weight: 800;">
+            <span style="font-weight: 800">
                 <span class="brand-green">Sari-</span><span class="brand-orange">Sari</span>
             </span>
         </div>
@@ -33,23 +269,27 @@
     </div>
 
     <div class="nav-icons">
-        {% if user.role == 'VENDOR' %}
-            <a href="{% url 'product_list' %}">
-                <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
-            </a>
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
+            <div class="cart-nav-container">
+                <a href="javascript:void(0)" onclick="openShopModal()" style="display: flex; align-items: center; text-decoration: none" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
+                </a>
+            </div>
         {% else %}
             <div class="cart-nav-container">
-                <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
+                <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none">
                     <svg class="cart-icon-svg" viewBox="0 0 24 24">
                         <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
                     </svg>
-                    <span class="cart-badge" id="nav-cart-badge" style="display:none;">0</span>
+                    <span class="cart-badge" id="nav-cart-badge" style="display:none">0</span>
                 </a>
                 
                 <div class="cart-dropdown">
-                    <h4>Recently Added Products</h4>
+                    <h4>Recent Products</h4>
                     <div class="cart-dropdown-list" id="nav-cart-list"></div>
-                    <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
+                    <div class="cart-dropdown-footer" id="cart-footer" style="display:none">
                         <span class="cart-more-text" id="cart-more-text"></span>
                         <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
                     </div>
@@ -58,27 +298,25 @@
         {% endif %}
         
         <div class="notif-nav-container" id="notif-container">
-            <a href="{% url 'notification_list' %}" style="display:flex; align-items:center; text-decoration:none;">
+            <a href="{% url 'notification_list' %}" style="display:flex; align-items:center; text-decoration:none">
                 <svg class="notif-icon-svg" viewBox="0 0 24 24">
                     <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
                 </svg>
-                <span class="notif-badge" id="nav-notif-badge" style="display:none;">0</span>
+                <span class="notif-badge" id="nav-notif-badge" style="display:none">0</span>
             </a>
 
             <div class="notif-dropdown">
                 <h4>Recent Notifications</h4>
-                <div class="notif-dropdown-list" id="nav-notif-list">
-                    <div class="empty-notif">Loading...</div>
-                </div>
+                <div class="notif-dropdown-list" id="nav-notif-list"></div>
                 <div class="notif-dropdown-footer">
                     <a href="{% url 'notification_list' %}" class="view-all-link">View All Notifications</a>
                 </div>
             </div>
         </div>
 
-        <a href="{% url 'profile' %}" style="display: flex; align-items: center;">
+        <a href="{% url 'profile' %}" style="display: flex; align-items: center">
             {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="Profile" class="nav-icon" style="border-radius: 50%; object-fit: cover; width: 28px; height: 28px; border: 1px solid #ddd;">
+                <img src="{{ user.avatar.url }}" alt="Profile" class="nav-icon" style="border-radius: 50%; object-fit: cover; width: 28px; height: 28px; border: 1px solid #ddd">
             {% else %}
                 <img src="{% static 'icons/profile.png' %}" alt="Profile Icon" class="nav-icon">
             {% endif %}
@@ -86,34 +324,44 @@
     </div>
 </header>
 
-<main class="container" style="height: calc(100vh - 70px);">
+<main class="container" style="height: calc(100vh - 70px)">
     <aside class="sidebar">
         <h2>Account Menu</h2>
         
-        <a href="{% url 'profile' %}" class="sidebar-btn active" style="text-decoration: none;">
+        <a href="{% url 'profile' %}" class="sidebar-btn active" id="profile-sidebar-link" style="text-decoration: none">
             <span>My Account</span>
         </a>
 
-        <a href="{% url 'loyalty_rewards' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="javascript:void(0)" onclick="openLoyaltyModal()" class="sidebar-btn" id="loyalty-sidebar-link" style="text-decoration: none">
             <span>Loyalty Rewards</span>
         </a>
 
-        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'inbox' %}" class="sidebar-btn" style="text-decoration: none">
             <span>Messages</span>
         </a>
 
-        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'notification_list' %}" class="sidebar-btn" style="text-decoration: none">
             <span>Notifications</span>
         </a>
 
-        <a href="{% url 'about' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="{% url 'about' %}" class="sidebar-btn" style="text-decoration: none">
             <span>About Us</span>
         </a>
     </aside>
 
-    <div class="main" style="height: 100%; padding: 0;">
-        <section class="content" style="height: 100%; overflow-y: auto; background-color: var(--bg-secondary); padding: 30px;">
+    <div class="main" style="height: 100%; padding: 0">
+        <section class="content" style="height: 100%; overflow-y: auto; background-color: var(--bg-secondary); padding: 30px">
             
+            {% if messages %}
+                <div class="messages-container" style="margin-bottom: 20px;">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" style="padding: 15px; margin-bottom: 10px; border-radius: 8px; background: {% if message.tags == 'success' %}#d4edda{% elif message.tags == 'error' %}#f8d7da{% else %}#d1ecf1{% endif %}; color: {% if message.tags == 'success' %}#155724{% elif message.tags == 'error' %}#721c24{% else %}#0c5460{% endif %}; border: 1px solid {% if message.tags == 'success' %}#c3e6cb{% elif message.tags == 'error' %}#f5c6cb{% else %}#bee5eb{% endif %};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <form method="post" enctype="multipart/form-data" id="profile-form">
                 {% csrf_token %}
                 <input type="hidden" name="update_profile" value="update_profile">
@@ -133,7 +381,7 @@
                                 <label for="{{ form.avatar.id_for_label }}" class="avatar-edit-overlay">
                                     <span>📷</span>
                                 </label>
-                                <div style="display:none;">{{ form.avatar }}</div>
+                                <div style="display:none">{{ form.avatar }}</div>
                             </div>
 
                             <div class="profile-identity">
@@ -165,11 +413,11 @@
                         <div class="modern-card promo-card">
                             {% if user.role == 'VENDOR' %}
                                 <div class="card-body">
-                                    <h3>Manage Your Shop</h3>
-                                    <p>Check your orders, add products, and view your sales performance.</p>
-                                    <a href="{% url 'vendor_profile' %}" class="btn-full-width btn-vendor">
-                                        Go to Shop Dashboard
-                                    </a>
+                                    <h3>{{ user.vendorprofile.shop_name|default:"My Shop" }}</h3>
+                                    <p>Manage your inventory, update your profile, and track your sales performance.</p>
+                                    <button type="button" class="btn-full-width btn-vendor" onclick="openShopModal()">
+                                        Manage Shop
+                                    </button>
                                 </div>
                             {% else %}
                                 <div class="card-body">
@@ -187,9 +435,9 @@
                         <div class="modern-card">
                             <div class="card-header">
                                 <h3>Personal Information</h3>
-                                <button type="button" class="icon-btn edit-toggle" onclick="toggleEdit(this, 'personal-fields')">
+                                <button type="button" class="icon-btn edit-toggle" onclick="toggleEditMode()">
                                     <svg class="edit-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                    <svg class="save-icon" viewBox="0 0 24 24" style="display:none;"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                    <svg class="save-icon" viewBox="0 0 24 24" style="display:none"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
                                 </button>
                             </div>
                             <div class="card-body form-grid-2">
@@ -219,10 +467,9 @@
                         <div class="modern-card">
                             <div class="card-header">
                                 <h3>Address Book</h3>
-                                <button type="button" class="icon-btn edit-toggle" onclick="toggleEdit(this, 'address-fields')">
+                                <div class="icon-btn" style="visibility: hidden">
                                     <svg class="edit-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                    <svg class="save-icon" viewBox="0 0 24 24" style="display:none;"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                                </button>
+                                </div>
                             </div>
                             <div class="card-body form-grid-2">
                                 <div class="form-group span-2 field-wrapper address-fields disabled">
@@ -242,21 +489,33 @@
                     </div>
 
                     <div class="grid-column col-3">
-                        <div class="modern-card loyalty-bg">
+                        <div class="modern-card loyalty-bg clickable-loyalty-card" onclick="openLoyaltyModal()">
                             <div class="card-header no-border">
-                                <h3 style="color: white;">My Rewards</h3>
-                                <a href="{% url 'loyalty_rewards' %}" class="icon-link-white">➔</a>
+                                <h3 style="color: white">My Rewards</h3>
+                                <span class="icon-link-white" style="cursor: pointer">➔</span>
                             </div>
                             <div class="loyalty-body">
                                 <div class="points-circle">
-                                    <span class="points-num">{{ user.loyaltyprofile.points|default:"0" }}</span>
-                                    <span class="points-label">PTS</span>
+                                    <span class="points-num"><strong>{{ user.loyaltyprofile.points|default:"0" }}</strong></span>
+                                    <span class="points-label" style="font-weight: 800; color: white !important">PTS</span>
                                 </div>
                                 <div class="rank-display">
                                     Current Rank: <strong>{{ user.loyaltyprofile.rank|default:"Bronze" }}</strong>
                                 </div>
                                 <div class="loyalty-progress-container">
-                                    <div class="loyalty-progress-bar" style="width: 40%;"></div> 
+                                    {% with points=user.loyaltyprofile.points|default:0 %}
+                                        {% if points < 50 %}
+                                            {% widthratio points 50 100 as progress_percent %}
+                                            <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%"></div>
+                                        {% elif points < 150 %}
+                                            {% with shifted_points=points|add:"-50" %}
+                                                {% widthratio shifted_points 100 100 as progress_percent %}
+                                                <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%; background-color: var(--warning-color)"></div>
+                                            {% endwith %}
+                                        {% else %}
+                                            <div class="loyalty-progress-bar" style="width: 100%; background-color: var(--accent-secondary)"></div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
                                 <p class="loyalty-next">150 pts to Silver</p>
                             </div>
@@ -293,9 +552,9 @@
                         <div class="modern-card logout-card">
                             <div class="card-body">
                                 <p>Securely end your session.</p>
-                                <a href="{% url 'logout' %}" class="btn-full-width btn-logout">
+                                <button type="button" onclick="openLogoutModal()" class="btn-full-width btn-logout">
                                     Logout
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -312,10 +571,10 @@
         <form method="post">
             {% csrf_token %}
             {% for field in password_form %}
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom: 15px">
                     <label>{{ field.label }}</label>
                     {{ field }}
-                    {% if field.errors %}<div style="color:red; font-size:0.8rem;">{{ field.errors }}</div>{% endif %}
+                    {% if field.errors %}<div style="color:red; font-size:0.8rem">{{ field.errors }}</div>{% endif %}
                 </div>
             {% endfor %}
             <button type="submit" name="change_password" value="change_password" class="btn-save-main">Update Password</button>
@@ -323,59 +582,354 @@
     </div>
 </div>
 
+<div class="modal-backdrop" id="shop-modal-backdrop" style="display: none"></div>
+<div class="modal shop-modal-container" id="shopModal" style="display: none">
+    <button class="modal-close" onclick="closeShopModal()">&times;</button>
+    
+    <div class="modal-content shop-content-override">
+        <div class="shop-modal-header">
+            <h2>Edit Shop Profile</h2>
+        </div>
+        
+        <div class="shop-modal-body">
+            <form action="{% url 'vendor_profile' %}" method="POST" enctype="multipart/form-data" class="shop-edit-form">
+                {% csrf_token %}
+                
+                <div class="shop-image-section">
+                    {% if user.vendorprofile.profile_image %}
+                        <img src="{{ user.vendorprofile.profile_image.url }}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% else %}
+                        <img src="{% static 'icons/placeholder.png' %}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% endif %}
+                    
+                    <div class="file-upload-wrapper">
+                        <label for="shop_image_input" style="font-weight: 600; cursor: pointer; color: var(--accent-primary)">Upload New Logo</label>
+                        <input type="file" name="profile_image" id="shop_image_input" style="display: block; margin-top: 5px; font-size: 0.9rem">
+                    </div>
+                </div>
+
+                <div class="shop-form-grid">
+                    <div class="form-group-shop">
+                        <label>Shop Name</label>
+                        <input type="text" name="shop_name" value="{{ user.vendorprofile.shop_name }}" required>
+                    </div>
+                    
+                    <div class="form-group-shop">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact_number" value="{{ user.vendorprofile.contact_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Business Permit No.</label>
+                        <input type="text" name="business_permit_number" value="{{ user.vendorprofile.business_permit_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Years of Experience</label>
+                        <input type="number" name="experience_years" value="{{ user.vendorprofile.experience_years|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Pickup Address</label>
+                        <input type="text" name="pickup_address" value="{{ user.vendorprofile.pickup_address|default:'' }}" placeholder="Street / House No.">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Barangay</label>
+                        <input type="text" name="barangay" value="{{ user.vendorprofile.barangay|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>City</label>
+                        <input type="text" name="city" value="{{ user.vendorprofile.city|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Shop Description</label>
+                        <textarea name="shop_description" rows="3">{{ user.vendorprofile.shop_description|default:'' }}</textarea>
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Farming/Business Practices</label>
+                        <textarea name="farming_practices" rows="3">{{ user.vendorprofile.farming_practices|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save-shop">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="logout-modal-backdrop" style="display: none"></div>
+<div class="modal logout-modal-custom" id="logoutModal" style="display: none">
+    <button class="modal-close" onclick="closeLogoutModal()">&times;</button>
+    <div class="modal-content logout-modal-content" style="display: block; padding: 30px">
+        <h2>Confirm Logout</h2>
+        <p style="color: var(--text-primary)">Are you sure you want to end your current session?</p>
+        
+        <div class="logout-actions">
+            <button type="button" class="btn-cancel-logout" onclick="closeLogoutModal()">Cancel</button>
+            <a href="{% url 'logout' %}" class="btn-confirm-logout">Yes, Log Out</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="loyalty-modal-backdrop" style="display: none"></div>
+<div class="modal loyalty-modal-container" id="loyaltyModal" style="display: none">
+    <button class="modal-close" onclick="closeLoyaltyModal()">&times;</button>
+    
+    <div class="modal-content loyalty-modal-content-override">
+        <h1 class="page-title" style="margin-top: 0">Loyalty Rewards</h1>
+
+        <div class="modern-card loyalty-main-card" style="padding: 30px; margin-bottom: 30px">
+
+            <div class="loyalty-card-flex">
+
+                <div class="loyalty-info">
+                    <h2 class="title">Your Points Balance</h2>
+
+                    <p class="loyalty-points"><strong>{{ user.loyaltyprofile.points|default:"0" }}</strong></p>
+                    <p class="points-label" style="font-weight: 800; color: white !important">PTS</p>
+
+                    <p class="progress-msg">
+                        {% with points=user.loyaltyprofile.points|default:0 %}
+                            {% if points < 50 %}
+                                Earn <strong>{{ 50|add:"-"|add:points }}</strong> more points to reach <strong>Silver</strong> tier
+                            {% elif points < 150 %}
+                                Earn <strong>{{ 150|add:"-"|add:points }}</strong> more points to reach <strong>Gold</strong> tier
+                            {% else %}
+                                You reached the highest tier! 🎉
+                            {% endif %}
+                        {% endwith %}
+                    </p>
+
+                    <div class="progress-wrapper">
+                        {% with points=user.loyaltyprofile.points|default:0 %}
+                            {% if points < 50 %}
+                                {% widthratio points 50 100 as progress_percent %}
+                                <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%"></div>
+                            {% elif points < 150 %}
+                                {% with shifted_points=points|add:"-50" %}
+                                    {% widthratio shifted_points 100 100 as progress_percent %}
+                                    <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%; background-color: var(--warning-color)"></div>
+                                {% endwith %}
+                            {% else %}
+                                <div class="loyalty-progress-bar" style="width: 100%; background-color: var(--accent-secondary)"></div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="perks-box">
+                    <img src="{% static 'images/logo.png' %}" class="perk-img">
+                    <p class="perk-text">Exclusive<br>Member<br>Perks</p>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="modern-card" style="margin-bottom: 30px">
+            <div class="card-header no-border">
+                <h3>Earn Points</h3>
+            </div>
+            <div class="card-body">
+                <p>• Message vendor for the first time <strong>+20</strong></p>
+                <p>• Unique product search <strong>+5</strong></p>
+            </div>
+        </div>
+
+        <div class="modern-card">
+            <div class="card-header no-border">
+                <h3>Redeem Rewards</h3>
+            </div>
+
+            <div class="card-body">
+                <form method="POST" action="{% url 'redeem_points' %}">
+                    {% csrf_token %}
+
+                    <select name="reward" class="reward-dropdown">
+                        <option value="5% Discount|150">5% Discount – 150 points</option>
+                        <option value="Free Delivery|300">Free Delivery – 300 points</option>
+                        <option value="VIP Badge|700">VIP Badge – 700 points</option>
+                    </select>
+
+                    <button type="submit" class="btn-redeem" style="width: 100%; padding: 14px; border-radius: 10px; border: none; background: var(--accent-secondary); color: var(--text-on-accent); font-weight: 700; font-size: 1.1rem; cursor: pointer">
+                        Redeem
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const inputs = document.querySelectorAll('.field-wrapper input');
-        inputs.forEach(input => input.disabled = true);
+        const profileForm = document.getElementById('profile-form');
+        
+        // Get all form elements that should be initially disabled
+        const editableFields = Array.from(profileForm.elements).filter(el => {
+            return (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') &&
+                   el.type !== 'hidden' && 
+                   el.type !== 'file' &&
+                   el.name !== 'csrfmiddlewaretoken' &&
+                   el.name !== 'update_profile';
+        });
+        
+        // Initial setup: disable all editable fields
+        editableFields.forEach(input => {
+            input.disabled = true;
+            input.setAttribute('disabled', 'disabled');
+            console.log('Initially disabled:', input.name);
+        });
 
+        // Handler for Avatar Update (must enable all fields before submission)
         const avatarInput = document.getElementById('{{ form.avatar.id_for_label }}');
         if(avatarInput){
             avatarInput.addEventListener('change', function(e) {
                 if (this.files && this.files[0]) {
-                    // 1. Update Preview
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         document.getElementById('avatar-preview').src = e.target.result;
                     }
                     reader.readAsDataURL(this.files[0]);
 
-                    // 2. Enable ALL fields before auto-submitting
-                    // (Important so Django doesn't think we are sending empty/missing data for required fields)
-                    const allInputs = document.querySelectorAll('#profile-form input, #profile-form select');
-                    allInputs.forEach(input => input.disabled = false);
+                    console.log('Avatar changed, enabling all fields before submit...');
+                    // Enable ALL editable inputs before submitting
+                    editableFields.forEach(input => {
+                        input.disabled = false;
+                        input.removeAttribute('disabled');
+                        console.log('Enabled for avatar submit:', input.name, '=', input.value);
+                    });
 
-                    // 3. Submit form to save image
-                    document.getElementById('profile-form').submit();
+                    // Small delay to ensure attributes are updated
+                    setTimeout(() => {
+                        profileForm.submit();
+                    }, 50);
                 }
             });
         }
     });
 
-    function toggleEdit(btn, fieldClass) {
-        const fields = document.querySelectorAll('.' + fieldClass);
-        const inputs = document.querySelectorAll('.' + fieldClass + ' input');
-        const editIcon = btn.querySelector('.edit-icon');
-        const saveIcon = btn.querySelector('.save-icon');
+    function toggleEditMode() {
         const form = document.getElementById('profile-form');
+        const masterButton = form.querySelector('.icon-btn.edit-toggle');
+        
+        // We use the visibility of the save icon to determine if we are currently editing
+        const saveIcon = masterButton.querySelector('.save-icon');
+        const editIcon = masterButton.querySelector('.edit-icon');
+        const isCurrentlyEditing = saveIcon.style.display === 'block';
 
-        const isEditing = !inputs[0].disabled;
+        // Get all form elements that should be toggled
+        const editableFields = Array.from(form.elements).filter(el => {
+            return (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') &&
+                   el.type !== 'hidden' && 
+                   el.type !== 'file' &&
+                   el.name !== 'csrfmiddlewaretoken' &&
+                   el.name !== 'update_profile';
+        });
 
-        if (isEditing) {
-            form.submit();
-        } else {
-            inputs.forEach(input => {
-                input.disabled = false;
-            });
-            fields.forEach(div => div.classList.remove('disabled'));
+        // Find ALL field wrappers for visual feedback
+        const allFieldWrappers = form.querySelectorAll('.field-wrapper');
+
+        console.log('Toggle Edit Mode - Currently Editing:', isCurrentlyEditing);
+        console.log('Found', editableFields.length, 'editable fields');
+
+        if (isCurrentlyEditing) {
+            // State: Currently ENABLED -> Transition to DISABLED (Save/Submit)
+            console.log('Saving form...');
             
+            // CRITICAL: Enable ALL editable fields before submission
+            editableFields.forEach(input => {
+                input.disabled = false;
+                input.removeAttribute('disabled');
+                console.log('Enabling field for submit:', input.name, '=', input.value);
+            });
+            
+            // Log form data before submission
+            const formData = new FormData(form);
+            console.log('Form data being submitted:');
+            for (let [key, value] of formData.entries()) {
+                console.log('  ' + key + ':', value);
+            }
+            
+            // Submit after a small delay to ensure DOM updates
+            setTimeout(() => {
+                form.submit();
+            }, 50);
+            
+        } else {
+            // State: Currently DISABLED -> Transition to ENABLED (Edit Mode ON)
+            console.log('Entering edit mode...');
+            
+            // Enable visual feedback
+            allFieldWrappers.forEach(div => div.classList.remove('disabled'));
+            
+            // Enable all editable fields
+            editableFields.forEach(input => {
+                input.disabled = false;
+                input.removeAttribute('disabled');
+                console.log('Enabled field:', input.name, 'Current value:', input.value);
+            });
+            
+            // Toggle button icons
             editIcon.style.display = 'none';
             saveIcon.style.display = 'block';
             
-            if(inputs.length > 0) inputs[0].focus();
+            // Focus on first field
+            const firstNameInput = form.querySelector('[name="first_name"]');
+            if(firstNameInput) {
+                setTimeout(() => firstNameInput.focus(), 100);
+            }
+        }
+    }
+    
+    function toggleSidebarLink(active) {
+        const loyaltyLink = document.getElementById('loyalty-sidebar-link');
+        const profileLink = document.getElementById('profile-sidebar-link').closest('.sidebar-btn');
+        if (active) {
+            if (profileLink.classList.contains('active')) {
+                profileLink.classList.remove('active');
+            }
+            loyaltyLink.classList.add('active');
+        } else {
+            loyaltyLink.classList.remove('active');
+            const isAnyOtherModalOpen = document.getElementById('shopModal').style.display === 'block' || document.getElementById('passwordModal').style.display === 'flex';
+            if (!isAnyOtherModalOpen) {
+                 profileLink.classList.add('active');
+            }
         }
     }
 
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+
+    function openShopModal() { 
+        document.getElementById('shopModal').style.display = 'block'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'block'; 
+    }
+    function closeShopModal() { 
+        document.getElementById('shopModal').style.display = 'none'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'none'; 
+    }
+
+    function openLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'flex'; 
+    }
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none'; 
+    }
+    
+    function openLoyaltyModal() {
+        document.getElementById('loyaltyModal').style.display = 'block';
+        document.getElementById('loyalty-modal-backdrop').style.display = 'block';
+        toggleSidebarLink(true);
+    }
+
+    function closeLoyaltyModal() {
+        document.getElementById('loyaltyModal').style.display = 'none';
+        document.getElementById('loyalty-modal-backdrop').style.display = 'none';
+        toggleSidebarLink(false);
+    }
 </script>
 {% endblock %}

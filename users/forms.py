@@ -127,3 +127,33 @@ class ConsumerProfileForm(forms.ModelForm):
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make phone_number not required to avoid validation issues with empty values
+        self.fields['phone_number'].required = False
+        # Ensure email is required
+        self.fields['email'].required = True
+        self.fields['first_name'].required = False
+        self.fields['last_name'].required = False
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        # If phone_number is empty, return None to avoid unique constraint issues
+        if not phone_number or phone_number.strip() == '':
+            return None
+        
+        # Check if another user has this phone number (excluding current user)
+        if self.instance and self.instance.pk:
+            # Only check for duplicates if the phone number has changed
+            if self.instance.phone_number != phone_number:
+                existing = CustomUser.objects.filter(phone_number=phone_number).exclude(pk=self.instance.pk)
+                if existing.exists():
+                    raise forms.ValidationError('This phone number is already in use.')
+        else:
+            # For new users, check if phone number exists
+            existing = CustomUser.objects.filter(phone_number=phone_number)
+            if existing.exists():
+                raise forms.ValidationError('This phone number is already in use.')
+        
+        return phone_number

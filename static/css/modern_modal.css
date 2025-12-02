@@ -93,6 +93,9 @@
     margin-bottom: 5px;
     color: var(--text-primary);
     font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .modal-vendor {
