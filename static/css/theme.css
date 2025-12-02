@@ -130,7 +130,7 @@ body {
     top: -6px;
     right: -6px;
     background-color: var(--danger-color);
-    color: var(--text-on-accent);
+    color: white !important;
     border-radius: 50%;
     padding: 2px 4px;
     font-size: 10px;

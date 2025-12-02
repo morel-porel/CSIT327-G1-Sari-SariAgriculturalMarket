@@ -156,7 +156,7 @@
             let cart = getCart();
             const existingItem = cart.find(item => item.id === product.id);
             if (existingItem) { existingItem.qty += 1; } 
-            else { cart.push({ id: product.id, name: product.name, price: parseFloat(product.price.replace(/[^\d.]/g, '')), image: product.image, qty: 1, shop: product.shop }); }
+            else { cart.push({ id: product.id, name: product.name, price: parseFloat(product.price.replace(/[^\d.]/g, '')), image: product.image, qty: 1, shop: product.shop, vendor_id: product.vendor_id || null }); }
             saveCart(cart);
         };
 

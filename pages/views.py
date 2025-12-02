@@ -2,8 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from products.models import Product
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from users.models import SearchHistory, LoyaltyProfile
+from users.models import SearchHistory, LoyaltyProfile, CustomUser
 from django.http import JsonResponse
+from django.urls import reverse
+from django.db.models import Count
+from messaging.models import Conversation, Message
+from notifications.utils import create_notification
+from datetime import datetime
 import json
 
 def about_us_view(request):
@@ -154,3 +159,78 @@ def clear_search_history_api(request):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+@login_required
+@require_POST
+def checkout_api(request):
+    try:
+        data = json.loads(request.body)
+        grouped_orders = data.get('orders', [])
+        
+        if not grouped_orders:
+            return JsonResponse({'status': 'error', 'message': 'Cart is empty or invalid.'}, status=400)
+
+        # 1. Notify the Consumer (Buyer)
+        total_items = sum(len(order['items']) for order in grouped_orders)
+        create_notification(
+            recipient=request.user,
+            message=f"Order placed successfully! You checked out {total_items} item(s) from {len(grouped_orders)} vendor(s).",
+            link="#"
+        )
+
+        # 2. Process Orders per Vendor (Messaging and Notification)
+        for order in grouped_orders:
+            vendor_id = order['vendor_id']
+            vendor = get_object_or_404(CustomUser, pk=vendor_id)
+            shop_name = order['shop_name']
+            total_price = order['total_price']
+            
+            # --- A. Construct Receipt Message ---
+            receipt_body = f"Thank you for your sale, {vendor.username}!\n"
+            receipt_body += f"NEW ORDER from {request.user.username} (Consumer):\n\n"
+            
+            for item in order['items']:
+                receipt_body += f"- {item['qty']}x {item['name']} @ ₱{item['price']}\n"
+            
+            receipt_body += f"\nTOTAL SALE: ₱{total_price:.2f}"
+            receipt_body += f"\nOrder placed on: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+
+            # --- B. Find or Create Conversation ---
+            conversation = Conversation.objects.annotate(
+                num_participants=Count('participants')
+            ).filter(
+                participants=request.user
+            ).filter(
+                participants=vendor
+            ).filter(
+                num_participants=2
+            ).first()
+
+            if not conversation:
+                conversation = Conversation.objects.create()
+                conversation.participants.add(request.user, vendor)
+            
+            # --- C. Send Receipt Message (as the Buyer) ---
+            Message.objects.create(
+                conversation=conversation,
+                sender=request.user,
+                text_content=receipt_body
+            )
+
+            # --- D. Notify the Vendor ---
+            notification_text = f"NEW SALE! {request.user.username} checked out {len(order['items'])} item(s) from your shop {shop_name}."
+            notification_link = reverse('conversation_detail', kwargs={'conversation_id': conversation.id})
+            
+            create_notification(
+                recipient=vendor,
+                message=notification_text,
+                link=notification_link
+            )
+
+        return JsonResponse({'status': 'success', 'redirect_url': reverse('cart')})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON data.'}, status=400)
+    except Exception as e:
+        print(f"Checkout error: {e}")
+        return JsonResponse({'status': 'error', 'message': 'Server processing error.'}, status=500)

@@ -4,8 +4,9 @@
 {% block title %}Shopping Cart{% endblock %}
 
 {% block css %}
-    {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern_modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/checkout_modal_v2.css' %}">
     <style>
         body {
             background-color: #f5f5f5;
@@ -15,6 +16,170 @@
         }
         footer, .footer {
             display: none !important;
+        }
+        
+        .checkout-modal-content {
+            max-width: 520px !important;
+            padding: 0 !important;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: var(--bg-primary);
+        }
+        .checkout-modal-header {
+            padding: 24px 28px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .checkout-modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+        }
+        .checkout-modal-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkout-modal-header h2::before {
+            content: '🛒';
+            font-size: 1.5rem;
+        }
+        .checkout-modal-header .modal-close {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .checkout-modal-header .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        .checkout-summary-body {
+            padding: 24px;
+            max-height: 55vh;
+            overflow-y: auto;
+        }
+        .checkout-vendor-group {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+        .checkout-vendor-group:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .checkout-vendor-group h3 {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            padding: 12px 16px;
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkout-vendor-group h3::before {
+            content: '🏪';
+            font-size: 1.1rem;
+        }
+        .checkout-item-list {
+            padding: 12px 16px;
+            background: var(--bg-primary);
+        }
+        .checkout-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .checkout-item-row:last-child {
+            border-bottom: none;
+        }
+        .checkout-item-name {
+            flex: 1;
+            padding-right: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .checkout-item-qty {
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: rgba(var(--accent-primary-rgb), 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .checkout-item-price {
+            min-width: 90px;
+            text-align: right;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            font-size: 1rem;
+        }
+        .checkout-group-total {
+            background: linear-gradient(135deg, rgba(var(--accent-primary-rgb), 0.1) 0%, rgba(var(--accent-secondary-rgb), 0.1) 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent-primary);
+            border-top: 2px solid var(--border-color);
+        }
+        .checkout-grand-total {
+            padding: 15px 20px;
+            background: var(--bg-primary);
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .checkout-final-actions {
+            padding: 15px 20px;
+            text-align: right;
+        }
+        .checkout-btn-confirm {
+            background-color: var(--accent-orange);
+            color: var(--text-primary);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .checkout-btn-confirm:hover {
+             background-color: #f7a216;
         }
     </style>
 {% endblock %}
@@ -42,7 +207,7 @@
                 <div class="summary-left">
                     <div class="cart-select-all-footer">
                         <input type="checkbox" id="selectAllFooter" class="cart-checkbox" onchange="toggleSelectAll('footer')">
-                        <label for="selectAllFooter" style="cursor:pointer;">Select All (<span id="total-item-count">0</span>)</label>
+                        <label for="selectAllFooter" style="cursor:pointer">Select All (<span id="total-item-count">0</span>)</label>
                         <button class="btn-delete-all" onclick="deleteSelected()">Delete</button>
                     </div>
                 </div>
@@ -51,21 +216,49 @@
                         Total (<span id="selected-count">0</span> items): 
                         <span class="summary-total-price" id="cart-total">₱0.00</span>
                     </div>
-                    <button class="btn-checkout" onclick="alert('Checkout functionality coming soon!')">Check Out</button>
+                    <button class="btn-checkout" onclick="openCheckoutModal()">Check Out</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="empty-cart-view" style="display:none; text-align: center; padding: 100px 0;">
-        <img src="{% static 'icons/cart.png' %}" style="width: 100px; opacity: 0.1; margin-bottom: 20px; filter: grayscale(1);">
-        <h2 style="color: #888; font-size: 1.2rem;">Your shopping cart is empty</h2>
-        <a href="{% url 'home' %}" class="btn-view-cart" style="display:inline-block; width:auto; margin-top:20px;">Go Shopping Now</a>
+    <div id="empty-cart-view" style="display:none; text-align: center; padding: 100px 0">
+        <img src="{% static 'icons/cart.png' %}" style="width: 100px; opacity: 0.1; margin-bottom: 20px; filter: grayscale(1)">
+        <h2 style="color: #888; font-size: 1.2rem">Your shopping cart is empty</h2>
+        <a href="{% url 'home' %}" class="btn-view-cart" style="display:inline-block; width:auto; margin-top:20px">Go Shopping Now</a>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="checkout-modal-backdrop" style="display: none"></div>
+<div class="modal checkout-modal" id="checkout-modal" style="display: none;">
+    <div class="modal-content checkout-modal-content">
+        <div class="checkout-modal-header">
+            <h2>Confirm Your Order</h2>
+            <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
+        </div>
+
+        <div class="checkout-summary-body">
+            <p>Please review the items below and confirm your checkout.</p>
+            <div id="checkout-vendor-groups">
+                <!-- Vendor groups will be inserted here -->
+            </div>
+        </div>
+
+        <div class="checkout-grand-total">
+            <span>Grand Total:</span>
+            <span id="modal-grand-total">₱0.00</span>
+        </div>
+
+        <div class="checkout-final-actions">
+            <button class="checkout-btn-cancel" onclick="closeCheckoutModal()">Cancel</button>
+            <button class="checkout-btn-confirm" onclick="confirmCheckout()">Place Order</button>
+        </div>
     </div>
 </div>
 
 <script>
     let currentSearchTerm = '';
+    let groupedCartData = {};
 
     document.addEventListener('DOMContentLoaded', function() {
         setupCartSearch();
@@ -77,19 +270,15 @@
         const dropdown = document.getElementById('base-search-dropdown');
 
         if (searchInput) {
-            // 1. Clone input to remove existing event listeners (autocomplete, global search)
             const newInput = searchInput.cloneNode(true);
             searchInput.parentNode.replaceChild(newInput, searchInput);
             
-            // 2. Style and Config
             newInput.value = '';
             newInput.placeholder = "Search your cart...";
-            newInput.id = 'cart-search-input'; // Prevent conflicts
+            newInput.id = 'cart-search-input'; 
 
-            // 3. Disable Global Dropdown
-            if(dropdown) dropdown.remove(); // Remove it from DOM entirely for this page
+            if(dropdown) dropdown.remove(); 
 
-            // 4. Prevent Form Submission (Enter Key)
             const form = newInput.closest('form');
             if (form) {
                 form.onsubmit = function(e) { 
@@ -98,7 +287,6 @@
                 };
             }
 
-            // 5. Attach Local Search Logic
             newInput.addEventListener('input', function(e) {
                 currentSearchTerm = e.target.value.toLowerCase().trim();
                 renderCartPage();
@@ -106,8 +294,11 @@
         }
     }
 
+    function getCart() { return JSON.parse(localStorage.getItem('sari_cart')) || [] }
+    function saveCart(cart) { localStorage.setItem('sari_cart', JSON.stringify(cart)); if(window.updateCartUI) window.updateCartUI() }
+
     function renderCartPage() {
-        const cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+        const cart = getCart();
         const itemsList = document.getElementById('cart-items-list');
         const contentDiv = document.getElementById('cart-content');
         const emptyDiv = document.getElementById('empty-cart-view');
@@ -129,30 +320,32 @@
         if(selectAllFooter) selectAllFooter.checked = true;
         if(totalCountLabel) totalCountLabel.textContent = cart.length;
 
-        // --- Filter Cart based on Search ---
         const filteredCart = cart.filter(item => 
             item.name.toLowerCase().includes(currentSearchTerm)
         );
 
         if (filteredCart.length === 0 && currentSearchTerm !== '') {
-            itemsList.innerHTML = `<div style="text-align:center; padding:40px; color:#888; font-size:1.1rem; background:#fff; margin-top:15px; border-radius:4px;">
+            itemsList.innerHTML = `<div style="text-align:center; padding:40px; color:#888; font-size:1.1rem; background:#fff; margin-top:15px; border-radius:4px">
                 No items found matching "<strong>${currentSearchTerm}</strong>"
             </div>`;
-            // Reset totals to 0 visually since nothing is showing
             document.getElementById('selected-count').textContent = 0;
             document.getElementById('cart-total').textContent = '₱0.00';
             return;
         }
 
-        // --- Group Items by Shop ---
         const groupedCart = filteredCart.reduce((acc, item) => {
             const shop = item.shop || 'Unknown Shop';
-            if (!acc[shop]) acc[shop] = [];
-            acc[shop].push(item);
+            const vendor_id = item.vendor_id || 0; 
+            
+            if (!acc[shop]) acc[shop] = { name: shop, id: vendor_id, items: [], total: 0 };
+            
+            const itemTotal = item.price * item.qty;
+            acc[shop].items.push(item);
+            acc[shop].total += itemTotal;
             return acc;
         }, {});
 
-        for (const [shopName, items] of Object.entries(groupedCart)) {
+        for (const [shopName, group] of Object.entries(groupedCart)) {
             const shopHeader = document.createElement('div');
             shopHeader.className = 'cart-shop-header';
             shopHeader.innerHTML = `
@@ -163,16 +356,15 @@
             `;
             itemsList.appendChild(shopHeader);
 
-            items.forEach((item) => {
+            group.items.forEach((item) => {
                 const total = item.price * item.qty;
-                // Find original index to ensure Delete/Update works on the real cart
                 const originalIndex = cart.findIndex(c => c.id === item.id); 
 
                 const itemRow = document.createElement('div');
                 itemRow.className = 'cart-item-row';
                 itemRow.innerHTML = `
                     <div class="cart-col-checkbox">
-                        <input type="checkbox" class="cart-checkbox item-check" data-index="${originalIndex}" data-price="${total}" onchange="calculateTotal()" checked>
+                        <input type="checkbox" class="cart-checkbox item-check" data-index="${originalIndex}" data-price="${total}" data-vendor-id="${item.vendor_id}" data-item-id="${item.id}" onchange="calculateTotal()" checked>
                     </div>
                     <div class="cart-col-product">
                         <div class="cart-product-flex">
@@ -208,7 +400,6 @@
         if(selectAllHeader) selectAllHeader.checked = isChecked;
         if(selectAllFooter) selectAllFooter.checked = isChecked;
 
-        // Only toggle currently visible (searched) items
         const checkboxes = document.querySelectorAll('.item-check');
         checkboxes.forEach(cb => {
             cb.checked = isChecked;
@@ -239,40 +430,225 @@
         }
 
         if(confirm(`Are you sure you want to delete ${checkboxes.length} item(s)?`)) {
-            let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+            let cart = getCart();
             
-            // Get indices, sort descending to delete without messing up array order
             const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-index'))).sort((a, b) => b - a);
 
             indicesToDelete.forEach(index => {
                 cart.splice(index, 1);
             });
 
-            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            saveCart(cart);
             renderCartPage();
-            if(window.updateCartUI) window.updateCartUI();
         }
     }
 
     function changeQty(index, change) {
-        let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+        let cart = getCart();
         if (cart[index]) {
             cart[index].qty += change;
             if (cart[index].qty < 1) cart[index].qty = 1;
-            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            saveCart(cart);
             renderCartPage();
-            if(window.updateCartUI) window.updateCartUI();
         }
     }
 
     function removeItem(index) {
         if(confirm('Remove this item?')) {
-            let cart = JSON.parse(localStorage.getItem('sari_cart')) || [];
+            let cart = getCart();
             cart.splice(index, 1);
-            localStorage.setItem('sari_cart', JSON.stringify(cart));
+            saveCart(cart);
             renderCartPage();
-            if(window.updateCartUI) window.updateCartUI();
         }
     }
+
+    function groupSelectedItems() {
+        const cart = getCart();
+        const selectedElements = Array.from(document.querySelectorAll('.item-check:checked'));
+        
+        if (selectedElements.length === 0) {
+            return [];
+        }
+
+        const grouped = {};
+
+        selectedElements.forEach(cb => {
+            const originalIndex = parseInt(cb.getAttribute('data-index'));
+            const item = cart[originalIndex];
+            
+            if (!item || !item.shop) {
+                console.error("Skipping malformed item in cart:", item);
+                return;
+            }
+            
+            // Skip items without valid vendor_id
+            if (!item.vendor_id || typeof item.vendor_id !== 'number') {
+                console.error("Item missing valid vendor_id:", item);
+                return;
+            }
+            
+            const vendor_id = item.vendor_id;
+            const shop_name = item.shop;
+            
+            if (!grouped[vendor_id]) {
+                grouped[vendor_id] = {
+                    vendor_id: vendor_id,
+                    shop_name: shop_name,
+                    items: [],
+                    total_price: 0.00
+                };
+            }
+            
+            const itemPrice = parseFloat(item.price);
+            const itemTotal = itemPrice * item.qty;
+
+            grouped[vendor_id].items.push({
+                id: item.id,
+                name: item.name,
+                qty: item.qty,
+                price: itemPrice,
+                total: itemTotal,
+                original_index: originalIndex
+            });
+            grouped[vendor_id].total_price += itemTotal;
+        });
+
+        return Object.values(grouped);
+    }
+
+    function populateCheckoutModal(groupedOrders) {
+        const modalContainer = document.getElementById('checkout-vendor-groups');
+        const grandTotalElement = document.getElementById('modal-grand-total');
+        let grandTotal = 0;
+        modalContainer.innerHTML = '';
+
+        if (groupedOrders.length === 0) {
+            modalContainer.innerHTML = '<p style="text-align: center; color: var(--danger-color)">No items selected for checkout.</p>';
+            grandTotalElement.textContent = '₱0.00';
+            return;
+        }
+
+        groupedOrders.forEach(order => {
+            grandTotal += order.total_price;
+            
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'checkout-vendor-group';
+            groupDiv.innerHTML = `
+                <h3>Vendor: ${order.shop_name}</h3>
+                <div class="checkout-item-list">
+                    ${order.items.map(item => `
+                        <div class="checkout-item-row">
+                            <span class="checkout-item-name">${item.name}</span>
+                            <span class="checkout-item-qty">${item.qty}x</span>
+                            <span class="checkout-item-price">₱${item.total.toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="checkout-group-total">
+                    <span>Subtotal:</span>
+                    <span>₱${order.total_price.toFixed(2)}</span>
+                </div>
+            `;
+            modalContainer.appendChild(groupDiv);
+        });
+
+        grandTotalElement.textContent = '₱' + grandTotal.toFixed(2);
+        
+        return grandTotal;
+    }
+
+    function openCheckoutModal() {
+        const selectedCount = document.getElementById('selected-count').textContent;
+        if (parseInt(selectedCount) === 0) {
+            alert("Please select at least one item to checkout.");
+            return;
+        }
+
+        groupedCartData = groupSelectedItems();
+        
+        if (groupedCartData.length === 0) {
+             alert("Error: The selected items are missing vendor information.\\n\\nThis happens with old cart items. Please:\\n1. Remove these items from cart\\n2. Go back to the home page\\n3. Add the products again\\n\\nThen try checking out.");
+             return;
+        }
+
+        populateCheckoutModal(groupedCartData);
+        
+        document.getElementById('checkout-modal').style.display = 'block';
+        document.getElementById('checkout-modal-backdrop').style.display = 'block';
+    }
+
+    function closeCheckoutModal() {
+        document.getElementById('checkout-modal').style.display = 'none';
+        document.getElementById('checkout-modal-backdrop').style.display = 'none';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function confirmCheckout() {
+        const confirmBtn = document.querySelector('.checkout-btn-confirm');
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Processing...';
+
+        if (groupedCartData.length === 0) {
+             alert("Error: Cart data is missing. Please close and try again.");
+             confirmBtn.disabled = false;
+             confirmBtn.textContent = 'Place Order';
+             return;
+        }
+
+        fetch("{% url 'checkout_api' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orders: groupedCartData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let cart = getCart();
+                
+                const indicesToDelete = groupedCartData.flatMap(order => 
+                    order.items.map(item => item.original_index)
+                ).sort((a, b) => b - a);
+
+                indicesToDelete.forEach(index => {
+                    if (index >= 0 && index < cart.length) {
+                        cart.splice(index, 1);
+                    }
+                });
+                
+                saveCart(cart);
+
+                closeCheckoutModal();
+                window.location.reload(); 
+            } else {
+                alert('Checkout failed: ' + data.message);
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Place Order';
+            }
+        })
+        .catch(error => {
+            console.error('Network or Server Error:', error);
+            alert('An unexpected error occurred during checkout.');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Place Order';
+        });
+    }
+
 </script>
 {% endblock %}

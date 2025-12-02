@@ -70,7 +70,8 @@ def product_detail_api(request, pk):
             'shop_name': product.vendor.vendorprofile.shop_name,
             'seller_name': product.vendor.username,
             'vendor_user_id': product.vendor.pk,
-            'is_verified': is_verified,  
+            'is_verified': is_verified,
+            'is_seasonal': product.is_seasonal,
         }
         return JsonResponse(data)
     except Product.DoesNotExist:
