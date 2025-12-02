@@ -21,15 +21,21 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
     
 class VendorProfile(models.Model):
-    # --- NEW: Region Choices for Filtering ---
+    # --- Region Choices for Cebu, Philippines ---
     class Region(models.TextChoices):
-        DOMESTIC = "Domestic", "Domestic"
-        OVERSEAS = "Overseas", "Overseas"
-        METRO_MANILA = "Metro Manila", "Metro Manila"
-        NORTH_LUZON = "North Luzon", "North Luzon"
-        SOUTH_LUZON = "South Luzon", "South Luzon"
-        VISAYAS = "Visayas", "Visayas"
-        MINDANAO = "Mindanao", "Mindanao"
+        CEBU_CITY = "Cebu City", "Cebu City"
+        MANDAUE_CITY = "Mandaue City", "Mandaue City"
+        LAPU_LAPU_CITY = "Lapu-Lapu City", "Lapu-Lapu City"
+        TALISAY_CITY = "Talisay City", "Talisay City"
+        MINGLANILLA = "Minglanilla", "Minglanilla"
+        CONSOLACION = "Consolacion", "Consolacion"
+        COMPOSTELA = "Compostela", "Compostela"
+        LILOAN = "Liloan", "Liloan"
+        NAGA_CITY = "Naga City", "Naga City"
+        CARCAR_CITY = "Carcar City", "Carcar City"
+        TOLEDO_CITY = "Toledo City", "Toledo City"
+        DANAO_CITY = "Danao City", "Danao City"
+        BOGO_CITY = "Bogo City", "Bogo City"
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     shop_name = models.CharField(max_length=255)
@@ -49,8 +55,8 @@ class VendorProfile(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     zip_code = models.CharField(max_length=20, blank=True, null=True)
     
-    # --- NEW: Region Field ---
-    region = models.CharField(max_length=50, choices=Region.choices, default=Region.VISAYAS, blank=True, null=True)
+    # --- Region Field ---
+    region = models.CharField(max_length=50, choices=Region.choices, default=Region.CEBU_CITY, blank=True, null=True)
     
     def __str__(self):
         return self.shop_name

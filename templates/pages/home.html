@@ -100,35 +100,38 @@
     </div>
 
     <div class="nav-icons">
-        {% if user.is_authenticated and user.role == 'VENDOR' %}
-            <div class="cart-nav-container">
-                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
-                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
-                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
-                    </svg>
-                </a>
-            </div>
-        {% else %}
-            <div class="cart-nav-container">
-                <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
-                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
-                        <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
-                    </svg>
-                    <span class="cart-badge" id="nav-cart-badge" style="display:none;">0</span>
-                </a>
-                
-                <div class="cart-dropdown">
-                    <h4>Recently Added Products</h4>
-                    <div class="cart-dropdown-list" id="nav-cart-list">
-                    </div>
-                    <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
-                        <span class="cart-more-text" id="cart-more-text"></span>
-                        <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
+        {% if user.is_authenticated %}
+            {% if user.role == 'VENDOR' %}
+                <div class="cart-nav-container">
+                    <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                        <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                            <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                        </svg>
+                    </a>
+                </div>
+            {% else %}
+                <div class="cart-nav-container">
+                    <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
+                        <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                            <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
+                        </svg>
+                        <span class="cart-badge" id="nav-cart-badge" style="display:none;">0</span>
+                    </a>
+                    
+                    <div class="cart-dropdown">
+                        <h4>Recently Added Products</h4>
+                        <div class="cart-dropdown-list" id="nav-cart-list">
+                        </div>
+                        <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
+                            <span class="cart-more-text" id="cart-more-text"></span>
+                            <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         {% endif %}
         
+        {% if user.is_authenticated %}
         <div class="notif-nav-container" id="home-notif-container">
             <a href="{% url 'notification_list' %}" style="display:flex; align-items:center; text-decoration:none;">
                 <svg class="notif-icon-svg" viewBox="0 0 24 24">
@@ -147,6 +150,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}" style="display: flex; align-items: center;">
@@ -287,6 +291,7 @@
                 Product description goes here...
             </p>
 
+            {% if user.is_authenticated %}
             <div class="modal-actions">
                 <a href="#" class="action-btn chat" id="modal-chat-btn" data-tooltip="Chat with Vendor">
                     <svg viewBox="0 0 24 24">
@@ -295,11 +300,13 @@
                     </svg>
                 </a>
 
+                {% if user.role != 'VENDOR' %}
                 <button class="action-btn cart" id="modal-cart-btn" data-tooltip="Add to Cart" onclick="addToCart()">
                     <svg viewBox="0 0 24 24">
                         <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
                     </svg>
                 </button>
+                {% endif %}
 
                 <div style="position: relative;">
                     <button class="action-btn share" id="modal-share-btn" data-tooltip="Share">
@@ -309,12 +316,16 @@
                     </button>
                     <div id="share-panel" class="share-popover">
                         <div id="qrcode-container" style="display: flex; justify-content: center;"></div>
-                        <button onclick="shareToSocial('facebook')">Share on Facebook</button>
-                        <button onclick="shareToSocial('twitter')">Share on X (Twitter)</button>
                         <button onclick="copyProductLink()">Copy Link</button>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div class="modal-actions" style="text-align: center; padding: 1rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Please log in to interact with this product</p>
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn-primary" style="display: inline-block; padding: 12px 24px; background: var(--accent-primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 700;">Log In</a>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -359,6 +370,18 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // --- CHECK FOR PRODUCT ID IN URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product_id');
+        if (productId) {
+            // Wait for loadProductDetails to be defined, then load the product
+            setTimeout(() => {
+                if (typeof loadProductDetails === 'function') {
+                    loadProductDetails(productId);
+                }
+            }, 100);
+        }
+
         // --- SEARCH LOGIC ---
         const searchInput = document.getElementById('home-search-input');
         const dropdown = document.getElementById('home-search-dropdown');
@@ -484,7 +507,14 @@
                 categoryBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const category = this.getAttribute('data-category');
-                fetch(`/my-products/api/list/?category=${encodeURIComponent(category)}`)
+                
+                // Build API URL
+                let apiUrl = '/my-products/api/list/';
+                if (category !== 'all') {
+                    apiUrl += `?categories=${encodeURIComponent(category)}`;
+                }
+                
+                fetch(apiUrl)
                     .then(response => response.json())
                     .then(data => {
                         productGrid.innerHTML = ''; 
@@ -496,12 +526,27 @@
                                 productCard.style.cursor = 'pointer';
                                 productCard.addEventListener('click', () => loadProductDetails(product.id));
                                 const verifiedBadge = product.is_verified ? `<img src="/static/icons/verified.png" class="vendor-badge" alt="Verified" title="Verified Vendor">` : '';
-                                productCard.innerHTML = `<div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover;"></div><div class="product-info"><h3 class="product-name">${product.name}</h3><p class="product-price">${product.price}</p><p class="product-vendor">Seller: <span class="vendor-name-container">${product.shop_name} ${verifiedBadge}</span></p></div>`;
+                                const seasonalBadge = product.is_seasonal ? `<span class="seasonal-badge-card" title="In Season"><img src="/static/icons/season.png" alt="In Season"></span>` : '';
+                                productCard.innerHTML = `
+                                    <div class="product-image-wrapper">
+                                        <div class="product-image" style="background-image: url('${product.image_url}'); background-size: cover; background-position: center;"></div>
+                                        ${seasonalBadge}
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">${product.name}</h3>
+                                        <p class="product-price">${product.price}</p>
+                                        <p class="product-vendor">Seller: <span class="vendor-name-container">${product.shop_name} ${verifiedBadge}</span></p>
+                                    </div>
+                                `;
                                 productGrid.appendChild(productCard);
                             });
                         } else {
                             productGrid.innerHTML = '<p id="no-products-message">No products found in this category.</p>';
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching products:', error);
+                        productGrid.innerHTML = '<p id="no-products-message">Error loading products. Please try again.</p>';
                     });
             });
         });

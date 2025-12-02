@@ -11,46 +11,57 @@
 </head>
 <body>
 
-<header class="about-header">
-  <div class="left-section">
-      <button class="back-btn" onclick="window.history.back()">⬅</button>
-
-      <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo" class="logo">
-
-      <h1 class="header-title">Sari-Sari</h1>
-  </div>
-
-  <div class="search-bar">
-      <input type="text" placeholder="Search products, vendors...">
-      <button>🔍</button>
-  </div>
-</header>
-
 <main>
-  <section class="intro">
-      <h2>Sari-Sari Agricultural Marketplace</h2>
-      <p><em>Bringing the farm to your sari-sari store and neighborhood</em></p>
+  <button class="back-button" onclick="window.history.back()" title="Go Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+  </button>
 
-      <h3>We connect farmers, vendors, and families — locally and affordably</h3>
+  <section class="hero-section">
+      <div class="hero-content">
+          <div class="hero-badge">About Us</div>
+          <h2 class="hero-title">Connecting Communities Through Agriculture</h2>
+          <p class="hero-subtitle">Bringing the farm to your sari-sari store and neighborhood</p>
+          
+          <div class="hero-description">
+              <p>
+                  Sari-Sari Agricultural Marketplace blends the trusted neighborhood sari-sari store spirit
+                  with an easy digital marketplace — enabling farmers to sell directly, vendors to source reliably,
+                  and communities to access fresh, affordable goods.
+              </p>
+          </div>
 
-      <p>
-          Sari-Sari Agricultural Marketplace blends the trusted neighborhood sari-sari store spirit
-          with an easy digital marketplace — enabling farmers to sell directly, vendors to source reliably,
-          and communities to access fresh, affordable goods.
-      </p>
-
-      <div class="intro-buttons">
-          <a href="{% url 'vendor_signup' %}">
-              <button class="primary-btn">Join as Vendor</button>
-          </a>
-          <a href="{% url 'home' %}">
-            <button class="secondary-btn">Browse Products</button>
-          </a>
+          <div class="intro-buttons">
+              <a href="{% url 'vendor_signup' %}" class="btn-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M8.5 11C10.7091 11 12.5 9.20914 12.5 7C12.5 4.79086 10.7091 3 8.5 3C6.29086 3 4.5 4.79086 4.5 7C4.5 9.20914 6.29086 11 8.5 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M20 8V14M17 11H23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Join as Vendor
+              </a>
+              <a href="{% url 'home' %}" class="btn-secondary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Browse Products
+              </a>
+          </div>
       </div>
   </section>
 
-  <section class="cards">
-      <div class="card">
+  <section class="info-cards">
+      <div class="info-card mission">
+          <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
           <h4>Our Mission</h4>
           <p>
             To empower local farmers, vendors, and communities by providing an accessible digital marketplace
@@ -58,7 +69,13 @@
           </p>
       </div>
 
-      <div class="card">
+      <div class="info-card vision">
+          <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
           <h4>Our Vision</h4>
           <p>
             To be the leading community-driven marketplace that supports sustainable agriculture, fair pricing,
@@ -66,7 +83,15 @@
           </p>
       </div>
 
-      <div class="card">
+      <div class="info-card serve">
+          <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
           <h4>Who We Serve</h4>
           <p>
             Smallholder farmers, sari-sari store owners, market vendors, cooperatives, backyard gardeners,
@@ -74,11 +99,17 @@
           </p>
       </div>
 
-      <div class="card">
+      <div class="info-card offer">
+          <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 16V8C20.9996 7.64927 20.9071 7.30481 20.7315 7.00116C20.556 6.69751 20.3037 6.44536 20 6.27L13 2.27C12.696 2.09446 12.3511 2.00205 12 2.00205C11.6489 2.00205 11.304 2.09446 11 2.27L4 6.27C3.69626 6.44536 3.44398 6.69751 3.26846 7.00116C3.09294 7.30481 3.00036 7.64927 3 8V16C3.00036 16.3507 3.09294 16.6952 3.26846 16.9988C3.44398 17.3025 3.69626 17.5546 4 17.73L11 21.73C11.304 21.9055 11.6489 21.9979 12 21.9979C12.3511 21.9979 12.696 21.9055 13 21.73L20 17.73C20.3037 17.5546 20.556 17.3025 20.7315 16.9988C20.9071 16.6952 20.9996 16.3507 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3.27 6.96L12 12.01L20.73 6.96M12 22.08V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
           <h4>What We Offer</h4>
           <p>
-            Product listings (produce, seeds, feeds), vendor verification, order scheduling, price transparency,
-            and community support resources.
+            Product listings (produce, seeds, feeds), vendor verification, seasonal tracking, order management, 
+            price transparency, and community support resources.
           </p>
       </div>
   </section>

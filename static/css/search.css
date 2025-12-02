@@ -135,3 +135,22 @@
     color: var(--text-primary);
     margin: 0;
 }
+
+/* Remove footer whitespace - adjust container height for search page */
+.container {
+    height: calc(100vh - 70px) !important; /* Only account for navbar (70px), no footer */
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.main-container {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
