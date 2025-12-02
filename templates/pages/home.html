@@ -316,8 +316,6 @@
                     </button>
                     <div id="share-panel" class="share-popover">
                         <div id="qrcode-container" style="display: flex; justify-content: center;"></div>
-                        <button onclick="shareToSocial('facebook')">Share on Facebook</button>
-                        <button onclick="shareToSocial('twitter')">Share on X (Twitter)</button>
                         <button onclick="copyProductLink()">Copy Link</button>
                     </div>
                 </div>
@@ -372,6 +370,18 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // --- CHECK FOR PRODUCT ID IN URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product_id');
+        if (productId) {
+            // Wait for loadProductDetails to be defined, then load the product
+            setTimeout(() => {
+                if (typeof loadProductDetails === 'function') {
+                    loadProductDetails(productId);
+                }
+            }, 100);
+        }
+
         // --- SEARCH LOGIC ---
         const searchInput = document.getElementById('home-search-input');
         const dropdown = document.getElementById('home-search-dropdown');
