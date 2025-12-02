@@ -832,7 +832,8 @@ document.getElementById('redeemForm').addEventListener('submit', function(e){
                    el.type !== 'hidden' && 
                    el.type !== 'file' &&
                    el.name !== 'csrfmiddlewaretoken' &&
-                   el.name !== 'update_profile';
+                   el.name !== 'update_profile' &&
+                   el.id !== 'theme-switcher';
         });
         
         // Initial setup: disable all editable fields

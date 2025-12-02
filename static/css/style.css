@@ -1,11 +1,11 @@
 :root {
-    --auth-gradient: linear-gradient(135deg, #175e52 0%, #2e7d32 100%);
-    --auth-bg: #ffffff;
-    --text-main: #333;
-    --text-muted: #666;
-    --input-bg: #f8f9fa;
-    --border-color: #e1e1e1;
-    --brand-orange: #faa625; /* Updated Color */
+    --auth-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    --auth-bg: var(--bg-primary);
+    --text-main: var(--text-primary);
+    --text-muted: var(--text-secondary);
+    --input-bg: var(--bg-secondary);
+    --border-color: var(--border-input);
+    --brand-orange: var(--accent-orange); /* Updated Color */
 }
 
 .auth-overlay-wrapper {
@@ -14,7 +14,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: white;
+    background-color: var(--bg-primary);
     z-index: 9999;
     display: flex;
     overflow: hidden;
@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    color: white;
+    color: var(--text-on-accent);
     position: relative;
     overflow: hidden; 
 }
@@ -97,7 +97,7 @@
 }
 
 .auth-footer-links a {
-    color: white;
+    color: var(--text-on-accent);
     text-decoration: none;
     opacity: 0.8;
     transition: opacity 0.2s;
@@ -161,6 +161,7 @@
     padding: 15px 20px;
     border: 1px solid var(--border-color);
     background-color: var(--input-bg);
+    color: var(--text-main);
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -170,8 +171,8 @@
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
-    background-color: white;
-    border-color: #175e52;
+    background-color: var(bg-accent);
+    border-color: var(--accent-primary);
     box-shadow: 0 0 0 4px rgba(23, 94, 82, 0.1);
 }
 
@@ -184,7 +185,7 @@ input[type="checkbox"] {
 
 .btn-primary-auth {
     background: var(--auth-gradient);
-    color: white;
+    color: var(--text-on-accent);
     padding: 15px;
     border: none;
     border-radius: 8px;
@@ -218,7 +219,7 @@ input[type="checkbox"] {
 }
 
 .auth-actions a {
-    color: #175e52;
+    color: var(--accent-primary);
     text-decoration: none;
     font-weight: 600;
 }
@@ -231,13 +232,13 @@ input[type="checkbox"] {
 }
 
 .auth-switch a {
-    color: #175e52;
+    color: var(--accent-primary);
     font-weight: 700;
     text-decoration: none;
 }
 
 .errorlist {
-    color: #d32f2f;
+    color: var(--danger-color);
     font-size: 0.85rem;
     list-style: none;
     padding: 0;
