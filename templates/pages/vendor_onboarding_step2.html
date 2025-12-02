@@ -9,7 +9,7 @@
 
     /* Match body bg to wrapper */
     body, html {
-        background-color: #f5f7f9;
+        background-color: var(--bg-secondary);
         height: 100%;
         margin: 0;
     }
@@ -17,7 +17,7 @@
     /* Reuse styles from Step 1 for consistency */
     .onboarding-wrapper {
         min-height: calc(100vh - 90px);
-        background-color: #f5f7f9;
+        background-color: var(--bg-secondary);
         display: flex;
         justify-content: center;
         padding: 40px 20px;
@@ -25,7 +25,7 @@
     }
 
     .onboarding-card {
-        background: #ffffff;
+        background: var(--bg-primary);
         border-radius: 16px;
         box-shadow: 0 4px 25px rgba(0,0,0,0.05);
         max-width: 800px;
@@ -36,10 +36,10 @@
     }
 
     .wizard-header {
-        background-color: var(--accent-primary, #285429);
+        background-color: var(--accent-primary);
         padding: 30px;
         text-align: center;
-        color: white;
+        color: var(--text-on-accent);
     }
 
     .wizard-title {
@@ -81,8 +81,8 @@
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background-color: #fff;
-        color: var(--accent-primary, #285429);
+        background-color: var(--bg-primary);
+        color: var(--accent-primary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -93,13 +93,13 @@
     }
 
     .step-node.completed .dot {
-        background-color: #81c784;
-        color: white;
+        background-color: var(--accent-highlight);
+        color: var(--text-on-accent);
     }
 
     .step-node.active .dot {
-        background-color: #faa625;
-        color: white;
+        background-color: var(--accent-orange);
+        color: var(--text-on-accent);
         transform: scale(1.2);
     }
 
@@ -117,10 +117,10 @@
 
     .step-title {
         font-size: 1.4rem;
-        color: #333;
+        color: var(--text-primary);
         margin-bottom: 25px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .form-grid-row {
@@ -138,30 +138,30 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: #555;
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 
     .form-control {
         width: 100%;
         padding: 12px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-input);
         border-radius: 8px;
         font-size: 1rem;
-        color: #333;
-        background-color: #fff;
+        color: var(--text-primary);
+        background-color: var(--bg-primary);
     }
     
     .form-control:focus {
         outline: none;
-        border-color: var(--accent-primary, #285429);
+        border-color: var(--accent-primary);
         box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
     }
 
     /* ID Upload Custom */
     .id-upload-box {
-        background-color: #f9f9f9;
-        border: 2px dashed #ccc;
+        background-color: var(--bg-secondary);
+        border: 2px dashed var(--border-input);
         padding: 30px;
         text-align: center;
         border-radius: 12px;
@@ -170,7 +170,7 @@
     }
     .id-upload-box:hover {
         border-color: var(--accent-primary);
-        background-color: #f0fdf4;
+        background-color: var(--bg-success-light);
     }
     .cloud-icon {
         font-size: 2.5rem;
@@ -187,8 +187,8 @@
 
     .btn-wizard {
         padding: 12px 30px;
-        background-color: var(--accent-primary, #285429);
-        color: white;
+        background-color: var(--accent-primary);
+        color: var(--text-on-accent);
         border: none;
         font-weight: bold;
         cursor: pointer;
@@ -199,16 +199,16 @@
     }
 
     .btn-wizard.btn-back {
-        background-color: #e0e0e0;
-        color: #555;
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
     }
 
     .btn-wizard:hover {
-        background-color: var(--accent-secondary, #2e7d32);
+        background-color: var(--accent-secondary);
         transform: translateY(-1px);
     }
     .btn-wizard.btn-back:hover {
-        background-color: #d0d0d0;
+        background-color: var(--bg-secondary);
     }
 
     @media (max-width: 768px) {
@@ -265,7 +265,7 @@
                 <div class="form-grid-row">
                     <div class="form-group">
                         <label>Email Address</label>
-                        <input type="text" class="form-control" value="{{ request.user.email }}" readonly style="background: #f0f0f0; color: #777;">
+                        <input type="text" class="form-control" value="{{ request.user.email }}" readonly>
                     </div>
                     <div class="form-group">
                         <label>Date of Birth</label>

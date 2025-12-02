@@ -535,7 +535,7 @@
 }
 
 .points-label {
-    color: var(--text-secondary);
+    color: var(--text-on-accent);
     margin-top: -8px;
     font-size: 0.9rem;
 }
