@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
+{% load tz %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
@@ -12,7 +14,6 @@
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
 
-        /* Shop Modal Styles */
         .shop-modal-container {
             max-width: 800px !important;
             width: 95% !important;
@@ -136,7 +137,22 @@
             background-color: var(--accent-secondary);
         }
 
-        /* Logout Modal Styles */
+        .clickable-loyalty-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .clickable-loyalty-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        .loyalty-bg .points-label {
+            color: white !important;
+            font-weight: 800;
+        }
+        .loyalty-bg .points-num {
+            font-weight: 800;
+        }
+
         .logout-modal-content {
             max-width: 350px !important;
             text-align: center;
@@ -184,6 +200,24 @@
         .btn-cancel-logout:hover { background: #e0e0e0; }
         .btn-confirm-logout:hover { background: #b71c1c; }
 
+        .loyalty-modal-container {
+            max-width: 900px !important;
+            width: 95% !important;
+            height: auto;
+            max-height: 90vh;
+        }
+        .loyalty-modal-content-override {
+            flex-direction: column !important;
+            height: auto !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            padding: 30px !important;
+            display: block !important;
+        }
+        .loyalty-modal-content-override .title {
+             font-size: 1.5rem;
+             margin-bottom: 10px;
+        }
 
         @media (max-width: 768px) {
             .shop-form-grid {
@@ -216,7 +250,7 @@
     <div class="nav-icons">
         {% if user.is_authenticated and user.role == 'VENDOR' %}
             <div class="cart-nav-container">
-                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                <a href="javascript:void(0)" onclick="openShopModal()" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
                     <svg class="cart-icon-svg" viewBox="0 0 24 24">
                         <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
                     </svg>
@@ -232,9 +266,8 @@
                 </a>
                 
                 <div class="cart-dropdown">
-                    <h4>Recently Added Products</h4>
-                    <div class="cart-dropdown-list" id="nav-cart-list">
-                    </div>
+                    <h4>Recent Products</h4>
+                    <div class="cart-dropdown-list" id="nav-cart-list"></div>
                     <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
                         <span class="cart-more-text" id="cart-more-text"></span>
                         <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
@@ -274,11 +307,11 @@
     <aside class="sidebar">
         <h2>Account Menu</h2>
         
-        <a href="{% url 'profile' %}" class="sidebar-btn active" style="text-decoration: none;">
+        <a href="{% url 'profile' %}" class="sidebar-btn active" id="profile-sidebar-link" style="text-decoration: none;">
             <span>My Account</span>
         </a>
 
-        <a href="{% url 'loyalty_rewards' %}" class="sidebar-btn" style="text-decoration: none;">
+        <a href="javascript:void(0)" onclick="openLoyaltyModal()" class="sidebar-btn" id="loyalty-sidebar-link" style="text-decoration: none;">
             <span>Loyalty Rewards</span>
         </a>
 
@@ -426,21 +459,33 @@
                     </div>
 
                     <div class="grid-column col-3">
-                        <div class="modern-card loyalty-bg">
+                        <div class="modern-card loyalty-bg clickable-loyalty-card" onclick="openLoyaltyModal()">
                             <div class="card-header no-border">
                                 <h3 style="color: white;">My Rewards</h3>
-                                <a href="{% url 'loyalty_rewards' %}" class="icon-link-white">➔</a>
+                                <span class="icon-link-white" style="cursor: pointer;">➔</span>
                             </div>
                             <div class="loyalty-body">
                                 <div class="points-circle">
-                                    <span class="points-num">{{ user.loyaltyprofile.points|default:"0" }}</span>
-                                    <span class="points-label">PTS</span>
+                                    <span class="points-num"><strong>{{ user.loyaltyprofile.points|default:"0" }}</strong></span>
+                                    <span class="points-label" style="font-weight: 800; color: white !important;">PTS</span>
                                 </div>
                                 <div class="rank-display">
                                     Current Rank: <strong>{{ user.loyaltyprofile.rank|default:"Bronze" }}</strong>
                                 </div>
                                 <div class="loyalty-progress-container">
-                                    <div class="loyalty-progress-bar" style="width: 40%;"></div> 
+                                    {% with points=user.loyaltyprofile.points|default:0 %}
+                                        {% if points < 50 %}
+                                            {% widthratio points 50 100 as progress_percent %}
+                                            <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%;"></div>
+                                        {% elif points < 150 %}
+                                            {% with shifted_points=points|add:"-50" %}
+                                                {% widthratio shifted_points 100 100 as progress_percent %}
+                                                <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%; background-color: var(--warning-color);"></div>
+                                            {% endwith %}
+                                        {% else %}
+                                            <div class="loyalty-progress-bar" style="width: 100%; background-color: var(--accent-secondary);"></div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
                                 <p class="loyalty-next">150 pts to Silver</p>
                             </div>
@@ -586,14 +631,104 @@
     </div>
 </div>
 
-<div id="logoutModal" class="settings-modal">
-    <div class="settings-modal-content logout-modal-content">
+<div class="modal-backdrop" id="logout-modal-backdrop" style="display: none;"></div>
+<div class="modal" id="logoutModal" style="display: none;">
+    <button class="modal-close" onclick="closeLogoutModal()">&times;</button>
+    <div class="modal-content logout-modal-content" style="display: block; padding: 30px;">
         <h2>Confirm Logout</h2>
-        <p>Are you sure you want to end your current session?</p>
+        <p style="color: var(--text-primary);">Are you sure you want to end your current session?</p>
         
         <div class="logout-actions">
             <button type="button" class="btn-cancel-logout" onclick="closeLogoutModal()">Cancel</button>
             <a href="{% url 'logout' %}" class="btn-confirm-logout">Yes, Log Out</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" id="loyalty-modal-backdrop" style="display: none;"></div>
+<div class="modal loyalty-modal-container" id="loyaltyModal" style="display: none;">
+    <button class="modal-close" onclick="closeLoyaltyModal()">&times;</button>
+    
+    <div class="modal-content loyalty-modal-content-override">
+        <h1 class="page-title" style="margin-top: 0;">Loyalty Rewards</h1>
+
+        <div class="modern-card loyalty-main-card" style="padding: 30px; margin-bottom: 30px;">
+
+            <div class="loyalty-card-flex">
+
+                <div class="loyalty-info">
+                    <h2 class="title">Your Points Balance</h2>
+
+                    <p class="loyalty-points"><strong>{{ user.loyaltyprofile.points|default:"0" }}</strong></p>
+                    <p class="points-label" style="font-weight: 800; color: white !important;">PTS</p>
+
+                    <p class="progress-msg">
+                        {% with points=user.loyaltyprofile.points|default:0 %}
+                            {% if points < 50 %}
+                                Earn <strong>{{ 50|add:"-"|add:points }}</strong> more points to reach <strong>Silver</strong> tier
+                            {% elif points < 150 %}
+                                Earn <strong>{{ 150|add:"-"|add:points }}</strong> more points to reach <strong>Gold</strong> tier
+                            {% else %}
+                                You reached the highest tier! 🎉
+                            {% endif %}
+                        {% endwith %}
+                    </p>
+
+                    <div class="progress-wrapper">
+                        {% with points=user.loyaltyprofile.points|default:0 %}
+                            {% if points < 50 %}
+                                {% widthratio points 50 100 as progress_percent %}
+                                <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%;"></div>
+                            {% elif points < 150 %}
+                                {% with shifted_points=points|add:"-50" %}
+                                    {% widthratio shifted_points 100 100 as progress_percent %}
+                                    <div class="loyalty-progress-bar" style="width: {{ progress_percent }}%; background-color: var(--warning-color);"></div>
+                                {% endwith %}
+                            {% else %}
+                                <div class="loyalty-progress-bar" style="width: 100%; background-color: var(--accent-secondary);"></div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="perks-box">
+                    <img src="{% static 'images/logo.png' %}" class="perk-img">
+                    <p class="perk-text">Exclusive<br>Member<br>Perks</p>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="modern-card" style="margin-bottom: 30px;">
+            <div class="card-header no-border">
+                <h3>Earn Points</h3>
+            </div>
+            <div class="card-body">
+                <p>• Message vendor for the first time <strong>+20</strong></p>
+                <p>• Unique product search <strong>+5</strong></p>
+            </div>
+        </div>
+
+        <div class="modern-card">
+            <div class="card-header no-border">
+                <h3>Redeem Rewards</h3>
+            </div>
+
+            <div class="card-body">
+                <form method="POST" action="{% url 'redeem_points' %}">
+                    {% csrf_token %}
+
+                    <select name="reward" class="reward-dropdown">
+                        <option value="5% Discount|150">5% Discount – 150 points</option>
+                        <option value="Free Delivery|300">Free Delivery – 300 points</option>
+                        <option value="VIP Badge|700">VIP Badge – 700 points</option>
+                    </select>
+
+                    <button type="submit" class="btn-redeem" style="width: 100%; padding: 14px; border-radius: 10px; border: none; background: var(--accent-secondary); color: var(--text-on-accent); font-weight: 700; font-size: 1.1rem; cursor: pointer;">
+                        Redeem
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -658,6 +793,23 @@
             if(inputs.length > 0) inputs[0].focus();
         }
     }
+    
+    function toggleSidebarLink(active) {
+        const loyaltyLink = document.getElementById('loyalty-sidebar-link');
+        const profileLink = document.getElementById('profile-sidebar-link').closest('.sidebar-btn');
+        if (active) {
+            if (profileLink.classList.contains('active')) {
+                profileLink.classList.remove('active');
+            }
+            loyaltyLink.classList.add('active');
+        } else {
+            loyaltyLink.classList.remove('active');
+            const isAnyOtherModalOpen = document.getElementById('shopModal').style.display === 'block' || document.getElementById('passwordModal').style.display === 'flex';
+            if (!isAnyOtherModalOpen) {
+                 profileLink.classList.add('active');
+            }
+        }
+    }
 
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
@@ -676,6 +828,18 @@
     }
     function closeLogoutModal() {
         document.getElementById('logoutModal').style.display = 'none'; 
+    }
+    
+    function openLoyaltyModal() {
+        document.getElementById('loyaltyModal').style.display = 'block';
+        document.getElementById('loyalty-modal-backdrop').style.display = 'block';
+        toggleSidebarLink(true);
+    }
+
+    function closeLoyaltyModal() {
+        document.getElementById('loyaltyModal').style.display = 'none';
+        document.getElementById('loyalty-modal-backdrop').style.display = 'none';
+        toggleSidebarLink(false);
     }
 </script>
 {% endblock %}
