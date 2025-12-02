@@ -98,18 +98,26 @@ def product_list_api(request):
             Q(description__icontains=query)
         )
 
-    # 2. Category Filter (List) using ArrayField Overlap
+    # 2. Category Filter (List) using ArrayField with OR logic
     if categories:
-        category_list = categories.split(',')
+        # Split by comma to get multiple selected categories from frontend
+        category_list = [cat.strip() for cat in categories.split(',') if cat.strip()]
         if category_list:
-            # Check if product categories overlap with selected categories
-            products_qs = products_qs.filter(category__overlap=category_list)
+            # Use Q objects with OR logic to show products that match ANY selected category
+            category_filter = Q()
+            for category in category_list:
+                category_filter |= Q(category__contains=[category])
+            products_qs = products_qs.filter(category_filter)
 
-    # 3. Location/Region Filter (List)
+    # 3. Location/Barangay Filter (List) - Filter by vendor's barangay
     if regions:
-        region_list = regions.split(',')
+        region_list = [barangay.strip() for barangay in regions.split(',')]
         if region_list:
-            products_qs = products_qs.filter(vendor__vendorprofile__region__in=region_list)
+            # Filter products by vendor's barangay field using case-insensitive partial matching
+            barangay_filter = Q()
+            for barangay in region_list:
+                barangay_filter |= Q(vendor__vendorprofile__barangay__icontains=barangay)
+            products_qs = products_qs.filter(barangay_filter)
 
     # 4. Price Range Filter
     if min_price:
@@ -140,7 +148,8 @@ def product_list_api(request):
             'image_url': image_url,
             'shop_name': shop_name,
             'vendor_id': product.vendor.pk,
-            'is_verified': is_verified, 
+            'is_verified': is_verified,
+            'is_seasonal': product.is_seasonal,
         })
         
     return JsonResponse({'products': products_data})
