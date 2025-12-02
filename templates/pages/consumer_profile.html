@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
-        /* Force search bar visibility in profile header but keep hidden visual style if desired, 
-           or use visibility:hidden as requested previously */
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
     </style>
@@ -34,9 +32,13 @@
 
     <div class="nav-icons">
         {% if user.role == 'VENDOR' %}
-            <a href="{% url 'product_list' %}">
-                <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
-            </a>
+            <div class="cart-nav-container">
+                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
+                </a>
+            </div>
         {% else %}
             <div class="cart-nav-container">
                 <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
@@ -332,19 +334,15 @@
         if(avatarInput){
             avatarInput.addEventListener('change', function(e) {
                 if (this.files && this.files[0]) {
-                    // 1. Update Preview
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         document.getElementById('avatar-preview').src = e.target.result;
                     }
                     reader.readAsDataURL(this.files[0]);
 
-                    // 2. Enable ALL fields before auto-submitting
-                    // (Important so Django doesn't think we are sending empty/missing data for required fields)
                     const allInputs = document.querySelectorAll('#profile-form input, #profile-form select');
                     allInputs.forEach(input => input.disabled = false);
 
-                    // 3. Submit form to save image
                     document.getElementById('profile-form').submit();
                 }
             });
