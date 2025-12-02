@@ -16,6 +16,7 @@
     --accent-primary: #285429; /* Main dark green */
     --accent-secondary: #2e7d32; /* Lighter action green */
     --accent-highlight: #6cdf6e; /* Brightest green */
+    --accent-orange: #faa625;
 
     --border-color: #ebebeb;
     --border-input: #cccccc;
@@ -48,6 +49,7 @@
     --accent-primary: #6cdf6e;
     --accent-secondary: #7fe093;
     --accent-highlight: #8affaa;
+    --accent-orange: #ffb84d;
 
     --border-color: #444444;
     --border-input: #555555;
@@ -81,6 +83,7 @@
     --accent-primary: #ffff00; /* Yellow */
     --accent-secondary: #ffff00;
     --accent-highlight: #00ff00; /* Bright green */
+    --accent-orange: #ff8800; /* High contrast orange */
 
     --border-color: #ffffff;
     --border-input: #ffffff;
@@ -114,8 +117,8 @@ body {
     position: absolute;
     top: -6px;
     right: -6px;
-    background-color: #ff0000;
-    color: white;
+    background-color: var(--danger-color);
+    color: var(--text-on-accent);
     border-radius: 50%;
     padding: 2px 4px;
     font-size: 10px;
@@ -133,8 +136,8 @@ body {
 /* ========================================= */
 
 .navbar, header {
-    background-color: #FFFFFF !important;
-    border-bottom: 1px solid #dddddd !important;
+    background-color: var(--bg-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
@@ -152,8 +155,8 @@ body {
     min-width: 180px; /* Ensure logo area is consistent */
 }
 
-.brand-green { color: #285429 !important; font-weight: 800 !important; }
-.brand-orange { color: #FAA625 !important; font-weight: 800 !important; }
+.brand-green { color: var(--accent-primary) !important; font-weight: 800 !important; }
+.brand-orange { color: var(--accent-orange) !important; font-weight: 800 !important; }
 
 /* 1. Main Search Container - ENFORCED UNIFORMITY */
 .search-bar {
@@ -171,8 +174,8 @@ body {
     height: 100% !important;
     width: 100% !important;
     max-width: 1100px !important; /* WIDER WIDTH (1100px) */
-    background-color: #ffffff !important;
-    border: 1px solid #e0e0e0 !important;
+    background-color: var(--bg-primary) !important;
+    border: 1px solid var(--border-color) !important;
     border-radius: 4px !important;
     display: flex !important;
     align-items: center !important;
@@ -198,7 +201,7 @@ body {
     background-color: transparent !important;
     border: none !important; 
     outline: none !important;
-    color: #333 !important;
+    color: var(--text-primary) !important;
     padding: 0 15px !important;
     font-size: 15px !important;
     border-radius: 0 !important;
@@ -208,9 +211,9 @@ body {
 .search-bar button {
     height: 100% !important;
     width: 60px !important; /* Wider button */
-    background-color: #285429 !important;
+    background-color: var(--accent-primary) !important;
     border: none !important;
-    color: white !important;
+    color: var(--text-on-accent) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -234,11 +237,11 @@ body {
     top: 125%; 
     left: 0; 
     width: 100%; 
-    background: #fff; 
+    background: var(--bg-primary); 
     border-radius: 12px; 
     padding: 15px; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-    border: 1px solid #eee; 
+    border: 1px solid var(--border-color); 
     z-index: 2000; 
     text-align: left;
 }
@@ -252,11 +255,11 @@ body {
 .search-card {
     display: inline-flex;
     align-items: center;
-    background-color: #f0f2f5;
+    background-color: var(--bg-accent);
     padding: 6px 12px;
     border-radius: 20px;
     text-decoration: none;
-    color: #333;
+    color: var(--text-primary);
     font-weight: 500;
     font-size: 0.9rem;
     transition: background-color 0.2s;
@@ -264,7 +267,7 @@ body {
 }
 
 .search-card:hover {
-    background-color: #e4e6eb;
+    background-color: var(--bg-secondary);
 }
 
 .history-icon {
@@ -278,15 +281,15 @@ body {
     margin-left: 8px;
     font-size: 16px;
     line-height: 1;
-    color: #999;
+    color: var(--text-secondary);
     cursor: pointer;
 }
-.search-card .delete-item-btn:hover { color: #dc3545; }
+.search-card .delete-item-btn:hover { color: var(--danger-color); }
 
 .dropdown-footer {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border-color);
     text-align: right;
 }
 
