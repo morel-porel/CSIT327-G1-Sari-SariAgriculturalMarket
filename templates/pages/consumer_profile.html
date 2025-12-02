@@ -10,6 +10,134 @@
     <style>
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
+
+        .shop-modal-content {
+            max-width: 800px !important;
+            padding: 0 !important;
+            background: var(--bg-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        .modal-header-row {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+
+        .modal-header-row h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .shop-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .shop-edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .shop-image-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .shop-img-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-tertiary);
+        }
+
+        .file-upload-wrapper {
+            flex: 1;
+        }
+
+        .shop-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group-shop {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group-shop label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group-shop input, 
+        .form-group-shop textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s;
+            font-family: var(--font-main);
+        }
+
+        .form-group-shop input:focus,
+        .form-group-shop textarea:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .btn-save-shop {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-save-shop:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .shop-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -33,10 +161,8 @@
     <div class="nav-icons">
         {% if user.role == 'VENDOR' %}
             <div class="cart-nav-container">
-                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
-                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
-                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
-                    </svg>
+                <a href="javascript:void(0)" onclick="openShopModal()" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon" style="width: 26px; height: 26px;">
                 </a>
             </div>
         {% else %}
@@ -167,11 +293,11 @@
                         <div class="modern-card promo-card">
                             {% if user.role == 'VENDOR' %}
                                 <div class="card-body">
-                                    <h3>Manage Your Shop</h3>
-                                    <p>Check your orders, add products, and view your sales performance.</p>
-                                    <a href="{% url 'vendor_profile' %}" class="btn-full-width btn-vendor">
-                                        Go to Shop Dashboard
-                                    </a>
+                                    <h3>{{ user.vendorprofile.shop_name|default:"My Shop" }}</h3>
+                                    <p>Manage your inventory, update your profile, and track your sales performance.</p>
+                                    <button type="button" class="btn-full-width btn-vendor" onclick="openShopModal()">
+                                        Manage Shop
+                                    </button>
                                 </div>
                             {% else %}
                                 <div class="card-body">
@@ -325,6 +451,83 @@
     </div>
 </div>
 
+<div id="shopModal" class="settings-modal">
+    <div class="settings-modal-content shop-modal-content">
+        <div class="modal-header-row">
+            <h2>Edit Shop Profile</h2>
+            <span class="settings-close-modal" onclick="closeShopModal()">&times;</span>
+        </div>
+        
+        <div class="shop-modal-body">
+            <form action="{% url 'vendor_profile' %}" method="POST" enctype="multipart/form-data" class="shop-edit-form">
+                {% csrf_token %}
+                
+                <div class="shop-image-section">
+                    {% if user.vendorprofile.profile_image %}
+                        <img src="{{ user.vendorprofile.profile_image.url }}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% else %}
+                        <img src="{% static 'icons/placeholder.png' %}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% endif %}
+                    
+                    <div class="file-upload-wrapper">
+                        <label for="shop_image_input" style="font-weight: 600; cursor: pointer; color: var(--accent-primary);">Upload New Logo</label>
+                        <input type="file" name="profile_image" id="shop_image_input" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div class="shop-form-grid">
+                    <div class="form-group-shop">
+                        <label>Shop Name</label>
+                        <input type="text" name="shop_name" value="{{ user.vendorprofile.shop_name }}" required>
+                    </div>
+                    
+                    <div class="form-group-shop">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact_number" value="{{ user.vendorprofile.contact_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Business Permit No.</label>
+                        <input type="text" name="business_permit_number" value="{{ user.vendorprofile.business_permit_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Years of Experience</label>
+                        <input type="number" name="experience_years" value="{{ user.vendorprofile.experience_years|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Pickup Address</label>
+                        <input type="text" name="pickup_address" value="{{ user.vendorprofile.pickup_address|default:'' }}" placeholder="Street / House No.">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Barangay</label>
+                        <input type="text" name="barangay" value="{{ user.vendorprofile.barangay|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>City</label>
+                        <input type="text" name="city" value="{{ user.vendorprofile.city|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Shop Description</label>
+                        <textarea name="shop_description" rows="3">{{ user.vendorprofile.shop_description|default:'' }}</textarea>
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Farming/Business Practices</label>
+                        <textarea name="farming_practices" rows="3">{{ user.vendorprofile.farming_practices|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save-shop">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.field-wrapper input');
@@ -344,6 +547,19 @@
                     allInputs.forEach(input => input.disabled = false);
 
                     document.getElementById('profile-form').submit();
+                }
+            });
+        }
+
+        const shopImgInput = document.getElementById('shop_image_input');
+        if(shopImgInput){
+            shopImgInput.addEventListener('change', function(e){
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('shop-img-preview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
                 }
             });
         }
@@ -375,5 +591,8 @@
 
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+
+    function openShopModal() { document.getElementById('shopModal').style.display = 'flex'; }
+    function closeShopModal() { document.getElementById('shopModal').style.display = 'none'; }
 </script>
 {% endblock %}
