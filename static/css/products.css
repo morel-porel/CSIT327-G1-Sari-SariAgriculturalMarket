@@ -6,6 +6,7 @@ body, html {
 body {
     background-color: var(--bg-secondary);
     font-family: var(--font-main);
+    color: var(--text-primary);
 }
 
 .navbar {
@@ -85,19 +86,22 @@ body {
 }
 
 .btn-danger {
-    background-color: #ffebee;
+    background-color: var(--bg-tertiary);
     color: var(--danger-color);
 }
 .btn-danger:hover {
-    background-color: #ffcdd2;
+    background-color: var(--danger-color);
+    color: var(--text-on-accent);
 }
 
 .btn-info {
-    background-color: #e3f2fd;
-    color: #0277bd;
+    background-color: var(--bg-tertiary);
+    color: var(--info-color);
+    border: 1px solid var(--info-color);
 }
 .btn-info:hover {
-    background-color: #b3e5fc;
+    background-color: var(--info-color);
+    color: var(--text-on-accent);
 }
 
 .btn-secondary {
@@ -107,7 +111,7 @@ body {
 }
 .btn-secondary:hover {
     color: var(--text-primary);
-    background-color: #f5f5f5;
+    background-color: var(--bg-tertiary);
 }
 
 .card {
@@ -134,7 +138,7 @@ body {
     color: var(--text-secondary);
     text-transform: uppercase;
     font-size: 0.8rem;
-    background-color: #fafafa;
+    background-color: var(--bg-secondary);
 }
 
 .product-table tr:last-child td {
@@ -200,10 +204,10 @@ body {
 .product-form-card select {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-input);
     border-radius: 8px;
     font-size: 1rem;
-    background-color: #fff;
+    background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
@@ -223,13 +227,14 @@ body {
 }
 
 .file-input-wrapper input[type="file"] {
-    border: 1px dashed #ccc;
-    background-color: #f9f9f9;
+    border: 1px dashed var(--border-input);
+    background-color: var(--bg-secondary);
     padding: 10px;
     cursor: pointer;
+    color: var(--text-primary);
 }
 .file-input-wrapper input[type="file"]:hover {
-    background-color: #f0fdf4;
+    background-color: var(--success-light);
     border-color: var(--accent-primary);
 }
 
@@ -246,8 +251,8 @@ body {
     display: flex;
     align-items: center;
     padding: 12px 15px;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -258,7 +263,7 @@ body {
 
 .category-checkboxes label:hover {
     border-color: var(--accent-primary);
-    background-color: #f9fff9;
+    background-color: var(--bg-success-light);
 }
 
 .category-checkboxes input[type="checkbox"] {
@@ -266,14 +271,14 @@ body {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #ccc;
+    border: 2px solid var(--border-input);
     border-radius: 4px;
     margin-right: 12px;
     position: relative;
     cursor: pointer;
     transition: all 0.2s ease;
     flex-shrink: 0;
-    background-color: #fff;
+    background-color: var(--bg-primary);
 }
 
 .category-checkboxes input[type="checkbox"]:checked {
@@ -288,14 +293,14 @@ body {
     top: 1px;
     width: 6px;
     height: 12px;
-    border: solid white;
+    border: solid var(--text-on-accent);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
 .category-checkboxes label:has(input:checked) {
     border-color: var(--accent-primary);
-    background-color: #e8f5e9;
+    background-color: var(--bg-success-light);
     color: var(--accent-primary);
     font-weight: 600;
 }
@@ -308,12 +313,12 @@ body {
 }
 
 .alert-error {
-    background-color: #ffebee;
+    background-color: var(--bg-tertiary);
     color: var(--danger-color);
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 25px;
-    border: 1px solid #ffcdd2;
+    border: 1px solid var(--danger-color);
 }
 
 .form-actions {
@@ -322,7 +327,7 @@ body {
     justify-content: flex-end;
     gap: 15px;
     padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border-color);
 }
 
 .empty-state {
