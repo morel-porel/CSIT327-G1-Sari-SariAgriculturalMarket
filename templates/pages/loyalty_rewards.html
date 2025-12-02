@@ -3,81 +3,90 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/loyalty_rewards.css' %}">
 
-<div class="loyalty-container">
+<div class="profile-page-wrapper">
 
-    <!-- Back + Page Title -->
-    <div class="loyalty-header" style="text-align:left; display:flex; align-items:center; gap:10px;">
-        <a href="{% url 'profile' %}" style="color:var(--text-primary); font-size:22px;">←</a>
-        <h1 style="margin:0;">Loyalty Rewards</h1>
-    </div>
+    <div class="profile-grid-layout">
 
-    <!-- MAIN POINTS CARD -->
-    <div class="loyalty-card" style="max-width:900px; width:100%; margin:auto;">
+        <!-- BACK BUTTON (full width on top) -->
+        <div class="grid-column" style="grid-column: span 3; margin-bottom: -10px;">
+            <a href="{% url 'profile' %}" class="back-link">← Back to Profile</a>
+            <h1 class="page-title">Loyalty Rewards</h1>
+        </div>
 
-        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-            <div>
-                <h2 style="font-size: 67;">Your Points Balance</h2>
-                <p class="loyalty-points">{{ loyalty.points }}</p>
-                <h3 style="font-size: 30;">Total points</h3>
+        <!-- MAIN CONTENT – CENTER COLUMN ONLY -->
+        <div class="grid-column" style="grid-column: span 3; max-width: 900px; margin:auto;">
 
-                <p style="font-size:13px; margin-top:5px; color:#000000;">
-                    {% if next_tier %}
-                        Earn <strong>{{ points_needed }}</strong> more points for <strong>{{ next_tier }}</strong> tier
-                    {% else %}
-                        You reached the highest tier! 🎉
-                    {% endif %}
-                </p>
+            <!-- POINTS CARD -->
+            <div class="modern-card loyalty-main-card">
 
-                {% comment %} Example: calculate % for progress bar {% endcomment %}
-                {% with progress=loyalty.points|divisibleby:150 %}
-                {% endwith %}
+                <div class="loyalty-card-flex">
 
-                <div class="progress-wrapper">
-                    <div class="progress-bar" style="width:{{ loyalty.points|floatformat:0 }}px; "></div>
+                    <div class="loyalty-info">
+                        <h2 class="title">Your Points Balance</h2>
+
+                        <p class="loyalty-points">{{ loyalty.points }}</p>
+                        <p class="points-label">Total Points</p>
+
+                        <p class="progress-msg">
+                            {% if next_tier %}
+                                Earn <strong>{{ points_needed }}</strong> more points to reach <strong>{{ next_tier }}</strong> tier
+                            {% else %}
+                                You reached the highest tier! 🎉
+                            {% endif %}
+                        </p>
+
+                        <!-- PROGRESS BAR -->
+                        <div class="progress-wrapper">
+                            <div class="progress-bar-fill" style="width: {{ progress_percentage }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="perks-box">
+                        <img src="{% static 'images/logo.png' %}" class="perk-img">
+                        <p class="perk-text">Exclusive<br>Member<br>Perks</p>
+                    </div>
+
                 </div>
             </div>
 
-<div class="perks-box">
-    <img src="{% static 'images/logo.png' %}" style="width:115px; border-radius: 20px;">
-    <br>
-    <p style="font-size:20px" > Exclusive<br>Member <br> Perks</p>
-</div>
+            <!-- EARN POINTS -->
+            <div class="modern-card">
+                <div class="card-header no-border">
+                    <h3>Earn Points</h3>
+                </div>
+                <div class="card-body">
+                    <p>• Message vendor for the first time <strong>+20</strong></p>
+                    <p>• Unique product search <strong>+5</strong></p>
+                </div>
+            </div>
+
+            <!-- REDEEM REWARDS -->
+            <div class="modern-card">
+                <div class="card-header no-border">
+                    <h3>Redeem Rewards</h3>
+                </div>
+
+                <div class="card-body">
+                    <form method="POST" action="{% url 'redeem_points' %}">
+                        {% csrf_token %}
+
+                        <select name="reward" class="reward-dropdown">
+                            <option value="5% Discount|150">5% Discount – 150 points</option>
+                            <option value="Free Delivery|300">Free Delivery – 300 points</option>
+                            <option value="VIP Badge|700">VIP Badge – 700 points</option>
+                        </select>
+
+                        <button type="submit" class="btn-redeem">
+                            Redeem
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         </div>
     </div>
-
-    <!-- ROW: Recent Activity + Earn Points -->
-    <div style="display:flex; gap:20px; flex-wrap:wrap; max-width:900px; margin:auto;">
-
-        <!-- Earn Points -->
-        <div class="reward-item" style="flex:1; min-width:350px; min-height: 150px;">
-            <h3 style="font-size:30px">Earn Points</h3>
-            <br>
-            <p style="font-size:15px">• Message vendor first time  <strong>+20</strong></p>
-            <p style="font-size:15px">• Unique product search  <strong>+5</strong></p>
-        </div>
-    </div>
-
-
-    <!-- REDEEM SECTION -->
-    <div id="redeem-section" style="max-width:900px; margin:auto;">
-        <h2>Redeem Rewards</h2>
-
-        <form method="POST" action="{% url 'redeem_points' %}">
-            {% csrf_token %}
-
-            <select name="reward" 
-                    style="padding:12px; border-radius:8px; border:1px solid var(--border-color); width:100%; margin-bottom:20px;">
-                <option value="5% Discount|150">5% Discount – 150 points</option>
-                <option value="Free Delivery|300">Free Delivery – 300 points</option>
-                <option value="VIP Badge|700">VIP Badge – 700 points</option>
-            </select>
-
-            <button type="submit" class="btn-redeem">Redeem</button>
-        </form>
-    </div>
-
 </div>
 
 {% endblock %}
