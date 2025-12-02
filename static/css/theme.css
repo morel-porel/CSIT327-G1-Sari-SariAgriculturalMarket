@@ -31,6 +31,10 @@
 
     /* ADDED: Font Variable Definition */
     --font-main: 'Noto Sans', sans-serif;
+
+    --promo-bg-start: #ffffff;  /* White gradient start */
+    --promo-bg-end: #fffde7;    /* Light cream/yellow end */
+    --promo-border: #fff9c4;    /* Soft yellow border */
 }
 
 /* --- 2. DARK THEME OVERRIDES --- */
@@ -65,6 +69,10 @@
     .nav-icon, .search-icon, .alert-icon {
         filter: invert(1) brightness(1.5);
     }
+
+    --promo-bg-start: #2a2a2a;  /* Dark gray start */
+    --promo-bg-end: #3a3a2a;    /* Darker olive end */
+    --promo-border: #555530;    /* Muted yellow border */
 }
 
 /* --- 3. HIGH CONTRAST THEME OVERRIDES --- */
@@ -99,6 +107,10 @@
     .nav-icon, .search-icon, .alert-icon {
         filter: invert(1);
     }
+
+    --promo-bg-start: #000000;  /* Pure black start */
+    --promo-bg-end: #1a1a00;    /* Very dark yellow end */
+    --promo-border: #ffff00;    /* Bright yellow border */
 }
 
 body {

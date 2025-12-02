@@ -18,13 +18,13 @@
     display: flex;
     flex-direction: row;
     padding: 0;
-    background: #fff;
+    background: var(--bg-primary);
     height: 500px;
 }
 
 .modal-image {
     flex: 1.2;
-    background-color: #ffffff;
+    background-color: var(--bg-accent);
     position: relative;
     overflow: hidden;
     margin-bottom: 0;
@@ -54,7 +54,7 @@
     top: 15px;
     right: 20px;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--bg-secondary);
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -62,20 +62,20 @@
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    color: #333;
+    color: var(--text-primary);
     transition: all 0.2s;
 }
 
 .modal-close:hover {
-    background: #fff;
-    color: #d32f2f;
+    background: var(--bg-accent);
+    color: var(--danger-color);
     transform: rotate(90deg);
 }
 
 .modal-category-badge {
     display: inline-block;
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: var(--bg-success-light);
+    color: var(--accent-secondary);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -91,18 +91,18 @@
     font-size: 2.2rem;
     line-height: 1.1;
     margin-bottom: 5px;
-    color: #1a1a1a;
+    color: var(--text-primary);
     font-weight: 800;
 }
 
 .modal-vendor {
     font-size: 0.95rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 20px;
 }
 
 .modal-vendor a {
-    color: #285429;
+    color: var(--accent-primary);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s;
@@ -115,7 +115,7 @@
 .modal-price {
     font-size: 2rem;
     font-weight: 800;
-    color: #285429;
+    color: var(--accent-primary);
     margin-bottom: 20px;
     letter-spacing: -0.5px;
 }
@@ -123,7 +123,7 @@
 .modal-description {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: #555;
+    color: var(--text-secondary);
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: 20px;
@@ -132,7 +132,7 @@
 
 .stock-indicator {
     font-size: 0.85rem;
-    color: #777;
+    color: var(--text-secondary);
     margin-bottom: 25px;
     display: flex;
     align-items: center;
@@ -144,7 +144,7 @@
     display: block;
     width: 8px;
     height: 8px;
-    background-color: #4caf50;
+    background-color: var(--accent-secondary);
     border-radius: 50%;
 }
 
@@ -154,21 +154,21 @@
     align-items: center;
     margin-top: auto;
     padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border-color);
 }
 
 .action-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 1px solid #e0e0e0;
-    background: #fff;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    color: #555;
+    color: var(--text-secondary);
     position: relative;
     text-decoration: none;
 }
@@ -185,21 +185,21 @@
 }
 
 .action-btn.chat:hover {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    border-color: #1976d2;
+    background-color: var(--info-color);
+    color: var(--text-on-accent);
+    border-color: var(--info-color);
 }
 
 .action-btn.cart:hover {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border-color: #2e7d32;
+    background-color: var(--bg-success-light);
+    color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
 }
 
 .action-btn.share:hover {
-    background-color: #fff3e0;
-    color: #f57c00;
-    border-color: #f57c00;
+    background-color: var(--promo-border);
+    color: var(--accent-orange);
+    border-color: var(--accent-orange);
 }
 
 .action-btn::after {
@@ -208,8 +208,8 @@
     bottom: 125%;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    background-color: #333;
-    color: #fff;
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 0.75rem;
@@ -232,11 +232,11 @@
     bottom: 70px;
     left: 50%; 
     transform: translateX(-50%);
-    background: white;
+    background: var(--bg-primary);
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
     z-index: 20;
     display: none;
     flex-direction: column;
@@ -246,18 +246,18 @@
 }
 
 .share-popover button {
-    background: #f9f9f9;
+    background: var(--bg-secondary);
     border: none;
     padding: 8px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    color: #555;
+    color: var(--text-primary);
     transition: background 0.2s;
 }
 
 .share-popover button:hover {
-    background: #e0e0e0;
+    background: var(--bg-accent);
 }
 
 @keyframes fadeIn {
