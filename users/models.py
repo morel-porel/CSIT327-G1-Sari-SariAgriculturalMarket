@@ -20,6 +20,34 @@ class CustomUser(AbstractUser):
     
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.CONSUMER)
     
+    # Warning and suspension system for moderation
+    warning_count = models.IntegerField(default=0, help_text="Number of warnings received")
+    suspension_count = models.IntegerField(default=0, help_text="Number of times suspended (max 3)")
+    is_suspended = models.BooleanField(default=False, help_text="Currently suspended")
+    suspension_end_date = models.DateTimeField(null=True, blank=True, help_text="When suspension will be lifted")
+    is_permanently_banned = models.BooleanField(default=False, help_text="Permanently banned (3rd suspension)")
+    
+    def is_suspension_active(self):
+        """Check if user is currently under active suspension"""
+        if self.is_permanently_banned:
+            return True
+        if self.is_suspended and self.suspension_end_date:
+            from django.utils import timezone
+            return timezone.now() < self.suspension_end_date
+        return False
+    
+    def lift_suspension_if_expired(self):
+        """Automatically lift suspension if time has passed"""
+        if self.is_suspended and self.suspension_end_date and not self.is_permanently_banned:
+            from django.utils import timezone
+            if timezone.now() >= self.suspension_end_date:
+                self.is_suspended = False
+                self.suspension_end_date = None
+                self.is_active = True
+                self.save()
+                return True
+        return False
+    
 class VendorProfile(models.Model):
     # --- Region Choices for Cebu, Philippines ---
     class Region(models.TextChoices):

@@ -163,6 +163,15 @@ def clear_search_history_api(request):
 @login_required
 @require_POST
 def checkout_api(request):
+    from users.suspension_utils import can_user_checkout
+    
+    # Check if user can checkout (not suspended at level 2+)
+    if not can_user_checkout(request.user):
+        return JsonResponse({
+            'status': 'error',
+            'message': 'You cannot checkout while your account is suspended. Please contact support.'
+        }, status=403)
+    
     try:
         data = json.loads(request.body)
         grouped_orders = data.get('orders', [])

@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Account Suspended{% endblock %}
+
+{% block extra_css %}
+<style>
+    .suspension-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .suspension-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .suspension-icon {
+        font-size: 80px;
+        margin-bottom: 1rem;
+    }
+    
+    .suspension-title {
+        font-size: 2rem;
+        color: #dc3545;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .suspension-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .suspension-details {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    .detail-value {
+        color: #6b7280;
+    }
+    
+    .penalties-section {
+        margin: 2rem 0;
+    }
+    
+    .penalty-item {
+        background: #fef2f2;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 6px;
+        border-left: 3px solid #dc3545;
+    }
+    
+    .contact-box {
+        background: #285429;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .btn-contact {
+        background: white;
+        color: #285429;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="suspension-container">
+    <div class="suspension-header">
+        <div class="suspension-icon">
+            {% if user.is_permanently_banned %}
+                🚫
+            {% else %}
+                ⛔
+            {% endif %}
+        </div>
+        <h1 class="suspension-title">
+            {% if user.is_permanently_banned %}
+                Account Permanently Banned
+            {% else %}
+                Account Suspended
+            {% endif %}
+        </h1>
+        <p class="suspension-subtitle">Your account has been restricted due to community guideline violations</p>
+    </div>
+    
+    <div class="suspension-details">
+        <div class="detail-row">
+            <span class="detail-label">Account Status:</span>
+            <span class="detail-value">
+                {% if user.is_permanently_banned %}
+                    <strong style="color: #991b1b;">Permanently Banned</strong>
+                {% else %}
+                    <strong style="color: #dc3545;">Suspended</strong>
+                {% endif %}
+            </span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Warnings Received:</span>
+            <span class="detail-value">{{ user.warning_count }}/2</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Suspensions:</span>
+            <span class="detail-value">{{ user.suspension_count }}/3</span>
+        </div>
+        {% if not user.is_permanently_banned and user.suspension_end_date %}
+        <div class="detail-row">
+            <span class="detail-label">Suspension Ends:</span>
+            <span class="detail-value">{{ user.suspension_end_date|date:"F d, Y g:i A" }}</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not user.is_permanently_banned %}
+    <div class="penalties-section">
+        <h3 style="color: #374151; margin-bottom: 1rem;">Current Penalties:</h3>
+        
+        {% if user.role == 'VENDOR' %}
+            {% if user.suspension_count == 1 %}
+                <div class="penalty-item">
+                    ❌ Cannot add or edit products during suspension
+                </div>
+                <div class="penalty-item">
+                    🕐 Suspension duration: 2 days
+                </div>
+            {% elif user.suspension_count == 2 %}
+                <div class="penalty-item">
+                    ❌ Vendor account unverified
+                </div>
+                <div class="penalty-item">
+                    🗑️ All products have been removed
+                </div>
+                <div class="penalty-item">
+                    ⏳ Must wait 1 week before reapplying for verification
+                </div>
+            {% endif %}
+        {% elif user.role == 'CONSUMER' %}
+            {% if user.suspension_count >= 1 %}
+                <div class="penalty-item">
+                    💰 100 loyalty points deducted
+                </div>
+            {% endif %}
+            {% if user.suspension_count == 2 %}
+                <div class="penalty-item">
+                    🛒 Cannot checkout or purchase products
+                </div>
+                <div class="penalty-item">
+                    💰 Additional 100 loyalty points deducted (200 total)
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    
+    <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; border-left: 3px solid #f59e0b; margin: 2rem 0;">
+        <strong>⚠️ Important:</strong> One more suspension (3rd) will result in permanent account ban.
+    </div>
+    {% else %}
+    <div style="background: #fef2f2; padding: 1.5rem; border-radius: 6px; border-left: 3px solid #991b1b; margin: 2rem 0;">
+        <strong style="color: #991b1b;">Account Permanently Banned</strong>
+        <p style="color: #6b7280; margin-top: 0.5rem;">This action cannot be reversed due to repeated serious violations.</p>
+    </div>
+    {% endif %}
+    
+    <div class="contact-box">
+        <h3 style="margin-bottom: 0.5rem;">Need Help?</h3>
+        <p style="opacity: 0.9;">If you believe this action was taken in error, please contact our support team.</p>
+        <button class="btn-contact" onclick="window.location.href='/about/'">Contact Support</button>
+    </div>
+</div>
+{% endblock %}

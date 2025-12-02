@@ -1,0 +1,218 @@
+{% extends 'dashboard/admin_layout_base.html' %}
+{% load static %}
+
+{% block title %}Vendor Management{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/reports.css' %}">
+{% endblock %}
+
+{% block panel_content %}
+
+    <div class="report-header">
+        <h2 class="section-title">Vendor Management</h2>
+        <div class="filter-bar">
+            <input type="text" placeholder="Search vendors..." id="search-vendors">
+            <button class="btn-filter" type="button" onclick="filterVendors()">Filter</button>
+        </div>
+    </div>
+
+    <form method="POST" class="report-form" id="bulk-action-form">
+        {% csrf_token %}
+        
+        <!-- Bulk Action Bar -->
+        <div style="margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 8px; display: flex; align-items: center; gap: 1rem;">
+            <label for="bulk-action-select" style="font-weight: 600; color: #285429;">Action:</label>
+            <select name="bulk_action" id="bulk-action-select" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; flex: 1; max-width: 400px;">
+                <option value="">---------</option>
+                <option value="suspend_1">1st Suspension (2 days - Cannot add/edit products)</option>
+                <option value="suspend_2">2nd Suspension (1 week - Unverify & delete products)</option>
+                <option value="ban">Permanent Ban (3rd suspension)</option>
+                <option value="lift_suspension">Lift Suspension (Remove penalties)</option>
+                <option value="reset_warnings">Reset Warnings to 0</option>
+            </select>
+            <button type="submit" class="btn-filter" style="padding: 0.5rem 1.5rem; background: #285429; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: 600;">Go</button>
+            <span id="selection-count" style="color: #666; font-size: 0.9rem;">0 selected</span>
+        </div>
+        
+        <div class="table-container">
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">
+                            <input type="checkbox" id="select-all" title="Select All">
+                        </th>
+                        <th>Shop Name</th>
+                        <th>Vendor Name</th>
+                        <th>Email</th>
+                        <th>Region</th>
+                        <th>Date Joined</th>
+                        <th>Verified</th>
+                        <th>Products</th>
+                        <th>Warnings</th>
+                        <th>Suspensions</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vendor in vendors %}
+                    <tr data-vendor-id="{{ vendor.user.id }}">
+                        <td>
+                            <input type="checkbox" name="selected_vendors" value="{{ vendor.user.id }}" class="vendor-checkbox">
+                        </td>
+                        <td><strong>{{ vendor.shop_name }}</strong></td>
+                        <td>{{ vendor.user.get_full_name|default:vendor.user.username }}</td>
+                        <td>{{ vendor.user.email }}</td>
+                        <td>{{ vendor.get_region_display|default:"N/A" }}</td>
+                        <td>{{ vendor.user.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            {% if vendor.is_verified %}
+                                <span style="color: #2e7d32; font-weight: 600;">✓ Verified</span>
+                            {% else %}
+                                <span style="color: #666;">✗ Not Verified</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ vendor.product_count }}</td>
+                        <td>
+                            <span style="padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600; font-size: 0.85rem;
+                                {% if vendor.user.warning_count == 0 %}
+                                    background: #d1fae5; color: #065f46;
+                                {% elif vendor.user.warning_count == 1 %}
+                                    background: #fef3c7; color: #92400e;
+                                {% else %}
+                                    background: #fee2e2; color: #991b1b;
+                                {% endif %}">
+                                {{ vendor.user.warning_count }}/2
+                            </span>
+                        </td>
+                        <td>
+                            <span style="padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600; font-size: 0.85rem;
+                                {% if vendor.user.suspension_count == 0 %}
+                                    background: #d1fae5; color: #065f46;
+                                {% elif vendor.user.suspension_count == 1 %}
+                                    background: #fef3c7; color: #92400e;
+                                {% elif vendor.user.suspension_count == 2 %}
+                                    background: #fed7aa; color: #9a3412;
+                                {% else %}
+                                    background: #fee2e2; color: #991b1b;
+                                {% endif %}">
+                                {{ vendor.user.suspension_count }}/3
+                            </span>
+                        </td>
+                        <td>
+                            {% if vendor.user.is_permanently_banned %}
+                                <span style="padding: 0.25rem 0.75rem; border-radius: 12px; background: #991b1b; color: white; font-weight: 600; font-size: 0.85rem;">
+                                    🚫 BANNED
+                                </span>
+                            {% elif vendor.user.is_suspended %}
+                                <span style="padding: 0.25rem 0.75rem; border-radius: 12px; background: #dc3545; color: white; font-weight: 600; font-size: 0.85rem;">
+                                    ⛔ SUSPENDED
+                                </span>
+                                {% if vendor.user.suspension_end_date %}
+                                    <br><small style="color: #666;">Until {{ vendor.user.suspension_end_date|date:"M d, Y" }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span style="padding: 0.25rem 0.75rem; border-radius: 12px; background: #2e7d32; color: white; font-weight: 600; font-size: 0.85rem;">
+                                    ✓ ACTIVE
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" style="text-align: center; padding: 2rem; color: #666;">No vendors found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+    
+    <div class="report-footer-buttons">
+        <button type="button" class="btn-export-reports" onclick="window.location.reload()">Refresh Data</button>
+        <button type="button" class="btn-export-reports" onclick="alert('CSV export feature coming soon!')">Export CSV</button>
+    </div>
+
+    <script>
+        // Select All functionality
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.vendor-checkbox');
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateSelectionCount();
+        });
+        
+        // Update selection count
+        document.querySelectorAll('.vendor-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectionCount);
+        });
+        
+        function updateSelectionCount() {
+            const count = document.querySelectorAll('.vendor-checkbox:checked').length;
+            document.getElementById('selection-count').textContent = count + ' of ' + 
+                document.querySelectorAll('.vendor-checkbox').length + ' selected';
+        }
+        
+        // Form submission validation
+        document.getElementById('bulk-action-form').addEventListener('submit', function(e) {
+            const action = document.getElementById('bulk-action-select').value;
+            const selectedCheckboxes = document.querySelectorAll('.vendor-checkbox:checked');
+            
+            if (!action) {
+                e.preventDefault();
+                alert('Please select an action from the dropdown.');
+                return false;
+            }
+            
+            if (selectedCheckboxes.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one vendor to perform this action.');
+                return false;
+            }
+            
+            // Confirmation messages
+            let confirmMsg = '';
+            if (action === 'suspend_1') {
+                confirmMsg = `Apply 1st Suspension (2 days) to ${selectedCheckboxes.length} vendor(s)? They will not be able to add/edit products.`;
+            } else if (action === 'suspend_2') {
+                confirmMsg = `Apply 2nd Suspension (1 week) to ${selectedCheckboxes.length} vendor(s)? Their accounts will be UNVERIFIED and ALL PRODUCTS DELETED. This cannot be undone!`;
+            } else if (action === 'ban') {
+                confirmMsg = `PERMANENTLY BAN ${selectedCheckboxes.length} vendor(s)? This is the 3rd suspension and CANNOT BE REVERSED!`;
+            } else if (action === 'lift_suspension') {
+                confirmMsg = `Lift suspension for ${selectedCheckboxes.length} vendor(s)? This will restore their access.`;
+            } else if (action === 'reset_warnings') {
+                confirmMsg = `Reset warnings to 0 for ${selectedCheckboxes.length} vendor(s)?`;
+            }
+            
+            if (confirmMsg && !confirm(confirmMsg)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        function filterVendors() {
+            const searchInput = document.getElementById('search-vendors').value.toLowerCase();
+            const rows = document.querySelectorAll('.report-table tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Allow filtering on Enter key
+        document.getElementById('search-vendors').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                filterVendors();
+            }
+        });
+        
+        // Initialize selection count
+        updateSelectionCount();
+    </script>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'dashboard/admin_layout_base.html' %}
+{% load static %}
+
+{% block title %}Reported Messages{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dashboard/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/reports.css' %}">
+{% endblock %}
+
+{% block panel_content %}
+
+    <div class="report-header">
+        <h2 class="section-title">Reported Messages</h2>
+        <div class="filter-bar">
+            <input type="text" placeholder="Search Reports..." id="search-reports">
+            <button class="btn-filter" onclick="filterReports()">Filter</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Reported Message</th>
+                    <th>Sender</th>
+                    <th>Reason</th>
+                    <th>Reported By</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr class="{% if report.is_resolved %}is-resolved{% endif %}">
+                    <td>{{ report.id }}</td>
+                    <td class="message-content">"{{ report.message.text_content|truncatechars:100 }}"</td>
+                    <td>
+                        <strong>{{ report.message.sender.username }}</strong>
+                        <br>
+                        <small style="color: {% if report.message.sender.is_suspended %}#dc3545{% elif report.message.sender.warning_count > 0 %}#faa625{% else %}#666{% endif %};">
+                            {% if report.message.sender.is_suspended %}
+                                ⛔ SUSPENDED
+                            {% else %}
+                                ⚠️ Warnings: {{ report.message.sender.warning_count }}/2
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td>{{ report.reason|truncatechars:50 }}</td>
+                    <td>{{ report.reporter.username }}</td>
+                    <td>{{ report.reported_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if report.is_resolved %}
+                            <span class="status-resolved">Resolved</span>
+                            {% if report.moderation_action != 'none' %}
+                                <br><small>({{ report.get_moderation_action_display }})</small>
+                            {% endif %}
+                        {% else %}
+                            <span class="status-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="action-buttons">
+                        {% if not report.is_resolved %}
+                            {% if not report.message.sender.is_suspended %}
+                                <form method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="report_id" value="{{ report.id }}">
+                                    <button type="submit" name="action_warn" value="1" class="btn-action btn-warn" title="Send Warning ({{ report.message.sender.warning_count }}/2)" 
+                                        onclick="return confirm('Send warning {{ report.message.sender.warning_count|add:1 }}/2 to {{ report.message.sender.username }}?{% if report.message.sender.warning_count == 1 %} This will SUSPEND their account!{% endif %}')">
+                                        ⚠️
+                                    </button>
+                                </form>
+                            {% endif %}
+                            <form method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="report_id" value="{{ report.id }}">
+                                <button type="submit" name="action_resolve" value="1" class="btn-action btn-resolve" title="Mark as Resolved (No Action)">
+                                    ✓
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="report_id" value="{{ report.id }}">
+                            <button type="submit" name="action_delete_message" value="1" class="btn-action btn-delete-msg" title="Delete Message" onclick="return confirm('Delete this message permanently?')">
+                                🗑️ Msg
+                            </button>
+                        </form>
+                        <form method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="report_id" value="{{ report.id }}">
+                            <button type="submit" name="action_delete_report" value="1" class="btn-action btn-delete" title="Delete Report" onclick="return confirm('Delete this report?')">
+                                🗑️
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem; color: #666;">No reported messages found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="report-footer-buttons">
+        <button type="button" class="btn-export-reports" onclick="window.location.reload()">Refresh Data</button>
+        <button type="button" class="btn-export-reports" onclick="alert('CSV export feature coming soon!')">Export CSV</button>
+
+        <form method="POST" action="{% url 'clear_all_warnings' %}" style="display: inline-block; margin-left: 10px;" 
+            onsubmit="return confirm('Are you sure you want to clear ALL user warning notifications? This will fix stuck notifications and cannot be undone.');">
+            {% csrf_token %}
+            <button type="submit" class="btn-export-reports" style="background-color: #fee2e2; color: #991b1b; border-color: #fecaca;">
+                Clear Stuck Warnings
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function filterReports() {
+            const searchInput = document.getElementById('search-reports').value.toLowerCase();
+            const rows = document.querySelectorAll('.report-table tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Allow filtering on Enter key
+        document.getElementById('search-reports').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                filterReports();
+            }
+        });
+    </script>
+
+{% endblock %}

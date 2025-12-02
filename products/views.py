@@ -2,14 +2,28 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from django.db.models import Q
 from .models import Product
 from .forms import ProductForm
+from users.suspension_utils import can_user_add_edit_products
 
 class VendorRequiredMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.role == 'VENDOR'
+        user = self.request.user
+        if not user.is_authenticated or user.role != 'VENDOR':
+            return False
+        
+        # Check if vendor can add/edit products (not suspended)
+        if not can_user_add_edit_products(user):
+            return False
+        
+        return True
+    
+    def handle_no_permission(self):
+        messages.error(self.request, "You cannot manage products while suspended or unverified.")
+        return redirect('home')
 
 class ProductListView(LoginRequiredMixin, VendorRequiredMixin, ListView):
     model = Product
