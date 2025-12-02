@@ -550,7 +550,8 @@
                 name: currentProductName,
                 price: document.getElementById('modal-price').textContent,
                 image: document.getElementById('modal-img').src,
-                shop: document.getElementById('modal-shop-link').textContent
+                shop: document.getElementById('modal-shop-link').textContent,
+                vendor_id: window.currentVendorId || null
             };
 
             if (window.addToCartGlobal) {
@@ -571,6 +572,7 @@
                     if (data.error) return; 
                     currentProductId = data.id; 
                     currentProductName = data.name;
+                    window.currentVendorId = data.vendor_user_id;
                     
                     document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
                     document.getElementById('modal-name').textContent = data.name;

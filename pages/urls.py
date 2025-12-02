@@ -1,6 +1,7 @@
+# pages/urls.py
 from django.urls import path
 from . import views
-from .views import loyalty_rewards, redeem_points
+from .views import loyalty_rewards, redeem_points, checkout_api
 
 urlpatterns = [
     path('about/', views.about_us_view, name='about'),
@@ -18,4 +19,6 @@ urlpatterns = [
     path('api/recent-searches/', views.recent_searches_api, name='recent_searches_api'),
     path('api/recent-searches/delete/', views.delete_search_item_api, name='delete_search_item_api'),
     path('api/recent-searches/clear/', views.clear_search_history_api, name='clear_search_history_api'),
+    
+    path('api/checkout/', views.checkout_api, name='checkout_api'),
 ]

@@ -87,11 +87,27 @@ def profile_view(request):
 
     if request.method == 'POST':
         if 'update_profile' in request.POST:
+            # Debug: Print what we received
+            print("=" * 50)
+            print("POST Data received:")
+            for key, value in request.POST.items():
+                print(f"  {key}: {value}")
+            print("=" * 50)
+            
             profile_form = ConsumerProfileForm(request.POST, request.FILES, instance=user)
             if profile_form.is_valid():
-                profile_form.save()
+                saved_user = profile_form.save()
+                print(f"Successfully saved user: {saved_user.first_name} {saved_user.last_name}")
                 messages.success(request, 'Your profile has been updated successfully!')
                 return redirect('profile')
+            else:
+                # Display form errors to help debug
+                print("Form validation errors:")
+                print(profile_form.errors)
+                for field, errors in profile_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'{field}: {error}')
+                messages.error(request, 'Form validation failed. Check the errors above.')
         
         elif 'change_password' in request.POST:
             password_form = PasswordChangeForm(user, request.POST)

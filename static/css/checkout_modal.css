@@ -1,0 +1,83 @@
+/* Modern Checkout Modal Styles */
+.checkout-grand-total {
+    padding: 20px 24px !important;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(255, 152, 0, 0.05) 100%) !important;
+    border-top: 3px solid var(--accent-primary) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem !important;
+    font-weight: 900 !important;
+}
+
+.checkout-grand-total span:first-child {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.checkout-grand-total span:last-child {
+    color: var(--accent-secondary);
+    font-size: 1.5rem;
+}
+
+.checkout-final-actions {
+    padding: 20px 24px !important;
+    background: var(--bg-primary);
+    display: flex !important;
+    gap: 12px;
+    justify-content: flex-end !important;
+}
+
+.checkout-btn-cancel {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    padding: 14px 28px !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+}
+
+.checkout-btn-cancel:hover {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--text-secondary) !important;
+    transform: translateY(-2px);
+}
+
+.checkout-btn-confirm {
+    background: linear-gradient(135deg, var(--accent-orange) 0%, #ff6b35 100%) !important;
+    color: white !important;
+    padding: 14px 32px !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(255, 111, 30, 0.3) !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.checkout-btn-confirm::before {
+    content: '✓';
+    font-size: 1.2rem;
+}
+
+.checkout-btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 30, 0.4) !important;
+}
+
+.checkout-btn-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
