@@ -12,10 +12,10 @@
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
 
+        /* Shop Modal Styles */
         .shop-modal-container {
             max-width: 800px !important;
             width: 95% !important;
-            /* CRITICAL FIX: Enforce 100% height relative to max-height to enable inner scrolling */
             height: 100% !important; 
             max-height: 90vh !important;
             overflow: hidden !important;
@@ -44,7 +44,6 @@
 
         .shop-modal-body {
             padding: 30px;
-            /* CRITICAL FIX: This is the element that needs the overflow set */
             overflow-y: auto;
             flex-grow: 1;
         }
@@ -137,6 +136,55 @@
             background-color: var(--accent-secondary);
         }
 
+        /* Logout Modal Styles */
+        .logout-modal-content {
+            max-width: 350px !important;
+            text-align: center;
+        }
+
+        .logout-modal-content h2 {
+            color: var(--danger-color);
+        }
+
+        .logout-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--danger-color);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel-logout:hover { background: #e0e0e0; }
+        .btn-confirm-logout:hover { background: #b71c1c; }
+
+
         @media (max-width: 768px) {
             .shop-form-grid {
                 grid-template-columns: 1fr;
@@ -166,10 +214,12 @@
     </div>
 
     <div class="nav-icons">
-        {% if user.role == 'VENDOR' %}
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
             <div class="cart-nav-container">
-                <a href="javascript:void(0)" onclick="openShopModal()" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
-                    <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon" style="width: 26px; height: 26px;">
+                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
                 </a>
             </div>
         {% else %}
@@ -183,7 +233,8 @@
                 
                 <div class="cart-dropdown">
                     <h4>Recently Added Products</h4>
-                    <div class="cart-dropdown-list" id="nav-cart-list"></div>
+                    <div class="cart-dropdown-list" id="nav-cart-list">
+                    </div>
                     <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
                         <span class="cart-more-text" id="cart-more-text"></span>
                         <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
@@ -426,9 +477,9 @@
                         <div class="modern-card logout-card">
                             <div class="card-body">
                                 <p>Securely end your session.</p>
-                                <a href="{% url 'logout' %}" class="btn-full-width btn-logout">
+                                <button type="button" onclick="openLogoutModal()" class="btn-full-width btn-logout">
                                     Logout
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -535,6 +586,18 @@
     </div>
 </div>
 
+<div id="logoutModal" class="settings-modal">
+    <div class="settings-modal-content logout-modal-content">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to end your current session?</p>
+        
+        <div class="logout-actions">
+            <button type="button" class="btn-cancel-logout" onclick="closeLogoutModal()">Cancel</button>
+            <a href="{% url 'logout' %}" class="btn-confirm-logout">Yes, Log Out</a>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.field-wrapper input');
@@ -606,6 +669,13 @@
     function closeShopModal() { 
         document.getElementById('shopModal').style.display = 'none'; 
         document.getElementById('shop-modal-backdrop').style.display = 'none'; 
+    }
+
+    function openLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'flex'; 
+    }
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none'; 
     }
 </script>
 {% endblock %}
