@@ -11,52 +11,79 @@
 </head>
 <body>
 
-  <header>
-    <div class="left-section">
+<header class="about-header">
+  <div class="left-section">
       <button class="back-btn" onclick="window.history.back()">⬅</button>
+
       <img src="{% static 'icons/sari-sari-logo.png' %}" alt="Logo" class="logo">
-      <h1>Sari-Sari</h1>
-    </div>
-    <div class="search-bar">
+
+      <h1 class="header-title">Sari-Sari</h1>
+  </div>
+
+  <div class="search-bar">
       <input type="text" placeholder="Search products, vendors...">
       <button>🔍</button>
-    </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section class="intro">
+<main>
+  <section class="intro">
       <h2>Sari-Sari Agricultural Marketplace</h2>
       <p><em>Bringing the farm to your sari-sari store and neighborhood</em></p>
-      <h3>We connect farmers, vendors, and families — locally and affordably</h3>
-      <p>
-        Sari-Sari Agricultural Marketplace blends the trusted neighborhood sari-sari store spirit with an easy digital marketplace — enabling farmers to sell directly, vendors to source reliably, and communities to access fresh, affordable goods.
-      </p>
-      <a href="{% url 'vendor_signup' %}">
-          <button>Join as Vendor</button>
-      </a>
-      <button>Browse Products</button>
-    </section>
 
-    <section class="cards">
-      <div class="card">
-        <h4>Our Mission</h4>
-        <p>To empower local farmers, vendors, and communities by providing an accessible digital marketplace that increases income opportunities, reduces middlemen, and makes fresh produce available to more Filipino homes.</p>
+      <h3>We connect farmers, vendors, and families — locally and affordably</h3>
+
+      <p>
+          Sari-Sari Agricultural Marketplace blends the trusted neighborhood sari-sari store spirit
+          with an easy digital marketplace — enabling farmers to sell directly, vendors to source reliably,
+          and communities to access fresh, affordable goods.
+      </p>
+
+      <div class="intro-buttons">
+          <a href="{% url 'vendor_signup' %}">
+              <button class="primary-btn">Join as Vendor</button>
+          </a>
+          <a href="{% url 'home' %}">
+            <button class="secondary-btn">Browse Products</button>
+          </a>
       </div>
+  </section>
+
+  <section class="cards">
       <div class="card">
-        <h4>Our Vision</h4>
-        <p>To be the leading community-driven marketplace that supports sustainable agriculture, fair pricing, and resilient local economies across towns and barangays.</p>
+          <h4>Our Mission</h4>
+          <p>
+            To empower local farmers, vendors, and communities by providing an accessible digital marketplace
+            that increases income opportunities, reduces middlemen, and makes fresh produce available to more Filipino homes.
+          </p>
       </div>
+
       <div class="card">
-        <h4>Who We Serve</h4>
-        <p>Smallholder farmers, sari-sari store owners, market vendors, cooperatives, backyard gardeners, and everyday buyers who want fresher, fairer access to agricultural products.</p>
+          <h4>Our Vision</h4>
+          <p>
+            To be the leading community-driven marketplace that supports sustainable agriculture, fair pricing,
+            and resilient local economies across towns and barangays.
+          </p>
       </div>
+
       <div class="card">
-        <h4>What We Offer</h4>
-        <p>Product listings (produce, seeds, feeds), vendor verification, order matching, delivery set-up scheduling, price transparency, and community support resources.</p>
+          <h4>Who We Serve</h4>
+          <p>
+            Smallholder farmers, sari-sari store owners, market vendors, cooperatives, backyard gardeners,
+            and everyday buyers who want fresher, fairer access to agricultural products.
+          </p>
       </div>
-    </section>
-  </main>
-  <script src="{% static 'js/theme.js' %}"></script>
+
+      <div class="card">
+          <h4>What We Offer</h4>
+          <p>
+            Product listings (produce, seeds, feeds), vendor verification, order scheduling, price transparency,
+            and community support resources.
+          </p>
+      </div>
+  </section>
+</main>
+
+<script src="{% static 'js/theme.js' %}"></script>
 </body>
 </html>
-
