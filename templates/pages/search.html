@@ -135,7 +135,7 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: #666; background: #fff; border-radius: 8px;">
+                    <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: var(--text-primary); background: var(--bg-primary); border-radius: 8px;">
                         <p>No results found for your criteria.</p>
                     </div>
                 {% endif %}
@@ -288,7 +288,7 @@
                         });
                     } else {
                         productGrid.innerHTML = `
-                            <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: #666; background: #fff; border-radius: 8px;">
+                            <div style="grid-column: 1 / -1; text-align:center; padding: 60px; color: var(--text-primary); background: var(--bg-primary); border-radius: 8px;">
                                 <p>No results found for the selected filters.</p>
                             </div>`;
                     }

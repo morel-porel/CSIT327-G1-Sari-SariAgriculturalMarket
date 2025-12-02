@@ -9,14 +9,14 @@
 
     /* Match body bg */
     body, html {
-        background-color: #f5f7f9;
+        background-color: var(--bg-secondary);
         height: 100%;
         margin: 0;
     }
 
     .success-wrapper {
         min-height: calc(100vh - 90px);
-        background-color: #f5f7f9;
+        background-color: var(--bg-secondary);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -25,7 +25,7 @@
     }
 
     .success-card {
-        background-color: #fff;
+        background-color: var(--bg-primary);
         max-width: 600px;
         width: 100%;
         padding: 60px 40px;
@@ -45,7 +45,7 @@
     .success-title {
         font-family: var(--font-main);
         font-size: 2.2rem;
-        color: #333;
+        color: var(--text-primary);
         margin-bottom: 20px;
         font-weight: 800;
     }
@@ -53,7 +53,7 @@
     .success-message {
         font-family: var(--font-main);
         font-size: 1.1rem;
-        color: #666;
+        color: var(--text-secondary);
         margin-bottom: 40px;
         line-height: 1.6;
     }
@@ -61,7 +61,7 @@
     .btn-home {
         display: inline-block;
         background-color: var(--accent-primary, #285429);
-        color: white;
+        color: var(--text-on-accent);
         padding: 14px 40px;
         text-decoration: none;
         font-family: var(--font-main);

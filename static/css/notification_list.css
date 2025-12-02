@@ -20,7 +20,7 @@
     font-size: 2rem;
     margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--border-color);
     font-weight: 800;
 }
 
@@ -37,9 +37,9 @@
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 15px;
-    background-color: #fff;
-    border: 1px solid #eee;
-    border-left: 5px solid #ddd; /* Default border color */
+    background-color: var(--bg-accent);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--border-input); /* Default border color */
     transition: all 0.2s ease;
     position: relative;
 }
@@ -54,35 +54,35 @@
 /* 1. Standard Message (Blue) */
 .notification-item.type-message {
     border-left-color: var(--info-color);
-    background-color: #f0f8ff; /* AliceBlue */
+    background-color: var(--bg-tertiary); /* AliceBlue */
 }
 .notification-item.type-message .notification-message {
-    color: #0c5460;
+    color: var(--info-color);
 }
 
 /* 2. Warning / Report (Red/Orange) */
 .notification-item.type-warning {
     border-left-color: var(--danger-color);
-    background-color: #fff5f5; /* Very light red */
+    background-color: var(--bg-tertiary); /* Very light red */
 }
 .notification-item.type-warning .notification-message {
-    color: #c62828;
+    color: var(--danger-color);
     font-weight: 600;
 }
 
 /* 3. Success / Verified (Green) */
 .notification-item.type-success {
     border-left-color: var(--accent-secondary);
-    background-color: #f1f8e9; /* Very light green */
+    background-color: var(--bg-success-light); /* Very light green */
 }
 .notification-item.type-success .notification-message {
-    color: #2e7d32;
+    color: var(--accent-secondary);
 }
 
 /* 4. General Info (Gray/Default) */
 .notification-item.type-info {
-    border-left-color: #b0b0b0;
-    background-color: #ffffff;
+    border-left-color: var(--border-input);
+    background-color: var(--bg-accent);
 }
 
 /* Unread Indicator */
@@ -95,7 +95,7 @@
     height: 10px;
     background-color: var(--accent-primary);
     border-radius: 50%;
-    box-shadow: 0 0 0 2px #fff;
+    box-shadow: 0 0 0 2px var(--bg-accent);
 }
 
 /* Text Styles */
@@ -135,7 +135,7 @@
 
 .notification-timestamp {
     display: block;
-    color: #888;
+    color: var(--text-secondary);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -143,8 +143,8 @@
 .no-notifications {
     text-align: center;
     padding: 60px;
-    color: #9ca3af;
-    border: 2px dashed #e5e7eb;
+    color: var(--text-secondary);
+    border: 2px dashed var(--border-color);
     border-radius: 12px;
 }
 

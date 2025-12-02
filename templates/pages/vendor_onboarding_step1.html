@@ -9,7 +9,7 @@
 
     /* Match body bg to wrapper to eliminate white gaps */
     body, html {
-        background-color: #f5f7f9;
+        background-color: var(--bg-tertiary);
         height: 100%;
         margin: 0;
     }
@@ -17,7 +17,7 @@
     /* Centered Modern Container with Gap */
     .onboarding-wrapper {
         min-height: calc(100vh - 90px);
-        background-color: #f5f7f9;
+        background-color: var(--bg-tertiary);
         display: flex;
         justify-content: center;
         padding: 40px 20px;
@@ -25,7 +25,7 @@
     }
 
     .onboarding-card {
-        background: #ffffff;
+        background: var(--bg-primary);
         border-radius: 16px;
         box-shadow: 0 4px 25px rgba(0,0,0,0.05);
         max-width: 800px;
@@ -36,10 +36,10 @@
     }
 
     .wizard-header {
-        background-color: var(--accent-primary, #285429);
+        background-color: var(--accent-primary);
         padding: 30px;
         text-align: center;
-        color: white;
+        color: var(--text-on-accent);
     }
 
     .wizard-title {
@@ -82,8 +82,8 @@
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background-color: #fff;
-        color: var(--accent-primary, #285429);
+        background-color: var(--bg-primary);
+        color: var(--accent-primary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -94,8 +94,8 @@
     }
 
     .step-node.active .dot {
-        background-color: #faa625;
-        color: white;
+        background-color: var(--accent-orange);
+        color: var(--text-on-accent);
         transform: scale(1.2);
     }
 
@@ -114,10 +114,10 @@
 
     .step-title {
         font-size: 1.4rem;
-        color: #333;
+        color: var(--text-primary);
         margin-bottom: 25px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .form-grid-row {
@@ -135,23 +135,23 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: #555;
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 
     .form-control {
         width: 100%;
         padding: 12px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-input);
         border-radius: 8px;
         font-size: 1rem;
-        color: #333;
-        background-color: #fff;
+        color: var(--text-primary);
+        background-color: var(--bg-primary);
     }
     
     .form-control:focus {
         outline: none;
-        border-color: var(--accent-primary, #285429);
+        border-color: var(--accent-primary);
         box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
     }
 
@@ -164,8 +164,8 @@
 
     .btn-wizard {
         padding: 12px 30px;
-        background-color: var(--accent-primary, #285429);
-        color: white;
+        background-color: var(--accent-primary);
+        color: var(--text-on-accent);
         border: none;
         font-weight: bold;
         cursor: pointer;
@@ -176,7 +176,7 @@
     }
 
     .btn-wizard:hover {
-        background-color: var(--accent-secondary, #2e7d32);
+        background-color: var(--accent-secondary);
         transform: translateY(-1px);
     }
 
