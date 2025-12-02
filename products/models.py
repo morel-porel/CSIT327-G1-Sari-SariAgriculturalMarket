@@ -27,6 +27,7 @@ class Product(models.Model):
     
     stock = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
+    is_seasonal = models.BooleanField(default=False, help_text="Mark if this product is currently in season")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

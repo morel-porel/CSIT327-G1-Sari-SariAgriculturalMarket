@@ -58,6 +58,17 @@
                         {% if form.stock.errors %}<span class="error-text">{{ form.stock.errors.0 }}</span>{% endif %}
                     </div>
 
+                    <div class="form-group">
+                        <div class="form-check">
+                            {{ form.is_seasonal }}
+                            <label class="form-check-label" for="{{ form.is_seasonal.id_for_label }}">
+                                <img src="{% static 'icons/season.png' %}" alt="Seasonal" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                                Mark as In Season
+                            </label>
+                        </div>
+                        {% if form.is_seasonal.errors %}<span class="error-text">{{ form.is_seasonal.errors.0 }}</span>{% endif %}
+                    </div>
+
                     <div class="form-group file-group">
                         <label for="{{ form.image.id_for_label }}">Product Image</label>
                         <div class="file-input-wrapper">

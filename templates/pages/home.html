@@ -219,11 +219,18 @@
             <div class="grid" id="product-grid-container">
                 {% for product in products %}
                     <div class="grid-item" data-product-id="{{ product.id }}" style="cursor: pointer;">
-                        {% if product.image %}
-                            <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
-                        {% else %}
-                            <div class="product-image"></div>
-                        {% endif %}
+                        <div class="product-image-wrapper">
+                            {% if product.image %}
+                                <div class="product-image" style="background-image: url('{{ product.image.url }}'); background-size: cover;"></div>
+                            {% else %}
+                                <div class="product-image"></div>
+                            {% endif %}
+                            {% if product.is_seasonal %}
+                                <span class="seasonal-badge-card" title="In Season">
+                                    <img src="{% static 'icons/season.png' %}" alt="In Season">
+                                </span>
+                            {% endif %}
+                        </div>
                         <div class="product-info">
                             <h3 class="product-name">{{ product.name }}</h3>
                             <p class="product-price">₱{{ product.price }}</p>
@@ -260,7 +267,12 @@
         <div class="modal-details">
             <span class="modal-category-badge" id="modal-category"></span>
             
-            <h2 id="modal-name">Product Name</h2>
+            <h2 id="modal-name">
+                <span id="modal-name-text">Product Name</span>
+                <span class="seasonal-badge-inline" id="modal-seasonal-badge" style="display: none;">
+                    <img src="{% static 'icons/season.png' %}" alt="In Season" title="In Season">
+                </span>
+            </h2>
             <p class="modal-vendor">
                 Sold by <a href="#" id="modal-shop-link">Vendor Name</a>
             </p>
@@ -575,11 +587,19 @@
                     window.currentVendorId = data.vendor_user_id;
                     
                     document.getElementById('modal-img').src = data.image_url || "{% static 'icons/placeholder.png' %}";
-                    document.getElementById('modal-name').textContent = data.name;
+                    document.getElementById('modal-name-text').textContent = data.name;
                     document.getElementById('modal-price').textContent = data.price; 
                     document.getElementById('modal-description').textContent = data.description;
                     document.getElementById('modal-category').textContent = data.category || 'Product';
                     document.getElementById('modal-stock').textContent = data.stock || '0';
+                    
+                    // Show/hide seasonal badge
+                    const seasonalBadge = document.getElementById('modal-seasonal-badge');
+                    if (data.is_seasonal) {
+                        seasonalBadge.style.display = 'inline-flex';
+                    } else {
+                        seasonalBadge.style.display = 'none';
+                    }
                     
                     const shopLink = document.getElementById('modal-shop-link');
                     shopLink.textContent = data.shop_name;
