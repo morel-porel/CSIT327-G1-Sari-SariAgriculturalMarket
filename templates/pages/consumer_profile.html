@@ -6,12 +6,193 @@
     <link rel="stylesheet" href="{% static 'css/consumer_profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
     <link rel="stylesheet" href="{% static 'css/notifications_dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern_modal.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
     <style>
-        /* Force search bar visibility in profile header but keep hidden visual style if desired, 
-           or use visibility:hidden as requested previously */
         .search-bar { visibility: hidden !important; opacity: 0; }
         body { overflow: hidden; }
+
+        /* Shop Modal Styles */
+        .shop-modal-container {
+            max-width: 800px !important;
+            width: 95% !important;
+            height: 100% !important; 
+            max-height: 90vh !important;
+            overflow: hidden !important;
+        }
+
+        .shop-content-override {
+            flex-direction: column !important;
+            height: 100% !important;
+            padding: 0 !important;
+            background-color: var(--bg-primary);
+        }
+
+        .shop-modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .shop-modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .shop-modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .shop-edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .shop-image-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .shop-img-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-tertiary);
+        }
+
+        .file-upload-wrapper {
+            flex: 1;
+        }
+
+        .shop-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group-shop {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group-shop label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group-shop input, 
+        .form-group-shop textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s;
+            font-family: var(--font-main);
+        }
+
+        .form-group-shop input:focus,
+        .form-group-shop textarea:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 84, 41, 0.1);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .btn-save-shop {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-save-shop:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        /* Logout Modal Styles */
+        .logout-modal-content {
+            max-width: 350px !important;
+            text-align: center;
+        }
+
+        .logout-modal-content h2 {
+            color: var(--danger-color);
+        }
+
+        .logout-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm-logout {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--danger-color);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel-logout:hover { background: #e0e0e0; }
+        .btn-confirm-logout:hover { background: #b71c1c; }
+
+
+        @media (max-width: 768px) {
+            .shop-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -33,10 +214,14 @@
     </div>
 
     <div class="nav-icons">
-        {% if user.role == 'VENDOR' %}
-            <a href="{% url 'product_list' %}">
-                <img src="{% static 'icons/cart.png' %}" alt="My Products" class="nav-icon">
-            </a>
+        {% if user.is_authenticated and user.role == 'VENDOR' %}
+            <div class="cart-nav-container">
+                <a href="{% url 'product_list' %}" style="display: flex; align-items: center; text-decoration: none;" title="Manage My Shop">
+                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+                    </svg>
+                </a>
+            </div>
         {% else %}
             <div class="cart-nav-container">
                 <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none;">
@@ -48,7 +233,8 @@
                 
                 <div class="cart-dropdown">
                     <h4>Recently Added Products</h4>
-                    <div class="cart-dropdown-list" id="nav-cart-list"></div>
+                    <div class="cart-dropdown-list" id="nav-cart-list">
+                    </div>
                     <div class="cart-dropdown-footer" id="cart-footer" style="display:none;">
                         <span class="cart-more-text" id="cart-more-text"></span>
                         <a href="{% url 'cart' %}" class="btn-view-cart">View Cart</a>
@@ -67,9 +253,7 @@
 
             <div class="notif-dropdown">
                 <h4>Recent Notifications</h4>
-                <div class="notif-dropdown-list" id="nav-notif-list">
-                    <div class="empty-notif">Loading...</div>
-                </div>
+                <div class="notif-dropdown-list" id="nav-notif-list"></div>
                 <div class="notif-dropdown-footer">
                     <a href="{% url 'notification_list' %}" class="view-all-link">View All Notifications</a>
                 </div>
@@ -165,11 +349,11 @@
                         <div class="modern-card promo-card">
                             {% if user.role == 'VENDOR' %}
                                 <div class="card-body">
-                                    <h3>Manage Your Shop</h3>
-                                    <p>Check your orders, add products, and view your sales performance.</p>
-                                    <a href="{% url 'vendor_profile' %}" class="btn-full-width btn-vendor">
-                                        Go to Shop Dashboard
-                                    </a>
+                                    <h3>{{ user.vendorprofile.shop_name|default:"My Shop" }}</h3>
+                                    <p>Manage your inventory, update your profile, and track your sales performance.</p>
+                                    <button type="button" class="btn-full-width btn-vendor" onclick="openShopModal()">
+                                        Manage Shop
+                                    </button>
                                 </div>
                             {% else %}
                                 <div class="card-body">
@@ -293,9 +477,9 @@
                         <div class="modern-card logout-card">
                             <div class="card-body">
                                 <p>Securely end your session.</p>
-                                <a href="{% url 'logout' %}" class="btn-full-width btn-logout">
+                                <button type="button" onclick="openLogoutModal()" class="btn-full-width btn-logout">
                                     Logout
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -323,6 +507,97 @@
     </div>
 </div>
 
+<div class="modal-backdrop" id="shop-modal-backdrop" style="display: none;"></div>
+<div class="modal shop-modal-container" id="shopModal" style="display: none;">
+    <button class="modal-close" onclick="closeShopModal()">&times;</button>
+    
+    <div class="modal-content shop-content-override">
+        <div class="shop-modal-header">
+            <h2>Edit Shop Profile</h2>
+        </div>
+        
+        <div class="shop-modal-body">
+            <form action="{% url 'vendor_profile' %}" method="POST" enctype="multipart/form-data" class="shop-edit-form">
+                {% csrf_token %}
+                
+                <div class="shop-image-section">
+                    {% if user.vendorprofile.profile_image %}
+                        <img src="{{ user.vendorprofile.profile_image.url }}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% else %}
+                        <img src="{% static 'icons/placeholder.png' %}" alt="Shop Logo" class="shop-img-preview" id="shop-img-preview">
+                    {% endif %}
+                    
+                    <div class="file-upload-wrapper">
+                        <label for="shop_image_input" style="font-weight: 600; cursor: pointer; color: var(--accent-primary);">Upload New Logo</label>
+                        <input type="file" name="profile_image" id="shop_image_input" style="display: block; margin-top: 5px; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div class="shop-form-grid">
+                    <div class="form-group-shop">
+                        <label>Shop Name</label>
+                        <input type="text" name="shop_name" value="{{ user.vendorprofile.shop_name }}" required>
+                    </div>
+                    
+                    <div class="form-group-shop">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact_number" value="{{ user.vendorprofile.contact_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Business Permit No.</label>
+                        <input type="text" name="business_permit_number" value="{{ user.vendorprofile.business_permit_number|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Years of Experience</label>
+                        <input type="number" name="experience_years" value="{{ user.vendorprofile.experience_years|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Pickup Address</label>
+                        <input type="text" name="pickup_address" value="{{ user.vendorprofile.pickup_address|default:'' }}" placeholder="Street / House No.">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>Barangay</label>
+                        <input type="text" name="barangay" value="{{ user.vendorprofile.barangay|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop">
+                        <label>City</label>
+                        <input type="text" name="city" value="{{ user.vendorprofile.city|default:'' }}">
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Shop Description</label>
+                        <textarea name="shop_description" rows="3">{{ user.vendorprofile.shop_description|default:'' }}</textarea>
+                    </div>
+
+                    <div class="form-group-shop full-width">
+                        <label>Farming/Business Practices</label>
+                        <textarea name="farming_practices" rows="3">{{ user.vendorprofile.farming_practices|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save-shop">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="logoutModal" class="settings-modal">
+    <div class="settings-modal-content logout-modal-content">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to end your current session?</p>
+        
+        <div class="logout-actions">
+            <button type="button" class="btn-cancel-logout" onclick="closeLogoutModal()">Cancel</button>
+            <a href="{% url 'logout' %}" class="btn-confirm-logout">Yes, Log Out</a>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.field-wrapper input');
@@ -332,20 +607,29 @@
         if(avatarInput){
             avatarInput.addEventListener('change', function(e) {
                 if (this.files && this.files[0]) {
-                    // 1. Update Preview
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         document.getElementById('avatar-preview').src = e.target.result;
                     }
                     reader.readAsDataURL(this.files[0]);
 
-                    // 2. Enable ALL fields before auto-submitting
-                    // (Important so Django doesn't think we are sending empty/missing data for required fields)
                     const allInputs = document.querySelectorAll('#profile-form input, #profile-form select');
                     allInputs.forEach(input => input.disabled = false);
 
-                    // 3. Submit form to save image
                     document.getElementById('profile-form').submit();
+                }
+            });
+        }
+
+        const shopImgInput = document.getElementById('shop_image_input');
+        if(shopImgInput){
+            shopImgInput.addEventListener('change', function(e){
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('shop-img-preview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
                 }
             });
         }
@@ -377,5 +661,21 @@
 
     function openPasswordModal() { document.getElementById('passwordModal').style.display = 'flex'; }
     function closePasswordModal() { document.getElementById('passwordModal').style.display = 'none'; }
+
+    function openShopModal() { 
+        document.getElementById('shopModal').style.display = 'block'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'block'; 
+    }
+    function closeShopModal() { 
+        document.getElementById('shopModal').style.display = 'none'; 
+        document.getElementById('shop-modal-backdrop').style.display = 'none'; 
+    }
+
+    function openLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'flex'; 
+    }
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none'; 
+    }
 </script>
 {% endblock %}
